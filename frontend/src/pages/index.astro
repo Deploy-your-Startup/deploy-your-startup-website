@@ -166,5 +166,25 @@ const baseDomain = "deploy-your-startup.com";
         Made with <span class="heart">&#9829;</span> from aboutphil
       </a>
     </footer>
+    <script>
+      function resetAnimations() {
+        const els = document.querySelectorAll('.spark, .node, .node-live .ring, .node-stack .reel');
+        els.forEach(el => {
+          (el as HTMLElement).style.animationName = 'none';
+          void (el as HTMLElement).offsetWidth;
+          (el as HTMLElement).style.animationName = '';
+        });
+      }
+
+      let resizeTimer: ReturnType<typeof setTimeout>;
+      window.addEventListener('orientationchange', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resetAnimations, 300);
+      });
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resetAnimations, 300);
+      });
+    </script>
   </body>
 </html>
