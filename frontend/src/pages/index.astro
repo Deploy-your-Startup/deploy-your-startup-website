@@ -1,0 +1,34 @@
+---
+import "../styles/global.css";
+
+const projectName = "deploy-your-startup-website";
+const baseDomain = "deploy-your-startup.com";
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <title>{projectName} — Coming Soon</title>
+    <meta name="description" content={`${projectName} is launching soon.`} />
+  </head>
+  <body>
+    <div class="grid"></div>
+    <main class="container">
+      <span class="badge"><span class="pulse"></span>Coming Soon</span>
+      <h1>{projectName}<br />is launching soon.</h1>
+      <p class="subtitle">
+        We're putting the finishing touches on something exciting. Stay tuned.
+      </p>
+    </main>
+    <footer>{baseDomain}</footer>
+  </body>
+</html>
