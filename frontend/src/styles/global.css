@@ -135,17 +135,17 @@ h1 {
 }
 
 .stack {
-  margin-top: 2rem;
+  margin-top: 3rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.9rem;
+  gap: 1rem;
 }
 
 .stack-label {
   font-family: "JetBrains Mono", monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -154,34 +154,33 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.9rem;
+  gap: 2.5rem;
+  flex-wrap: wrap;
 }
 
 .stack-logos a {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: transform 0.2s, border-color 0.2s, background 0.2s;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
 }
 
 .stack-logos a:hover {
-  transform: translateY(-2px);
-  border-color: rgba(0, 224, 255, 0.45);
-  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  background: rgba(124, 92, 255, 0.12);
 }
 
 .icon {
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 28px;
+  height: 28px;
   display: inline-block;
-  background-color: var(--text);
+  background-color: var(--muted);
   mask-image: var(--logo);
   mask-repeat: no-repeat;
   mask-position: center;
@@ -190,6 +189,11 @@ h1 {
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
   -webkit-mask-size: contain;
+  transition: background-color 0.25s ease;
+}
+
+.stack-logos a:hover .icon {
+  background-color: var(--text);
 }
 
 footer {
