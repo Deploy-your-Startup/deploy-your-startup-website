@@ -149,6 +149,7 @@ h1 {
 .tease strong,
 .factory-note strong,
 .control strong,
+.pricing-note strong,
 .byline strong {
   font-weight: 600;
   background: linear-gradient(135deg, var(--accent) 20%, var(--accent-2));
@@ -211,6 +212,24 @@ h1 {
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
+}
+
+.pricing {
+  margin-top: 3.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.pricing-note {
+  font-size: clamp(0.9rem, 1.7vw, 1.05rem);
+  font-weight: 300;
+  color: var(--muted);
+  max-width: 540px;
+  line-height: 1.65;
 }
 
 .factory-note {
