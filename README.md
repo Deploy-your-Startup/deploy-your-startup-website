@@ -24,10 +24,8 @@ new modules (e.g. `backend/`, `ai/`) drop in as siblings without restructuring.
 ## Development
 
 ```bash
-cd frontend
-npm install
-npm run dev      # http://localhost:4321
-npm run build    # static output in frontend/dist/
+./make.sh run    # http://localhost:4321
+./make.sh build  # static output in frontend/dist/
 ```
 
 ## Deployment

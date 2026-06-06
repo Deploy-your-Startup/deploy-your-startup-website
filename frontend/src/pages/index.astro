@@ -1,7 +1,6 @@
 ---
 import "../styles/global.css";
 
-const projectName = "deploy-your-startup-website";
 const baseDomain = "deploy-your-startup.com";
 ---
 
@@ -17,17 +16,38 @@ const baseDomain = "deploy-your-startup.com";
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap"
       rel="stylesheet"
     />
-    <title>{projectName} — Coming Soon</title>
-    <meta name="description" content={`${projectName} is launching soon.`} />
+    <title>Deploy Your Startup - Coming Soon</title>
+    <meta
+      name="description"
+      content="Deploy Your Startup is launching soon with opinionated tooling for solo founders and small teams."
+    />
   </head>
   <body>
     <div class="grid"></div>
     <main class="container">
       <span class="badge"><span class="pulse"></span>Coming Soon</span>
-      <h1>{projectName}<br />is launching soon.</h1>
+      <h1>Deploy your<br />startup in minutes.</h1>
       <p class="subtitle">
-        We're putting the finishing touches on something exciting. Stay tuned.
+        From zero to a running production cluster - opinionated tooling for solo founders and small teams who'd rather ship than wrangle YAML.
       </p>
+      <code class="cli">
+        <span class="prompt">$</span> <span class="cmd">startup bootstrap</span><span
+          class="cursor"></span>
+      </code>
+      <div class="stack">
+        <span class="stack-label">Built on</span>
+        <div class="stack-logos">
+          <a
+            href="https://www.hetzner.com/cloud"
+            target="_blank"
+            rel="noopener"
+            title="Hetzner Cloud"
+            style="--logo: url('https://cdn.simpleicons.org/hetzner')"
+          >
+            <span class="icon"></span>
+          </a>
+        </div>
+      </div>
     </main>
     <footer>{baseDomain}</footer>
   </body>

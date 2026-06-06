@@ -96,6 +96,102 @@ h1 {
   line-height: 1.6;
 }
 
+.cli {
+  display: inline-block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.95rem;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--text);
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.cli:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.cli .prompt {
+  color: var(--accent-2);
+  user-select: none;
+}
+
+.cli .cmd {
+  color: var(--text);
+}
+
+.cli .cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1.1em;
+  background: var(--accent);
+  vertical-align: text-bottom;
+  animation: blink 1s steps(2) infinite;
+  margin-left: 2px;
+}
+
+.stack {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.stack-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.stack-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+}
+
+.stack-logos a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.stack-logos a:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 224, 255, 0.45);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.icon {
+  width: 1.8rem;
+  height: 1.8rem;
+  display: inline-block;
+  background-color: var(--text);
+  mask-image: var(--logo);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-image: var(--logo);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+}
+
 footer {
   position: fixed;
   bottom: 1.5rem;
@@ -117,4 +213,8 @@ footer {
   0%   { box-shadow: 0 0 0 0 rgba(0, 224, 255, 0.7); }
   70%  { box-shadow: 0 0 0 10px rgba(0, 224, 255, 0); }
   100% { box-shadow: 0 0 0 0 rgba(0, 224, 255, 0); }
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
 }
