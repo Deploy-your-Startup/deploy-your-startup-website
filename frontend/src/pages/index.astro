@@ -19,7 +19,7 @@ const baseDomain = "deploy-your-startup.com";
     <title>Deploy Your Startup - Coming Soon</title>
     <meta
       name="description"
-      content="Deploy Your Startup is launching soon with opinionated tooling for solo founders and small teams."
+      content="Deploy Your Startup is launching soon: opinionated, AI-ready tooling that takes solo founders and small teams from one idea to a whole startup factory."
     />
   </head>
   <body>
@@ -28,54 +28,129 @@ const baseDomain = "deploy-your-startup.com";
       <span class="badge"><span class="pulse"></span>Coming Soon</span>
       <h1>Deploy your<br />startup in minutes.</h1>
       <p class="subtitle">
-        From zero to a running production cluster - opinionated tooling for solo founders and small teams who'd rather ship than wrangle YAML.
+        From zero to a <strong>running production cluster</strong> - opinionated tooling for solo founders and small teams who'd rather ship than wrangle YAML.
       </p>
       <code class="cli">
         <span class="prompt">$</span> <span class="cmd">startup bootstrap</span><span
           class="cursor"></span>
       </code>
-      <div class="stack">
-        <span class="stack-label">Built on</span>
-        <div class="stack-logos">
+      <p class="tease">
+        But it doesn't stop at one deploy. Every project is
+        <strong>AI-ready from the first commit</strong> - so your agents can
+        scaffold, ship and scale right alongside you. One command today, a whole
+        <strong>startup factory</strong> tomorrow.
+      </p>
+      <div class="pills">
+        <span class="pill"><span class="dot"></span>Zero to prod in minutes</span>
+        <span class="pill"><span class="dot"></span>AI-ready by default</span>
+        <span class="pill"><span class="dot"></span>Build a startup factory</span>
+      </div>
+      <div class="factory">
+        <span class="stack-label">The startup factory</span>
+        <div class="line">
+          <div class="rail"><span class="spark"></span></div>
+
+          <div class="station">
+            <span class="node node-agent" title="You - the AI agent - drive the whole line">
+              <span class="glyph">&#10022;</span>
+            </span>
+            <span class="step step-agent">agent</span>
+          </div>
+
           <a
-            href="https://www.hetzner.com/cloud"
-            target="_blank"
-            rel="noopener"
-            title="Hetzner Cloud"
-            style="--logo: url('https://cdn.simpleicons.org/hetzner')"
-          >
-            <span class="icon"></span>
-          </a>
-          <a
-            href="https://k3s.io"
-            target="_blank"
-            rel="noopener"
-            title="k3s"
-            style="--logo: url('https://cdn.simpleicons.org/k3s')"
-          >
-            <span class="icon"></span>
-          </a>
-          <a
-            href="https://www.ansible.com"
-            target="_blank"
-            rel="noopener"
-            title="Ansible"
-            style="--logo: url('https://cdn.simpleicons.org/ansible')"
-          >
-            <span class="icon"></span>
-          </a>
-          <a
+            class="station"
             href="https://github.com"
             target="_blank"
             rel="noopener"
             title="GitHub"
-            style="--logo: url('https://cdn.simpleicons.org/github')"
           >
-            <span class="icon"></span>
+            <span class="node" style="--logo: url('https://cdn.simpleicons.org/github')">
+              <span class="icon"></span>
+            </span>
+            <span class="step">commit</span>
           </a>
+
+          <a
+            class="station"
+            href="https://www.ansible.com"
+            target="_blank"
+            rel="noopener"
+            title="Ansible - provisions your infrastructure"
+          >
+            <span class="node" style="--logo: url('https://cdn.simpleicons.org/ansible')">
+              <span class="icon"></span>
+            </span>
+            <span class="step">provision</span>
+          </a>
+
+          <a
+            class="station"
+            href="https://www.hetzner.com/cloud"
+            target="_blank"
+            rel="noopener"
+            title="Hetzner Cloud - your servers"
+          >
+            <span class="node" style="--logo: url('https://cdn.simpleicons.org/hetzner')">
+              <span class="icon"></span>
+            </span>
+            <span class="step">servers</span>
+          </a>
+
+          <a
+            class="station"
+            href="https://k3s.io"
+            target="_blank"
+            rel="noopener"
+            title="k3s - the operating system of your cloud"
+          >
+            <span class="node" style="--logo: url('https://cdn.simpleicons.org/k3s')">
+              <span class="icon"></span>
+            </span>
+            <span class="step">cloud os</span>
+          </a>
+
+          <div class="station">
+            <span class="node node-stack" title="The technology you choose - Django, FastAPI, NestJS, Vue, your call">
+              <span class="reel">
+                <span class="icon stack-icon" style="--logo: url('https://cdn.simpleicons.org/django')"></span>
+                <span class="icon stack-icon" style="--logo: url('https://cdn.simpleicons.org/fastapi')"></span>
+                <span class="icon stack-icon" style="--logo: url('https://cdn.simpleicons.org/nestjs')"></span>
+                <span class="icon stack-icon" style="--logo: url('https://cdn.simpleicons.org/vuedotjs')"></span>
+                <span class="icon stack-icon" style="--logo: url('https://cdn.simpleicons.org/django')"></span>
+              </span>
+            </span>
+            <span class="step">your stack</span>
+          </div>
+
+          <div class="station">
+            <span class="node node-live" title="Your startup, live">
+              <span class="ring"></span>
+              <span class="glyph">&#9650;</span>
+            </span>
+            <span class="step step-live">live</span>
+          </div>
         </div>
+        <p class="factory-note">
+          One framework or a full monorepo - frontend, backend, any service split you want.
+          Pack in as many as you like. <strong>Ready to scale.</strong>
+        </p>
       </div>
+      <p class="control">
+        Built by developers, for developers - a <strong>harness, not a cage</strong>.
+        Your whole stack ships as code into <strong>your own GitHub repo</strong>, so
+        you can crack it open, drop down to raw Ansible and kubectl, and
+        <strong>take the wheel</strong> the moment you want to. You always hold the keys.
+      </p>
     </main>
-    <footer>{baseDomain}</footer>
+    <footer>
+      <span class="byline"
+        >Shaped by years as a founder, tech lover and software engineer - kept as lean as
+        humanly possible, and - of course - <strong>opinionated</strong>.</span
+      >
+      <span class="domain">{baseDomain}</span>
+      <a class="made-by" href="https://aboutphil.de" target="_blank" rel="noopener">
+        Made with <span class="heart">&#9829;</span> from aboutphil
+      </a>
+    </footer>
   </body>
 </html>
