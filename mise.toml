@@ -1,0 +1,8 @@
+[tools]
+node = "24"
+
+[tasks.dev]
+run = "./make.sh run"
+
+[tasks.build]
+run = "./make.sh build"
