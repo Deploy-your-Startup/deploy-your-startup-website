@@ -15,7 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Check installer
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Check installer and landing page
         run: ./make.sh test
 
   deploy:

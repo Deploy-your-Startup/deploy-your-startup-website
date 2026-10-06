@@ -112,12 +112,12 @@ const baseDomain = "deploy-your-startup.com";
             href="https://k3s.io"
             target="_blank"
             rel="noopener"
-            title="k3s - the operating system of your cloud"
+            title="k3s - lightweight Kubernetes"
           >
             <span class="node" style="--logo: url('https://cdn.simpleicons.org/k3s')">
               <span class="icon"></span>
             </span>
-            <span class="step">cloud os</span>
+            <span class="step">k3s</span>
           </a>
 
           <div class="station">
@@ -145,6 +145,38 @@ const baseDomain = "deploy-your-startup.com";
           Your stack. Your repo. <strong>Ready to grow.</strong>
         </p>
       </div>
+      <section class="how-it-works" aria-labelledby="how-title">
+        <div class="how-heading">
+          <h2 id="how-title">Build your idea. Find out what works.</h2>
+          <p>A working app from the start. Your focus: features, real users and feedback.</p>
+        </div>
+        <div class="harness-graphic">
+          <div class="example-apps">
+            <a class="example-app" href="https://aboutphil.de" target="_blank" rel="noopener">
+              <div class="app-preview preview-phil" aria-hidden="true">
+                <div class="preview-toolbar"><i></i><i></i><i></i><span>aboutphil.de</span></div>
+                <div class="preview-profile"><span class="profile-avatar">P</span><div><span class="preview-stroke long"></span><span class="preview-stroke short"></span></div></div>
+                <div class="preview-tiles"><span></span><span></span><span></span></div>
+              </div>
+              <div class="example-caption"><h3>About Phil</h3><span>Personal website <b aria-hidden="true">↗</b></span></div>
+            </a>
+            <a class="example-app" href="https://gamingbuchclub.de" target="_blank" rel="noopener">
+              <div class="app-preview preview-club" aria-hidden="true">
+                <div class="preview-toolbar"><i></i><i></i><i></i><span>gamingbuchclub.de</span></div>
+                <div class="preview-games"><span><svg viewBox="0 0 40 40" fill="none"><path d="M12 13h16l5 15c1 4-3 6-5 3l-4-4h-8l-4 4c-2 3-6 1-5-3l5-15Z" stroke="currentColor" stroke-width="2"/><path d="M13 19h8m-4-4v8" stroke="currentColor" stroke-width="2"/><circle cx="27" cy="19" r="1.5" fill="currentColor"/></svg></span><span></span><span></span></div>
+                <div class="preview-votes"><span class="preview-stroke long"></span><i></i><i></i><i></i></div>
+              </div>
+              <div class="example-caption"><h3>Gaming Buch Club</h3><span>Community app <b aria-hidden="true">↗</b></span></div>
+            </a>
+          </div>
+          <div class="harness-connectors" aria-hidden="true"><span></span><span></span></div>
+          <div class="harness-foundation">
+            <div class="foundation-heading"><BrandMark /><strong>We take care of the harness.</strong></div>
+            <ul><li>Agent-ready projects</li><li>Automated checks</li><li>Deployment & operations</li></ul>
+          </div>
+          <div class="community-loop"><span aria-hidden="true">↻</span><p>Improved together. One community contribution at a time.</p></div>
+        </div>
+      </section>
       <section class="product-principles" aria-label="Speed, control and scalability">
         <article>
           <span class="principle-label">Speed</span>
@@ -316,6 +348,62 @@ const baseDomain = "deploy-your-startup.com";
   }
   .factory-note { color: var(--muted); }
   .factory-note strong, .control strong, .pricing-note strong { color: #bdcddd; background: none; -webkit-text-fill-color: currentColor; }
+  .how-it-works { margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid #ffffff12; text-align: left; }
+  .how-heading { text-align: center; }
+  .how-heading h2 { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 600; letter-spacing: -0.04em; }
+  .how-heading p { margin-top: 0.65rem; color: var(--muted); font-size: 0.9rem; }
+  .harness-graphic { max-width: 680px; margin: 2rem auto 0; }
+  .example-apps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; }
+  .example-app { display: block; color: var(--text); text-decoration: none; border: 1px solid #373e47; border-radius: 9px; overflow: hidden; background: #1c1e21; transition: border-color 0.2s, transform 0.2s; }
+  .example-app:hover { border-color: #71899d; transform: translateY(-3px); }
+  .example-app:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+  .app-preview { height: 145px; padding: 0 1rem; background: #111214; }
+  .preview-toolbar { display: flex; align-items: center; gap: 4px; height: 30px; border-bottom: 1px solid #ffffff0a; }
+  .preview-toolbar i { width: 4px; height: 4px; border-radius: 50%; background: #42474e; }
+  .preview-toolbar > span { margin-left: auto; color: #828b96; font: 0.5rem "JetBrains Mono", monospace; }
+  .preview-profile { display: flex; align-items: center; gap: 12px; margin-top: 18px; }
+  .profile-avatar { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #9cbedc1a; color: var(--accent); font-size: 0.9rem; }
+  .preview-profile > div { flex: 1; }
+  .preview-stroke { display: block; height: 5px; border-radius: 3px; background: #9cbedc38; }
+  .preview-stroke.long { width: 65%; }
+  .preview-stroke.short { width: 40%; margin-top: 8px; background: #ffffff12; }
+  .preview-tiles { display: flex; gap: 8px; margin-top: 16px; }
+  .preview-tiles span { flex: 1; height: 25px; border: 1px solid #9cbedc20; border-radius: 4px; background: #9cbedc07; }
+  .preview-games { display: flex; gap: 8px; margin-top: 15px; }
+  .preview-games > span { display: grid; place-items: center; flex: 1; height: 53px; border: 1px solid #a3b9a326; border-radius: 4px; background: #a3b9a30c; }
+  .preview-games > span:nth-child(2) { background: linear-gradient(145deg, #a3b9a31a, #a3b9a304); }
+  .preview-games > span:nth-child(3) { background: linear-gradient(35deg, #9cbedc19, #9cbedc04); }
+  .preview-games svg { width: 32px; height: 32px; color: #a3b9a3; }
+  .preview-votes { display: flex; align-items: center; gap: 5px; margin-top: 15px; }
+  .preview-votes .preview-stroke { margin-right: auto; width: 45%; background: #a3b9a330; }
+  .preview-votes i { height: 6px; width: 6px; border-radius: 50%; background: #a3b9a345; }
+  .example-caption { padding: 0.9rem 1rem; }
+  .example-caption h3 { font-size: 0.85rem; font-weight: 600; letter-spacing: -0.025em; }
+  .example-caption > span { display: flex; justify-content: space-between; margin-top: 0.35rem; color: var(--muted); font-size: 0.7rem; }
+  .example-caption b { color: var(--accent); font-weight: 400; }
+  .harness-connectors { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; height: 28px; }
+  .harness-connectors span { width: 1px; height: 100%; margin-inline: auto; background: #71899d70; }
+  .harness-foundation { padding: 1.2rem; border: 1px solid #71899d70; border-radius: 8px; background: #9cbedc08; text-align: center; }
+  .foundation-heading { display: flex; align-items: center; justify-content: center; gap: 0.6rem; }
+  .foundation-heading :global(svg) { width: 25px; height: 25px; color: var(--accent); }
+  .foundation-heading strong { font-size: 0.9rem; font-weight: 600; letter-spacing: -0.025em; }
+  .harness-foundation ul { display: flex; justify-content: center; gap: 1.25rem; flex-wrap: wrap; list-style: none; padding: 0; margin: 0.8rem 0 0; color: var(--muted); font-size: 0.7rem; }
+  .community-loop { display: flex; justify-content: center; align-items: center; gap: 0.6rem; margin-top: 1.1rem; color: var(--muted); }
+  .community-loop > span { color: var(--accent); font-size: 1.1rem; }
+  .community-loop p { font-size: 0.7rem; line-height: 1.7; }
+  @media (max-width: 600px) {
+    .example-apps, .harness-connectors { gap: 0.75rem; }
+    .app-preview { height: 130px; padding-inline: 0.6rem; }
+    .preview-toolbar > span { font-size: 0.4rem; }
+    .preview-profile { gap: 8px; }
+    .profile-avatar { width: 28px; height: 28px; }
+    .preview-games > span { height: 45px; }
+    .example-caption { padding: 0.75rem 0.6rem; }
+    .example-caption h3 { font-size: 0.75rem; }
+    .example-caption > span { font-size: 0.6rem; }
+    .harness-foundation ul { gap: 0.65rem 1rem; font-size: 0.65rem; }
+    .community-loop { text-align: center; }
+  }
   .product-principles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid #ffffff12; text-align: left; }
   .principle-label { color: #9cbedc; font: 0.6rem "JetBrains Mono", monospace; letter-spacing: 0.12em; text-transform: uppercase; }
   .product-principles h3 { margin: 0.75rem 0; font-size: 1rem; font-weight: 600; line-height: 1.45; letter-spacing: -0.025em; }
