@@ -1,8 +1,8 @@
 ---
-interface Props { id: string; command: string; label?: string }
-const { id, command, label = "Terminal" } = Astro.props;
+interface Props { id: string; command: string; label?: string; compact?: boolean }
+const { id, command, label = "Terminal", compact = false } = Astro.props;
 ---
-<div class="install-shell">
+<div class:list={["install-shell", { "compact-command": compact }]}>
   <div class="shell-heading"><span>{label}</span><button type="button" data-copy={id} aria-label={`Copy ${label.toLowerCase()} command`}>Copy</button></div>
   <Fragment set:html="<!--email_off-->" />
   <pre><code id={id}>{command}</code></pre>
@@ -16,6 +16,7 @@ const { id, command, label = "Terminal" } = Astro.props;
       try {
         await navigator.clipboard.writeText(code.textContent ?? '');
         button.textContent = 'Copied';
+        document.dispatchEvent(new CustomEvent('command-copied', { detail: { id: code.id } }));
       } catch {
         button.textContent = 'Select to copy';
         const range = document.createRange();

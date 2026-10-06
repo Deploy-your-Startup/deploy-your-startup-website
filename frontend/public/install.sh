@@ -2,6 +2,17 @@
 # Deploy Your Startup installer. Runtime tools stay in our own directory.
 set -euo pipefail
 
+startup_onboard=false
+case "${1:-}" in
+  --onboard) startup_onboard=true ;;
+  "") ;;
+  *) echo "Usage: install.sh [--onboard]" >&2; exit 1 ;;
+esac
+if "$startup_onboard" && ! ( : </dev/tty ) 2>/dev/null; then
+  echo "Run onboarding from an interactive terminal." >&2
+  exit 1
+fi
+
 if [ "$(uname -s)" != Darwin ]; then
   echo "Early access currently supports macOS." >&2
   exit 1
@@ -64,4 +75,31 @@ case ":$PATH:" in
     echo "Open a new terminal to use startup."
     ;;
 esac
-echo "Installed. Next: startup doctor"
+if "$startup_onboard"; then
+  export PATH="$startup_bin:$PATH"
+  # The installer may arrive through a pipe; prompts must read from the terminal.
+  startup_onboarding() {
+    echo "Welcome! Let's set up your first startup."
+    echo "You need GitHub, Hetzner Cloud and a domain you own."
+    echo "Servers and your domain are billed by your providers."
+    while ! command -v gh >/dev/null 2>&1; do
+      echo "Install GitHub CLI in another terminal: brew install gh"
+      echo "Without Homebrew, get it from https://cli.github.com"
+      read -r -p "Press Return when ready (Ctrl-C to stop). "
+    done
+    if ! gh auth status -h github.com >/dev/null 2>&1; then
+      gh auth login -h github.com -p https -s repo,workflow,read:packages,write:packages
+    fi
+    gh auth setup-git
+    until "$startup_target" doctor; do
+      echo "Complete the missing setup above in another terminal."
+      read -r -p "Press Return to check again (Ctrl-C to stop). "
+    done
+    "$startup_target" bootstrap --kind fullstack --provider hetzner --domain-owned --template-version v0.1.0
+    echo "Next: check your GitHub Actions run, point your domain's DNS at your server,"
+    echo "then open your site over HTTPS to verify the deployment."
+  }
+  startup_onboarding </dev/tty
+else
+  echo "Installed. Next: startup doctor"
+fi

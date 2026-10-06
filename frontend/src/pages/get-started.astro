@@ -1,7 +1,8 @@
 ---
 import "../styles/global.css";
 import Command from "../components/Command.astro";
-import { installCommand, loginCommand, bootstrapCommand } from "../config";
+import BrandMark from "../components/BrandMark.astro";
+import { onboardingCommand, installCommand } from "../config";
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -13,61 +14,64 @@ import { installCommand, loginCommand, bootstrapCommand } from "../config";
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
     <title>Your first startup — Deploy Your Startup</title>
-    <meta name="description" content="Install the CLI. Connect GitHub. Deploy your first startup on Hetzner." />
+    <meta name="description" content="One command to get started. The CLI guides you through login, setup checks and your first project." />
   </head>
-  <body>
-    <div class="grid"></div>
-    <main class="container quickstart-page">
-      <a class="back-link" href="/">← Deploy Your Startup</a>
-      <section class="quickstart" aria-labelledby="quickstart-title">
-        <span class="badge"><span class="pulse"></span>Early access · macOS</span>
-        <h1 id="quickstart-title">Your first startup.</h1>
-        <p class="section-intro">Django/FastAPI, Postgres, HTTPS. In your own accounts.</p>
-        <div class="requirements">
-          <h3>You need</h3>
-          <p>macOS, Chrome, GitHub, Hetzner Cloud and a domain you own.</p>
-          <p><strong>Servers are billed to your Hetzner account.</strong></p>
-        </div>
-        <article class="setup-step">
-          <div class="step-title"><span class="step-number">01</span><h3>Install</h3></div>
-          <Command id="install-code" command={installCommand} label="CLI" />
-          <p>Python 3.14 is included. Open a new terminal after installing.</p>
-          <p>Need GitHub CLI? <code>brew install gh</code></p>
-          <details>
-            <summary>Missing Git, SSH key or command?</summary>
-            <p>Git: <code>xcode-select --install</code></p>
-            <p>SSH key: <code>ssh-keygen -t ed25519</code></p>
-            <p>Git identity:</p>
-            <pre><code>git config --global user.name "Your Name"<br />git config --global user.email "you@example.com"</code></pre>
-            <p>Command not found? Open a new terminal.</p>
-          </details>
-        </article>
-        <article class="setup-step">
-          <div class="step-title"><span class="step-number">02</span><h3>Connect GitHub</h3></div>
-          <Command id="login-code" command={loginCommand} label="GitHub + setup check" />
-          <p>Sign in. Fix anything <code>startup doctor</code> reports.</p>
-        </article>
-        <article class="setup-step">
-          <div class="step-title"><span class="step-number">03</span><h3>Deploy</h3></div>
-          <Command id="bootstrap-code" command={bootstrapCommand} label="Create your project" />
-          <p>Choose a name and domain. The wizard sets up your private repos and deployment.</p>
-          <p>Check GitHub Actions. Point DNS at your server. Open your site over HTTPS.</p>
-        </article>
-        <div class="next-steps">
-          <h3>Make it yours.</h3>
-          <p>Follow your project's README. Push to <code>main</code> to deploy.</p>
-          <p>Want a frontend? Try the <a href="https://github.com/Deploy-your-Startup/vue-django-template">Vue + Django template</a>.</p>
-          <a href="https://github.com/Deploy-your-Startup/cli/issues">Stuck? Report an issue →</a>
-          <p class="feedback-note">Share the error. Keep passwords and tokens out.</p>
-          <details>
-            <summary>Update or remove the CLI</summary>
-            <p>Update: run the installer again. This installs the published CLI release; project files stay as they are.</p>
-            <Command id="update-code" command={installCommand} label="Update CLI" />
-            <Command id="uninstall-code" command="curl -fsSL https://deploy-your-startup.com/uninstall.sh | bash" label="Remove CLI" />
-            <p>Removal asks for confirmation. Projects and credentials stay. Cloud resources keep running and billing.</p>
-          </details>
-        </div>
+  <body class="start-page">
+    <main class="start-content">
+      <header>
+        <a class="brand" href="/" aria-label="Deploy Your Startup home">
+          <span class="brand-symbol"><BrandMark /></span>
+          <span>deploy your<strong>startup</strong></span>
+        </a>
+        <span class="availability">Early access · macOS</span>
+      </header>
+      <section aria-labelledby="start-title">
+        <p class="eyebrow">GET STARTED</p>
+        <h1 id="start-title">Your terminal.<br /><span>We’ll take it from here.</span></h1>
+        <p class="intro">Run this command. The CLI guides you through login,<br class="desktop-break" /> setup checks and your first project.</p>
+        <Command id="onboarding-code" command={onboardingCommand} label="Paste into your terminal" />
+        <p class="requirements-note">Bring macOS, Chrome, GitHub, Hetzner Cloud and a domain you own.<br />You pay your providers directly.</p>
       </section>
+      <footer>
+        <a href="https://github.com/Deploy-your-Startup/cli/issues">Need a hand? Report an issue ↗</a>
+        <details>
+          <summary>Update or remove the CLI</summary>
+          <p>Run the installer again to update. Your project files stay as they are.</p>
+          <Command id="update-code" command={installCommand} label="Update CLI" />
+          <Command id="uninstall-code" command="curl -fsSL https://deploy-your-startup.com/uninstall.sh | bash" label="Remove CLI" />
+          <p>Removal asks for confirmation. Projects and credentials stay. Cloud resources keep running and billing.</p>
+        </details>
+      </footer>
     </main>
   </body>
 </html>
+<style>
+  :global(body.start-page) { background: #18191b; color: #e7e7e4; padding: 0 1.5rem; --accent-2: #a9c5df; --muted: #aeb2b8; --text: #e7e7e4; }
+  .start-content { width: 100%; max-width: 960px; }
+  header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 2rem 0; border-bottom: 1px solid #343639; }
+  .brand { display: flex; align-items: center; gap: .7rem; color: #aeb2b8; text-decoration: none; font-size: .8rem; }
+  .brand-symbol { display: block; width: 44px; height: 44px; color: #a9c5df; }
+  .brand strong { display: block; color: #e7e7e4; font-size: 1.3rem; letter-spacing: -.04em; }
+  .availability, .eyebrow { font: .7rem "JetBrains Mono", monospace; color: #aeb2b8; }
+  section { padding: clamp(3rem, 8vw, 6rem) 0 2.5rem; }
+  .eyebrow { letter-spacing: .15em; margin-bottom: 1.5rem; }
+  h1 { background: none; -webkit-text-fill-color: currentColor; font-size: clamp(2.1rem, 5vw, 3.6rem); line-height: 1.12; letter-spacing: -.055em; margin-bottom: 1.5rem; }
+  h1 span { color: #a9c5df; }
+  .intro { color: #aeb2b8; line-height: 1.7; font-size: 1rem; margin-bottom: 2rem; }
+  .requirements-note { color: #aeb2b8; font-size: .78rem; line-height: 1.8; margin-top: 1.2rem; }
+  :global(.start-page .install-shell) { background: #141517; border: 1px solid #41454a; border-radius: 8px; }
+  :global(.start-page .shell-heading) { border-bottom-color: #303236; }
+  :global(.start-page button[data-copy]) { background: #24282d; border-color: #41454a; }
+  :global(.start-page pre) { font-size: .8rem; padding: 1.2rem 1rem; }
+  footer { border-top: 1px solid #343639; padding: 1.5rem 0 3rem; font-size: .8rem; }
+  footer > a { text-decoration: none; }
+  details { margin-top: 1.5rem; }
+  summary { color: #aeb2b8; font-size: .8rem; }
+  details p { color: #aeb2b8; line-height: 1.7; margin: 1rem 0; }
+  details :global(.install-shell) { margin: 1rem 0; }
+  @media (max-width: 600px) {
+    header { padding: 1.5rem 0; }
+    .availability { max-width: 100px; text-align: right; line-height: 1.6; }
+    .desktop-break { display: none; }
+  }
+</style>

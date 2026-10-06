@@ -1,9 +1,11 @@
 ---
 import "../styles/global.css";
+import Command from "../components/Command.astro";
+import Rocket from "../components/Rocket.astro";
+import BrandMark from "../components/BrandMark.astro";
+import { onboardingCommand } from "../config";
 
 const baseDomain = "deploy-your-startup.com";
-import Command from "../components/Command.astro";
-import { installCommand } from "../config";
 ---
 
 <!DOCTYPE html>
@@ -21,35 +23,43 @@ import { installCommand } from "../config";
     <title>Deploy Your Startup — Try the early access CLI</title>
     <meta
       name="description"
-      content="Install the early access CLI and deploy your own Django/FastAPI application, database and HTTPS on Hetzner. Your code, your GitHub account, your infrastructure."
+      content="Harness engineering for startups. AI-native projects with reusable agent instructions, tools and checks. Start in your terminal and deploy in your own accounts."
     />
   </head>
-  <body>
-    <div class="grid"></div>
-    <main class="container">
-      <span class="badge"><span class="pulse"></span>Early access · macOS</span>
-      <h1>Deploy your<br />startup in minutes.</h1>
-      <p class="subtitle">
-        Your code. Your servers. <strong>Ready to ship.</strong>
-      </p>
-      <Command id="install-code" command={installCommand} label="Install the CLI" />
-      <p class="install-note">macOS · Python 3.14 included</p>
-      <nav class="start-links" aria-label="Getting started">
-        <a class="primary-link" href="/get-started">Get started <span aria-hidden="true">→</span></a>
-        <a href="https://github.com/Deploy-your-Startup/cli" target="_blank" rel="noopener">View source</a>
-      </nav>
-      <p class="tease">
-        <strong>AI-ready from the first commit.</strong> Build one startup. Then the next.
-      </p>
-      <div class="pills">
-        <span class="pill"><span class="dot"></span>Zero to prod in minutes</span>
-        <span class="pill"><span class="dot"></span>AI-ready by default</span>
-        <span class="pill"><span class="dot"></span>Build a startup factory</span>
+  <body class="landing">
+    <main class="container landing-content">
+      <header class="masthead">
+        <a class="wordmark" href="/" aria-label="Deploy Your Startup home">
+          <span class="brand-symbol"><BrandMark /></span>
+          <span class="brand-name">deploy your<strong>startup</strong></span>
+        </a>
+        <span class="edition">THE STARTUP FACTORY</span>
+      <span class="availability"><span class="status-dot" aria-hidden="true"></span>Early access · macOS</span>
+      </header>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">AI-NATIVE STARTUP PRODUCTION</p>
+          <h1 id="hero-title"><span class="headline-lead">Ideas in.<span class="headline-rocket" aria-hidden="true"><Rocket /><i class="rocket-trail"></i></span></span><br /><span>Startups out.</span></h1>
+        </div>
+      </section>
+      <div class="launch-heading">
+        <p class="landing-description">A CLI for agent-ready apps and automated deployments.<br /><strong>Your code. Your infrastructure. Ready for the next idea.</strong></p>
       </div>
+      <div class="onboarding-command">
+        <Command id="onboarding-code" command={onboardingCommand} label="Start in your terminal" compact />
+      </div>
+      <p class="onboarding-note">Paste. Run. We’ll guide you. <a href="/get-started">Need help?</a></p>
+      <div class="landing-details">
+      <section class="harness-intro" aria-labelledby="harness-title">
+        <h2 id="harness-title">Harness engineering for startups.</h2>
+        <p>Your agent builds the app. We improve the harness: <br class="desktop-break" />
+          the instructions, tools and checks it works with.</p>
+        <p>A reusable foundation for this startup. And the next.</p>
+      </section>
       <div class="factory">
         <span class="stack-label">The startup factory</span>
         <div class="line">
-          <div class="rail"><span class="spark"></span></div>
+          <div class="rail"><span class="spark" aria-hidden="true"><Rocket /></span></div>
 
           <div class="station">
             <span class="node node-agent" title="You - the AI agent - drive the whole line">
@@ -135,10 +145,23 @@ import { installCommand } from "../config";
           Your stack. Your repo. <strong>Ready to grow.</strong>
         </p>
       </div>
-      <p class="control">
-        Code, infrastructure and deployments live in <strong>your own accounts</strong>.
-        Change anything. You hold the keys.
-      </p>
+      <section class="product-principles" aria-label="Speed, control and scalability">
+        <article>
+          <span class="principle-label">Speed</span>
+          <h3>AI-ready from the first commit.</h3>
+          <p>Agent instructions, service commands and automated checks come with your project. Start building on a working foundation.</p>
+        </article>
+        <article>
+          <span class="principle-label">Control</span>
+          <h3>Your startup. Your keys.</h3>
+          <p>Code, repositories, servers and deployments stay in your accounts. Inspect everything. Change anything.</p>
+        </article>
+        <article>
+          <span class="principle-label">Scalability</span>
+          <h3>Build one. Then the next.</h3>
+          <p>Reuse the harness across startups. Improve the shared foundation while keeping each app’s customizations.</p>
+        </article>
+      </section>
       <section class="pricing">
         <span class="stack-label">Fair by design</span>
         <div class="pills">
@@ -150,32 +173,186 @@ import { installCommand } from "../config";
           <strong>No platform fee during early access.</strong> Pay your providers directly.
         </p>
       </section>
+      </div>
     </main>
-    <footer>
-      <span class="domain">{baseDomain}</span>
-      <a class="made-by" href="https://aboutphil.de" target="_blank" rel="noopener">
-        Made with <span class="heart">&#9829;</span> from aboutphil
-      </a>
+    <footer class="landing-footer">
+      <div class="footer-links">
+        <span>{baseDomain}</span>
+        <a href="https://github.com/Deploy-your-Startup/cli" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://aboutphil.de" target="_blank" rel="noopener">By aboutphil</a>
+      </div>
     </footer>
     <script>
-      function resetAnimations() {
-        const els = document.querySelectorAll('.spark, .node, .node-live .ring, .node-stack .reel');
-        els.forEach(el => {
-          (el as HTMLElement).style.animationName = 'none';
-          void (el as HTMLElement).offsetWidth;
-          (el as HTMLElement).style.animationName = '';
-        });
-      }
+      const headlineRocket = document.querySelector<HTMLElement>('.headline-rocket');
+      document.addEventListener('command-copied', event => {
+        const { id } = (event as CustomEvent<{ id: string }>).detail;
+        if (id !== 'onboarding-code' || !headlineRocket || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        headlineRocket.classList.remove('launch-on-copy');
+        void headlineRocket.offsetWidth;
+        headlineRocket.classList.add('launch-on-copy');
+      });
+      headlineRocket?.addEventListener('animationend', event => {
+        if (event.animationName === 'copy-launch') headlineRocket.classList.remove('launch-on-copy');
+      });
 
-      let resizeTimer: ReturnType<typeof setTimeout>;
-      window.addEventListener('orientationchange', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(resetAnimations, 300);
-      });
-      window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(resetAnimations, 300);
-      });
+      const line = document.querySelector<HTMLElement>('.factory .line');
+      if (line) {
+        const rail = line.querySelector<HTMLElement>('.rail')!;
+        const nodes = [...line.querySelectorAll<HTMLElement>('.node')];
+        function alignFactory() {
+          if (!line) return;
+          const vertical = getComputedStyle(line).flexDirection === 'column';
+          const bounds = line.getBoundingClientRect();
+          const centers = nodes.map(node => {
+            const rect = node.getBoundingClientRect();
+            return { x: rect.left + rect.width / 2 - bounds.left, y: rect.top + rect.height / 2 - bounds.top };
+          });
+          const first = centers[0];
+          const last = centers[centers.length - 1];
+          rail.style.left = `${first.x}px`;
+          rail.style.top = `${first.y}px`;
+          rail.style.right = 'auto';
+          rail.style.bottom = 'auto';
+          rail.style.width = vertical ? '2px' : `${last.x - first.x}px`;
+          rail.style.height = vertical ? `${last.y - first.y}px` : '2px';
+          const distance = vertical ? last.y - first.y : last.x - first.x;
+          nodes.forEach((node, i) => {
+            const position = vertical ? centers[i].y - first.y : centers[i].x - first.x;
+            node.style.setProperty('--arrival', `${(position / distance - 0.5) * 8}s`);
+          });
+          const animated = [...line.querySelectorAll<HTMLElement>('.spark, .node, .ring')];
+          animated.forEach(el => { el.style.animationName = 'none'; });
+          void line.offsetWidth;
+          animated.forEach(el => { el.style.animationName = ''; });
+        }
+        new ResizeObserver(alignFactory).observe(line);
+        document.fonts.ready.then(alignFactory);
+      }
     </script>
   </body>
 </html>
+
+<style>
+  :global(body.landing) {
+    --accent: #9cbedc; --accent-2: #9cbedc; --text: #e7e7e4; --muted: #9a9b9e;
+    padding: 0 1.5rem; color: var(--text); background: #18191b;
+  }
+  .landing-content { max-width: 920px; text-align: center; animation: none; }
+  .masthead { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.6rem 0; border-bottom: 1px solid #ffffff12; }
+  .wordmark { display: inline-flex; align-items: center; gap: 0.65rem; color: #e7e7e4; text-decoration: none; text-align: left; }
+  .brand-name { font: 400 0.7rem "Inter", sans-serif; letter-spacing: 0.015em; line-height: 1.4; color: #aeb2b8; }
+  .brand-name strong { display: block; font-size: 1.15rem; font-weight: 600; letter-spacing: -0.05em; color: #e7e7e4; }
+  .brand-symbol { display: block; width: 45px; color: #a9c5df; transition: transform 0.35s ease; }
+  .brand-symbol :global(svg) { display: block; width: 100%; }
+  .wordmark:hover .brand-symbol { transform: translate(1px, -2px); }
+  .edition { font: 0.65rem "JetBrains Mono", monospace; color: var(--muted); letter-spacing: 0.1em; }
+  .availability { color: var(--muted); font: 0.65rem "JetBrains Mono", monospace; }
+  .status-dot { display: inline-block; width: 5px; height: 5px; margin: 0 0.45rem 0.1rem 0; border-radius: 50%; background: var(--accent); }
+  .hero { padding: 4rem 0 1.75rem; }
+  .eyebrow { color: var(--muted); font: 0.65rem "JetBrains Mono", monospace; letter-spacing: 0.13em; margin-bottom: 1.5rem; }
+  h1 { font-family: "Inter", sans-serif; font-size: clamp(3rem, 8vw, 5.7rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.065em; background: none; -webkit-text-fill-color: currentColor; color: #e7e7e4; margin: 0; }
+  h1 span { color: var(--accent); }
+  h1 .headline-lead { display: inline-block; position: relative; color: #e7e7e4; }
+  .headline-rocket { position: absolute; width: 0.4em; height: 0.5em; right: -0.62em; top: 0.05em; color: #a9c5df; pointer-events: none; animation: launch 16s -10s infinite cubic-bezier(.4,0,.2,1); }
+  .headline-rocket :global(svg) { display: block; width: 100%; height: 100%; transform: rotate(35deg); }
+  .rocket-trail { position: absolute; width: 1px; height: 0.65em; background: linear-gradient(#a9c5df66, transparent); top: 83%; left: 14%; transform: rotate(35deg); transform-origin: top; opacity: 0; animation: exhaust 16s -10s infinite ease; }
+  .headline-rocket.launch-on-copy { animation: copy-launch 3s cubic-bezier(.4,0,.2,1) both; }
+  .headline-rocket.launch-on-copy .rocket-trail { animation: copy-exhaust 3s ease both; }
+  @keyframes copy-launch {
+    0% { transform: translate(0, 0); opacity: 1; }
+    15% { transform: translate(-1px, 3px); opacity: 1; }
+    60% { transform: translate(0.8em, -1.2em); opacity: 0; }
+    60.01%, 80% { transform: translate(0, 0); opacity: 0; }
+    100% { transform: translate(0, 0); opacity: 1; }
+  }
+  @keyframes copy-exhaust { 0%, 65%, 100% { opacity: 0; } 20%, 45% { opacity: 0.8; } }
+  @keyframes launch {
+    0%, 72% { transform: translate(0, 0); opacity: 1; }
+    76% { transform: translate(-1px, 2px); opacity: 1; }
+    85% { transform: translate(0.55em, -0.8em); opacity: 0; }
+    85.01%, 91% { transform: translate(0, 0); opacity: 0; }
+    96%, 100% { transform: translate(0, 0); opacity: 1; }
+  }
+  @keyframes exhaust { 0%, 72%, 86%, 100% { opacity: 0; } 77%, 81% { opacity: 0.7; } }
+  @media (prefers-reduced-motion: reduce) { .rocket-trail { display: none; } }
+
+  .landing-description { font-size: 0.95rem; line-height: 1.8; color: var(--muted); }
+  .landing-description strong { font-weight: 400; color: #c7c9cc; }
+  .onboarding-command { max-width: 780px; margin: 2rem auto 0; }
+  .onboarding-command :global(.compact-command) { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; background: #111214; border: 1px solid #34373c; border-radius: 7px; padding: 0.35rem; transition: border-color 0.2s; }
+  .onboarding-command :global(.compact-command:focus-within), .onboarding-command :global(.compact-command:hover) { border-color: #71899d; }
+  .onboarding-command :global(.shell-heading) { display: contents; }
+  .onboarding-command :global(.shell-heading > span) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .onboarding-command :global(pre) { grid-row: 1; grid-column: 1; color: #d7dbe0; padding: 1rem 0.8rem; font-size: 0.75rem; }
+  .onboarding-command :global(button[data-copy]) { grid-row: 1; grid-column: 2; margin-right: 0.35rem; border: 0; border-radius: 4px; background: #9cbedc; color: #18212a; padding: 0.7rem 1rem; font-weight: 600; transition: background 0.2s; }
+  .onboarding-command :global(button[data-copy]:hover) { background: #bdd6ed; }
+  .onboarding-note { font: 0.7rem "JetBrains Mono", monospace; line-height: 1.8; margin-top: 0.9rem; color: var(--muted); }
+  .onboarding-note a { margin-left: 0.75rem; color: #c7c9cc; }
+  .landing-details { margin-top: 4rem; padding-top: 2.8rem; border-top: 1px solid #ffffff12; }
+  .harness-intro h2 { font: 600 clamp(1.4rem, 3vw, 2rem) "Inter", sans-serif; letter-spacing: -0.04em; }
+  .harness-intro p { max-width: 620px; margin: 0.8rem auto 0; color: var(--muted); font-size: 0.9rem; line-height: 1.8; }
+  .factory { margin-top: 3rem; padding: 1.5rem 0; gap: 2rem; }
+  .stack-label { color: var(--muted); font-size: 0.6rem; }
+  .line { justify-content: space-between; gap: 0.5rem; max-width: 720px; }
+  .factory .node { position: relative; border-radius: 14px; background: #111214; border: 1px solid #373e47; animation: factory-bounce 8s linear infinite; transform-origin: center; }
+  .factory .line > .station .node { animation-delay: var(--arrival, 0s); }
+  .node-agent, .node-live { background: #202c37; border-color: #6a879f; }
+  .node .glyph { color: #b5cfe5; }
+  .factory .node-live .ring { display: block; pointer-events: none; border: 1px solid #b5dbfa; border-radius: inherit; animation: arrival-ring 8s linear infinite; animation-delay: var(--arrival, 0s); }
+  .node-stack .reel { animation-duration: 24s; animation-timing-function: ease-in-out; }
+  .icon { background-color: #b5bdc9; }
+  .station:hover .icon { background-color: #e7eff7; }
+  .station:hover .node { background: #263442; }
+  .step, .step-live { color: #9a9b9e; font-size: 0.6rem; letter-spacing: 0.04em; }
+  .rail { background: #39424b; }
+  .factory .rail .spark { z-index: 2; width: 24px; height: 30px; top: 50%; margin-top: -15px; margin-left: -12px; color: #b5dbfa; background: none; box-shadow: none; border-radius: 0; filter: drop-shadow(0 0 5px #a1cefa55); animation: factory-travel 8s linear infinite; }
+  .factory .spark :global(svg) { display: block; width: 100%; height: 100%; transform: rotate(90deg); }
+  .factory .rail { z-index: 0; }
+  .factory .station { z-index: 1; }
+  @keyframes arrival-ring {
+    0%, 48%, 66%, 100% { opacity: 0; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1); }
+    64% { opacity: 0; transform: scale(1.55); }
+  }
+  .factory-note { color: var(--muted); }
+  .factory-note strong, .control strong, .pricing-note strong { color: #bdcddd; background: none; -webkit-text-fill-color: currentColor; }
+  .product-principles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid #ffffff12; text-align: left; }
+  .principle-label { color: #9cbedc; font: 0.6rem "JetBrains Mono", monospace; letter-spacing: 0.12em; text-transform: uppercase; }
+  .product-principles h3 { margin: 0.75rem 0; font-size: 1rem; font-weight: 600; line-height: 1.45; letter-spacing: -0.025em; }
+  .product-principles p { color: var(--muted); font-size: 0.85rem; line-height: 1.8; text-wrap: pretty; }
+  .pricing { margin-top: 2.5rem; padding-top: 2.5rem; border-top: 1px solid #ffffff12; gap: 1rem; }
+  .pills { margin-top: 0; }
+  .pill { border: 0; background: none; padding: 0; color: var(--muted); font-size: 0.7rem; }
+  .pill:hover { background: none; }
+  .pill .dot { background: #71899d; width: 4px; height: 4px; }
+  .pricing-note { color: var(--muted); font-size: 0.9rem; }
+  .landing-footer { width: 100%; max-width: 920px; margin-top: 3rem; padding: 1.5rem 0; border-top: 1px solid #ffffff12; color: var(--muted); font-size: 0.65rem; }
+  .footer-links { width: 100%; display: flex; gap: 1.2rem; align-items: center; }
+  .footer-links span { margin-right: auto; }
+  .footer-links a { color: var(--muted); }
+  @keyframes factory-bounce {
+    0%, 40%, 60%, 100% { transform: scale(1); box-shadow: 0 0 0 transparent; filter: brightness(1); }
+    46% { transform: scale(1.04); }
+    50% { transform: scale(1.14); box-shadow: 0 0 18px #9cbedc44; filter: brightness(1.25); }
+    54% { transform: scale(1.04); }
+  }
+  @keyframes factory-travel { from { left: 0; } to { left: 100%; } }
+  @keyframes factory-travel-vertical { from { top: 0; } to { top: 100%; } }
+  @media (max-width: 600px) {
+    :global(body.landing) { padding: 0 1.1rem; }
+    .edition { display: none; }
+    .product-principles { grid-template-columns: 1fr; gap: 1.75rem; }
+    .hero { padding-top: 3rem; }
+    h1 { font-size: clamp(2.7rem, 12vw, 4.5rem); }
+    .eyebrow { font-size: 0.55rem; }
+    .landing-description { font-size: 0.85rem; }
+    .desktop-break { display: none; }
+    .onboarding-command :global(pre) { font-size: 0.68rem; padding: 0.7rem 0.5rem; }
+    .onboarding-command :global(button[data-copy]) { padding: 0.6rem; }
+    .line { gap: 1.1rem; }
+    .factory .rail .spark { left: 50%; margin-top: -15px; animation-name: factory-travel-vertical; }
+    .factory .spark :global(svg) { transform: rotate(180deg); }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+    .footer-links span { flex-basis: 100%; margin: 0; }
+  }
+</style>
