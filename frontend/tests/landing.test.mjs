@@ -11,12 +11,12 @@ test("GIVEN the landing page WHEN Astro builds THEN visitors see the harness and
 
   // THEN the rendered section shows both apps on the shared foundation with working destinations.
   assert.ok(section);
-  for (const text of ["Build your idea. Find out what works.", "features, real users and feedback", "About Phil", "Gaming Buch Club", "We take care of the harness.", "Agent-ready projects", "Automated checks", "Deployment & operations", "community contribution", "Einfach ballern. Dann validieren."]) {
+  for (const text of ["Build your idea. Find out what works.", "features, real users and feedback", "About Phil", "Gaming Buch Club", "We take care of the harness.", "Agent-ready projects", "Automated checks", "Deployment & operations", "community contribution", "Ballern", "Go all in. Build. Ship. Validate."]) {
     assert.ok(section.includes(text), `Missing visible content: ${text}`);
   }
   assert.match(section, /href="https:\/\/aboutphil\.de"/);
   assert.match(section, /href="https:\/\/gamingbuchclub\.de"/);
-  assert.doesNotMatch(section, /runtime-flow|HTTPS|<script/);
+  assert.doesNotMatch(section, /runtime-flow|HTTPS|<script|Einfach ballern|Dann validieren/);
   assert.match(html, /class="factory"/);
   assert.match(html, /title="k3s - lightweight Kubernetes"/);
   assert.match(html, /<span class="step"[^>]*>k3s<\/span>/);
