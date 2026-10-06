@@ -1,6 +1,7 @@
 """Run the real installer end to end with local stand-ins for downloads."""
 import os
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -52,7 +53,12 @@ class InstallerAgentSkillTests(unittest.TestCase):
                 # Onboarding reads from the terminal; give it a real pseudo-terminal.
                 # Keep its input open until the installer is done: an early EOF
                 # reaches the terminal as Ctrl-D and would end the prompt.
-                command = ['/bin/sh', '-c', '(printf "%s" "$ANSWERS"; sleep 5) | script -q /dev/null "$@"', 'sh', *command]
+                # BSD (macOS) and util-linux (CI) spell `script` differently.
+                if sys.platform == 'darwin':
+                    pty = 'script -q /dev/null "$@"'
+                else:
+                    pty = 'script -qec "$(printf "%q " "$@")" /dev/null'
+                command = ['/bin/bash', '-c', f'(printf "%s" "$ANSWERS"; sleep 5) | {pty}', 'bash', *command]
             result = subprocess.run(
                 command, text=True, capture_output=True,
                 check=False, start_new_session=True, timeout=60,
