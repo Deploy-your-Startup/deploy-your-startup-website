@@ -2,6 +2,11 @@
 # Deploy Your Startup installer. Runtime tools stay in our own directory.
 set -euo pipefail
 
+# The only place these versions are pinned. The website reads them from here,
+# and scripts/update_cli_release.py advances the CLI pin on stable releases.
+startup_cli_version="v0.1.3"
+startup_template_version="v0.1.0"
+
 startup_onboard=false
 case "${1:-}" in
   --onboard) startup_onboard=true ;;
@@ -38,7 +43,7 @@ if [ -L "$startup_root" ]; then
 fi
 mkdir -p "$startup_root/runtime/bin" "$startup_bin"
 
-echo "Installing Startup CLI v0.1.1 with Python 3.14…"
+echo "Installing Startup CLI $startup_cli_version with Python 3.14…"
 curl --proto '=https' --tlsv1.2 -fsSL \
   https://astral.sh/uv/0.12.23/install.sh -o "$startup_tmp/uv-install.sh"
 UV_UNMANAGED_INSTALL="$startup_root/runtime/bin" sh "$startup_tmp/uv-install.sh"
@@ -47,7 +52,7 @@ UV_PYTHON_INSTALL_DIR="$startup_root/python" \
 UV_TOOL_DIR="$startup_root/tools" \
 UV_TOOL_BIN_DIR="$startup_root/commands" \
   "$startup_root/runtime/bin/uv" tool install --reinstall --quiet --managed-python --python 3.14 \
-  git+https://github.com/Deploy-your-Startup/cli@v0.1.3
+  "git+https://github.com/Deploy-your-Startup/cli@$startup_cli_version"
 
 cat > "$startup_tmp/startup" <<'LAUNCHER'
 #!/bin/sh
@@ -111,8 +116,8 @@ if "$startup_onboard"; then
       esac
     fi
     printf "\n[3/3] Set up your project\n"
-    "$startup_target" bootstrap --kind fullstack --provider hetzner --domain-owned --template-version v0.1.0
-    echo "To run setup again: startup bootstrap --kind fullstack --provider hetzner --domain-owned --template-version v0.1.0"
+    "$startup_target" bootstrap --kind fullstack --provider hetzner --domain-owned --template-version "$startup_template_version"
+    echo "To run setup again: startup bootstrap --kind fullstack --provider hetzner --domain-owned --template-version $startup_template_version"
   }
   startup_onboarding </dev/tty
 else

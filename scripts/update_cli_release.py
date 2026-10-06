@@ -18,8 +18,8 @@ def main():
         print("changed=false")
         return
     content = args.installer.read_text()
-    pattern = r"git\+https://github\.com/Deploy-your-Startup/cli@v(\d+)\.(\d+)\.(\d+)"
-    pins = list(re.finditer(pattern, content))
+    pattern = r'^startup_cli_version="v(\d+)\.(\d+)\.(\d+)"$'
+    pins = list(re.finditer(pattern, content, re.MULTILINE))
     if len(pins) != 1:
         raise SystemExit("Expected exactly one stable CLI installer pin.")
     current = tuple(map(int, pins[0].groups()))
@@ -27,7 +27,7 @@ def main():
     if target <= current:
         print("changed=false")
         return
-    updated = content[:pins[0].start()] + f"git+https://github.com/Deploy-your-Startup/cli@{tag}" + content[pins[0].end():]
+    updated = content[:pins[0].start()] + f'startup_cli_version="{tag}"' + content[pins[0].end():]
     args.installer.write_text(updated)
     print("changed=true")
     print(f"tag={tag}")
