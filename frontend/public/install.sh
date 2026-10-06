@@ -21,6 +21,10 @@ fi
 
 startup_tmp="$(mktemp -d)"
 trap 'rm -rf "$startup_tmp"' EXIT
+if [ -L "$startup_root" ]; then
+  echo "Refusing to install into a symlink: $startup_root" >&2
+  exit 1
+fi
 mkdir -p "$startup_root/runtime/bin" "$startup_bin"
 
 echo "Installing Startup CLI v0.1.0 with Python 3.14…"
@@ -31,7 +35,7 @@ UV_UNMANAGED_INSTALL="$startup_root/runtime/bin" sh "$startup_tmp/uv-install.sh"
 UV_PYTHON_INSTALL_DIR="$startup_root/python" \
 UV_TOOL_DIR="$startup_root/tools" \
 UV_TOOL_BIN_DIR="$startup_root/commands" \
-  "$startup_root/runtime/bin/uv" tool install --quiet --managed-python --python 3.14 \
+  "$startup_root/runtime/bin/uv" tool install --reinstall --quiet --managed-python --python 3.14 \
   git+https://github.com/Deploy-your-Startup/cli@v0.1.0
 
 cat > "$startup_tmp/startup" <<'LAUNCHER'
@@ -45,6 +49,7 @@ chmod +x "$startup_tmp/startup"
 # Replace a previous symlink rather than writing through it into its environment.
 mv -f "$startup_tmp/startup" "$startup_target"
 "$startup_target" --help >/dev/null
+printf '%s\n' 'Deploy Your Startup managed installation' > "$startup_root/.startup-install"
 
 case ":$PATH:" in
   *":$startup_bin:"*) ;;

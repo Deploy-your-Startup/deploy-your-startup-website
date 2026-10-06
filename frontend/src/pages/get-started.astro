@@ -59,6 +59,13 @@ import { installCommand, loginCommand, bootstrapCommand } from "../config";
           <p>Want a frontend? Try the <a href="https://github.com/Deploy-your-Startup/vue-django-template">Vue + Django template</a>.</p>
           <a href="https://github.com/Deploy-your-Startup/cli/issues">Stuck? Report an issue →</a>
           <p class="feedback-note">Share the error. Keep passwords and tokens out.</p>
+          <details>
+            <summary>Update or remove the CLI</summary>
+            <p>Update: run the installer again. This installs the published CLI release; project files stay as they are.</p>
+            <Command id="update-code" command={installCommand} label="Update CLI" />
+            <Command id="uninstall-code" command="curl -fsSL https://deploy-your-startup.com/uninstall.sh | bash" label="Remove CLI" />
+            <p>Removal asks for confirmation. Projects and credentials stay. Cloud resources keep running and billing.</p>
+          </details>
         </div>
       </section>
     </main>
