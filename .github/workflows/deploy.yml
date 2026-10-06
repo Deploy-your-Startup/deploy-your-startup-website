@@ -7,14 +7,79 @@ on:
       - "frontend/**"
       - "tests/**"
       - "make.sh"
+      - "scripts/**"
       - ".github/workflows/deploy.yml"
   workflow_dispatch:
+  schedule:
+    - cron: '7,17,27,37,47,57 * * * *'
+
+concurrency:
+  group: website-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    outputs:
+      deploy: ${{ steps.result.outputs.deploy }}
+      sha: ${{ steps.result.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Find the latest stable CLI release
+        id: update
+        if: github.event_name != 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api repos/Deploy-your-Startup/cli/releases/latest > "$RUNNER_TEMP/cli-release.json"
+          python3 scripts/update_cli_release.py --release "$RUNNER_TEMP/cli-release.json" >> "$GITHUB_OUTPUT"
+      - name: Test and commit a new installer pin
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ./make.sh test
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add frontend/public/install.sh
+          git commit -m "Update installer to latest stable CLI release"
+          git push origin HEAD:main
+          # Token-authenticated pushes do not trigger another push workflow.
+          # Dispatch a fresh run so the reusable deploy checks out the new SHA.
+          gh workflow run deploy.yml --ref main
+      - name: Select deployment commit
+        id: result
+        env:
+          UPDATED: ${{ steps.update.outputs.changed }}
+        run: |
+          if [ "$UPDATED" != true ] && { [ "$GITHUB_EVENT_NAME" = push ] || [ "$GITHUB_EVENT_NAME" = workflow_dispatch ]; }; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
   test:
+    needs: release
+    if: needs.release.outputs.deploy == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.release.outputs.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
@@ -22,7 +87,7 @@ jobs:
         run: ./make.sh test
 
   deploy:
-    needs: test
+    needs: [release, test]
     uses: philipp-lein/deploy-your-startup/.github/workflows/deploy-pages.yml@main
     with:
       project_name: deploy-your-startup-website

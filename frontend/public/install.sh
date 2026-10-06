@@ -47,7 +47,7 @@ UV_PYTHON_INSTALL_DIR="$startup_root/python" \
 UV_TOOL_DIR="$startup_root/tools" \
 UV_TOOL_BIN_DIR="$startup_root/commands" \
   "$startup_root/runtime/bin/uv" tool install --reinstall --quiet --managed-python --python 3.14 \
-  git+https://github.com/Deploy-your-Startup/cli@v0.1.1
+  git+https://github.com/Deploy-your-Startup/cli@v0.1.3
 
 cat > "$startup_tmp/startup" <<'LAUNCHER'
 #!/bin/sh
