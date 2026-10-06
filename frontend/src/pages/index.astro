@@ -2,6 +2,11 @@
 import "../styles/global.css";
 
 const baseDomain = "deploy-your-startup.com";
+const cliCommit = "a6a097d76d7309342fb147be6fca1ce6172b60eb";
+const templateCommit = "2644cb15cbd2c2d46b443b77bc8ed247378c8497";
+const installCommand = `uv tool install --python 3.12 "git+https://github.com/Deploy-your-Startup/cli.git@${cliCommit}"`;
+const loginCommand = "gh auth login --hostname github.com --git-protocol https --scopes repo,workflow,read:packages,write:packages\ngh auth setup-git\nstartup doctor";
+const bootstrapCommand = `startup bootstrap --kind fullstack --provider hetzner --domain-owned --template-version ${templateCommit}`;
 ---
 
 <!DOCTYPE html>
@@ -16,24 +21,29 @@ const baseDomain = "deploy-your-startup.com";
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap"
       rel="stylesheet"
     />
-    <title>Deploy Your Startup - Coming Soon</title>
+    <title>Deploy Your Startup — Try the early access CLI</title>
     <meta
       name="description"
-      content="Deploy Your Startup is launching soon: opinionated, AI-ready tooling that takes solo founders and small teams from one idea to a whole startup factory."
+      content="Install the early access CLI and deploy your own Django/FastAPI application, database and HTTPS on Hetzner. Your code, your GitHub account, your infrastructure."
     />
   </head>
   <body>
     <div class="grid"></div>
     <main class="container">
-      <span class="badge"><span class="pulse"></span>Coming Soon</span>
+      <span class="badge"><span class="pulse"></span>Early access · macOS</span>
       <h1>Deploy your<br />startup in minutes.</h1>
       <p class="subtitle">
         From zero to a <strong>running production cluster</strong> - opinionated tooling for solo founders and small teams who'd rather ship than wrangle YAML.
       </p>
-      <code class="cli">
-        <span class="prompt">$</span> <span class="cmd">startup bootstrap</span><span
-          class="cursor"></span>
-      </code>
+      <div class="install-shell">
+        <div class="shell-heading"><span>Install the CLI</span><button type="button" data-copy="install-code" aria-label="Copy CLI install command">Copy</button></div>
+        <pre><code id="install-code">{installCommand}</code></pre>
+      </div>
+      <p class="install-note">Requires <a href="https://docs.astral.sh/uv/getting-started/installation/" target="_blank" rel="noopener">uv</a> and Git. Installs a tested commit directly from GitHub.</p>
+      <nav class="start-links" aria-label="Getting started">
+        <a class="primary-link" href="#get-started">Start your first project <span aria-hidden="true">→</span></a>
+        <a href="https://github.com/Deploy-your-Startup/cli" target="_blank" rel="noopener">View source</a>
+      </nav>
       <p class="tease">
         But it doesn't stop at one deploy. Every project is
         <strong>AI-ready from the first commit</strong> - so your agents can
@@ -45,6 +55,46 @@ const baseDomain = "deploy-your-startup.com";
         <span class="pill"><span class="dot"></span>AI-ready by default</span>
         <span class="pill"><span class="dot"></span>Build a startup factory</span>
       </div>
+      <section class="quickstart" id="get-started" aria-labelledby="quickstart-title">
+        <span class="stack-label">Your first startup</span>
+        <h2 id="quickstart-title">Install. Connect. Deploy.</h2>
+        <p class="section-intro">Start with a Django/FastAPI application on Hetzner, with Postgres, HTTPS and a deployment pipeline. Early access currently supports macOS.</p>
+        <div class="requirements">
+          <h3>Bring these along</h3>
+          <p>A GitHub account, a Hetzner Cloud account, Google Chrome and an existing domain whose DNS you can edit. Use a fresh test project and domain or subdomain.</p>
+          <p>Bootstrap creates private repositories in your account and requests a server deployment. <strong>Hetzner infrastructure incurs charges in your account.</strong></p>
+        </div>
+        <article class="setup-step">
+          <div class="step-title"><span class="step-number">01</span><h3>Prepare your Mac</h3></div>
+          <p>Install uv and the GitHub CLI, then run the install command above. With Homebrew:</p>
+          <div class="command-block"><pre><code id="prepare-code">brew install uv gh</code></pre><button type="button" data-copy="prepare-code" aria-label="Copy prerequisite command">Copy</button></div>
+          <details><summary>New terminal or missing Git / SSH setup?</summary>
+            <p>If <code>startup</code> is not found, run <code>uv tool update-shell</code> and open a new terminal. If Git is missing, run <code>xcode-select --install</code>.</p>
+            <p>Set your Git name and email if you have not already:</p>
+            <pre><code>git config --global user.name "Your Name"<br />git config --global user.email "you@example.com"</code></pre>
+            <p>If you do not have an SSH key, run <code>ssh-keygen -t ed25519</code>. It gives you access to your server; uploading it to GitHub is optional when using HTTPS.</p>
+          </details>
+        </article>
+        <article class="setup-step">
+          <div class="step-title"><span class="step-number">02</span><h3>Connect GitHub and check your setup</h3></div>
+          <p>Sign in through the browser. The requested permissions let the CLI create your repositories, configure workflows and pull container images.</p>
+          <div class="command-block"><pre><code id="login-code">{loginCommand}</code></pre><button type="button" data-copy="login-code" aria-label="Copy GitHub setup commands">Copy</button></div>
+          <p><code>startup doctor</code> checks prerequisites without creating infrastructure. Resolve any missing items before continuing.</p>
+        </article>
+        <article class="setup-step">
+          <div class="step-title"><span class="step-number">03</span><h3>Create your first project</h3></div>
+          <p>The wizard asks for your project name and existing domain, guides the Hetzner setup and prepares your private repositories, secrets and deployment workflows.</p>
+          <div class="command-block"><pre><code id="bootstrap-code">{bootstrapCommand}</code></pre><button type="button" data-copy="bootstrap-code" aria-label="Copy project creation command">Copy</button></div>
+          <p>Follow the GitHub Actions link to check the deployment. If your domain uses another DNS provider, point the required hosts at the server there. Verify the site over HTTPS once deployment and DNS are ready.</p>
+        </article>
+        <div class="next-steps">
+          <h3>Then make it yours.</h3>
+          <p>Your generated project includes the development instructions. Install mise and Docker for local development, build your application and push to <code>main</code> to deploy.</p>
+          <p>This first template is a backend starter. A <a href="https://github.com/Deploy-your-Startup/vue-django-template" target="_blank" rel="noopener">Vue + Django template</a> is also available for a frontend and optional Auth0 login.</p>
+          <a href="https://github.com/Deploy-your-Startup/cli/issues" target="_blank" rel="noopener">Something got stuck? Report an issue <span aria-hidden="true">→</span></a>
+          <p class="feedback-note">Include the command, CLI commit and error message. Remove tokens, passwords and other secrets before sharing logs.</p>
+        </div>
+      </section>
       <div class="factory">
         <span class="stack-label">The startup factory</span>
         <div class="line">
@@ -150,8 +200,8 @@ const baseDomain = "deploy-your-startup.com";
         </div>
         <p class="pricing-note">
           You pay only what you actually use - billed straight to
-          <strong>your own accounts</strong>, never marked up by us. A small starter fee
-          for the launch ramp may land later, but the deal stays fair. The whole point:
+          <strong>your own accounts</strong>, never marked up by us. There is no platform fee
+          during early access. The whole point:
           <strong>let people ship their ideas</strong>.
         </p>
       </section>
@@ -167,6 +217,24 @@ const baseDomain = "deploy-your-startup.com";
       </a>
     </footer>
     <script>
+      document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach(button => {
+        button.addEventListener('click', async () => {
+          const code = document.getElementById(button.dataset.copy ?? '');
+          if (!code) return;
+          try {
+            await navigator.clipboard.writeText(code.textContent ?? '');
+            button.textContent = 'Copied';
+          } catch {
+            button.textContent = 'Select to copy';
+            const selection = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(code);
+            selection?.removeAllRanges();
+            selection?.addRange(range);
+          }
+          setTimeout(() => { button.textContent = 'Copy'; }, 2000);
+        });
+      });
       function resetAnimations() {
         const els = document.querySelectorAll('.spark, .node, .node-live .ring, .node-stack .reel');
         els.forEach(el => {

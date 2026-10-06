@@ -10,14 +10,15 @@
 }
 
 html, body {
-  height: 100%;
+  min-height: 100%;
   font-family: "Inter", system-ui, -apple-system, sans-serif;
   color: var(--text);
   background: var(--bg-0);
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -44,9 +45,51 @@ body {
 
 .container {
   position: relative;
-  max-width: 720px;
+  max-width: 880px;
+  width: 100%;
   text-align: center;
   animation: fadeUp 0.9s ease-out;
+}
+
+a { color: var(--accent-2); text-underline-offset: 4px; }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 5px; }
+.install-shell, .command-block { min-width: 0; text-align: left; background: rgba(10, 10, 20, 0.72); border: 1px solid rgba(124, 92, 255, 0.35); border-radius: 14px; overflow: hidden; }
+.shell-heading { display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); color: var(--muted); font-size: 0.8rem; }
+pre { max-width: 100%; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; text-align: left; line-height: 1.7; font-size: 0.78rem; }
+code { font-family: "JetBrains Mono", monospace; }
+button[data-copy] { flex-shrink: 0; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.16); background: rgba(124, 92, 255, 0.16); color: var(--text); border-radius: 6px; padding: 0.45rem 0.7rem; font: inherit; font-size: 0.75rem; }
+button[data-copy]:hover { border-color: var(--accent-2); }
+.install-note { font-size: 0.78rem; color: var(--muted); margin-top: 0.8rem; line-height: 1.6; }
+.start-links { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.6rem; font-size: 0.85rem; }
+.primary-link { padding: 0.9rem 1.2rem; border-radius: 8px; color: white; background: var(--accent); text-decoration: none; font-weight: 600; }
+.quickstart { scroll-margin-top: 2rem; margin-top: 4rem; text-align: left; }
+.quickstart h2 { margin: 0.6rem 0 1rem; font-size: clamp(1.8rem, 5vw, 2.5rem); letter-spacing: -0.03em; }
+.quickstart h3 { font-size: 1.05rem; font-weight: 600; }
+.quickstart p { color: var(--muted); font-size: 0.9rem; line-height: 1.75; margin-top: 0.8rem; }
+.section-intro { max-width: 650px; }
+.requirements { margin-top: 1.8rem; padding: 1.3rem; background: rgba(0, 224, 255, 0.04); border: 1px solid rgba(0, 224, 255, 0.18); border-radius: 12px; }
+.requirements strong { color: var(--text); font-weight: 600; }
+.setup-step { margin-top: 1.2rem; padding: 1.4rem; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; background: rgba(255, 255, 255, 0.025); }
+.step-title { display: flex; align-items: center; gap: 0.8rem; }
+.step-number { font: 0.8rem "JetBrains Mono", monospace; color: var(--accent-2); }
+.command-block { margin-top: 1rem; display: flex; align-items: flex-start; }
+.command-block pre { flex: 1; min-width: 0; }
+.command-block button { margin: 0.7rem; }
+details { margin-top: 1rem; font-size: 0.85rem; }
+summary { cursor: pointer; color: var(--text); line-height: 1.6; }
+details pre { padding-left: 0; }
+.next-steps { margin: 2rem 0; padding-left: 1.4rem; border-left: 2px solid var(--accent); }
+.next-steps > a { display: inline-block; margin-top: 1rem; font-size: 0.9rem; }
+.next-steps .feedback-note { font-size: 0.75rem; max-width: 620px; }
+@media (max-width: 600px) {
+  body { padding: 1.25rem; }
+  .setup-step { padding: 1rem; }
+  .command-block { flex-direction: column; }
+  .command-block pre { width: 100%; }
+  .command-block button { align-self: flex-end; margin-top: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
 .badge {
