@@ -2,7 +2,7 @@
 import "../styles/global.css";
 import Command from "../components/Command.astro";
 import BrandMark from "../components/BrandMark.astro";
-import { onboardingCommand, installCommand } from "../config";
+import { onboardingCommand, installCommand, pitchCommand } from "../config";
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -31,6 +31,11 @@ import { onboardingCommand, installCommand } from "../config";
         <p class="intro">Run this command. The CLI guides you through login,<br class="desktop-break" /> setup checks and your first project.</p>
         <Command id="onboarding-code" command={onboardingCommand} label="Paste into your terminal" />
         <p class="requirements-note">Bring macOS, Chrome, GitHub, Hetzner Cloud and a domain you own.<br />You pay your providers directly.</p>
+        <details class="pitch-option">
+          <summary>Only need a landing page first?</summary>
+          <p>Start with a static page on Cloudflare Pages: no server, a free Cloudflare account and a domain. The CLI guides you through the Cloudflare token and DNS.</p>
+          <Command id="pitch-code" command={pitchCommand} label="Landing page" />
+        </details>
       </section>
       <footer>
         <a href="https://github.com/Deploy-your-Startup/cli/issues">Need a hand? Report an issue ↗</a>
@@ -66,6 +71,7 @@ import { onboardingCommand, installCommand } from "../config";
   footer { border-top: 1px solid #343639; padding: 1.5rem 0 3rem; font-size: .8rem; }
   footer > a { text-decoration: none; }
   details { margin-top: 1.5rem; }
+  .pitch-option { margin-top: 2rem; }
   summary { color: #aeb2b8; font-size: .8rem; }
   details p { color: #aeb2b8; line-height: 1.7; margin: 1rem 0; }
   details :global(.install-shell) { margin: 1rem 0; }

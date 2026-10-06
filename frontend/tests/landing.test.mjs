@@ -24,3 +24,18 @@ test("GIVEN the landing page WHEN Astro builds THEN visitors see the harness and
   assert.match(html, /id="onboarding-code"/);
   assert.ok(readFileSync(new URL("../dist/get-started/index.html", import.meta.url), "utf8").includes("--onboard"));
 });
+
+test("GIVEN the get-started page WHEN Astro builds THEN visitors find the landing-page path next to onboarding", () => {
+  // GIVEN the real site, WHEN its production build renders the pages.
+  execFileSync("npm", ["run", "build"], { cwd: new URL("../", import.meta.url), stdio: "pipe" });
+  const html = readFileSync(new URL("../dist/get-started/index.html", import.meta.url), "utf8");
+  const option = html.match(/<details class="pitch-option[\s\S]*?<\/details>/)?.[0];
+
+  // THEN the full application stays the default and the landing page is an explicit, copyable option.
+  assert.ok(html.indexOf('id="onboarding-code"') < html.indexOf('id="pitch-code"'));
+  assert.ok(option);
+  for (const text of ["Only need a landing page first?", "Cloudflare Pages", "install.sh | bash", "gh auth setup-git", "startup bootstrap --kind pitch --template-version v0.1.0"]) {
+    assert.ok(option.includes(text), `Missing visible content: ${text}`);
+  }
+  assert.doesNotMatch(option, /--onboard|startup doctor|Hetzner Cloud/);
+});
