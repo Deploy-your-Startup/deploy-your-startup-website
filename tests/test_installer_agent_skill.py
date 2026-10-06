@@ -62,7 +62,7 @@ class InstallerAgentSkillTests(unittest.TestCase):
             result = subprocess.run(
                 command, text=True, capture_output=True,
                 check=False, start_new_session=True, timeout=60,
-                env={**os.environ, 'HOME': str(home), 'SHELL': '/bin/zsh',
+                env={**os.environ, 'HOME': str(home), 'SHELL': '/bin/bash',
                      'PATH': f'{tools}:{os.environ["PATH"]}',
                      'ANSWERS': answers, 'FAKE_STARTUP': str(fake), 'FAKE_SKILLS': '1' if skills else '0'},
             )
