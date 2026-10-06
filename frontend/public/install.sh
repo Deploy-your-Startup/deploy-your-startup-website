@@ -2,10 +2,9 @@
 # Deploy Your Startup installer. Runtime tools stay in our own directory.
 set -euo pipefail
 
-# The only place these versions are pinned. The website reads them from here,
-# and scripts/update_cli_release.py advances the CLI pin on stable releases.
-startup_cli_version="v0.1.3"
-startup_template_version="v0.1.0"
+# The only place the CLI version is pinned; scripts/update_cli_release.py
+# advances it on stable releases. Each CLI release pins its tested template.
+startup_cli_version="v0.1.4"
 
 startup_onboard=false
 case "${1:-}" in
@@ -116,8 +115,8 @@ if "$startup_onboard"; then
       esac
     fi
     printf "\n[3/3] Set up your project\n"
-    "$startup_target" bootstrap --kind fullstack --provider hetzner --domain-owned --template-version "$startup_template_version"
-    echo "To run setup again: startup bootstrap --kind fullstack --provider hetzner --domain-owned --template-version $startup_template_version"
+    "$startup_target" bootstrap --kind fullstack --provider hetzner --domain-owned
+    echo "To run setup again: startup bootstrap --kind fullstack --provider hetzner --domain-owned"
   }
   startup_onboarding </dev/tty
 else

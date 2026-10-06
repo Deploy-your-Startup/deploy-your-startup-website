@@ -49,7 +49,7 @@ class ReleaseUpdateTests(unittest.TestCase):
         # GIVEN a new release, WHEN the updater runs,
         # THEN only the pin changes and no other line names a CLI version.
         _, updated, _ = self.update('v0.1.3')
-        self.assertEqual(len(re.findall(r'v\d+\.\d+\.\d+', updated)), 2)
+        self.assertEqual(len(re.findall(r'v\d+\.\d+\.\d+', updated)), 1)
         self.assertIn('cli@$startup_cli_version', updated)
         self.assertIn('Startup CLI $startup_cli_version', updated)
 
