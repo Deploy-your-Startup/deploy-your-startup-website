@@ -30,15 +30,16 @@ import { installCommand, loginCommand, bootstrapCommand } from "../config";
         </div>
         <article class="setup-step">
           <div class="step-title"><span class="step-number">01</span><h3>Install</h3></div>
-          <Command id="prepare-code" command="brew install uv gh" label="Prerequisites" />
           <Command id="install-code" command={installCommand} label="CLI" />
+          <p>Python 3.14 is included. Open a new terminal after installing.</p>
+          <p>Need GitHub CLI? <code>brew install gh</code></p>
           <details>
             <summary>Missing Git, SSH key or command?</summary>
             <p>Git: <code>xcode-select --install</code></p>
             <p>SSH key: <code>ssh-keygen -t ed25519</code></p>
             <p>Git identity:</p>
             <pre><code>git config --global user.name "Your Name"<br />git config --global user.email "you@example.com"</code></pre>
-            <p>Command not found? Run <code>uv tool update-shell</code>, then open a new terminal.</p>
+            <p>Command not found? Open a new terminal.</p>
           </details>
         </article>
         <article class="setup-step">
