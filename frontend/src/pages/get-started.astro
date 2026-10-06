@@ -1,0 +1,65 @@
+---
+import "../styles/global.css";
+import Command from "../components/Command.astro";
+import { installCommand, loginCommand, bootstrapCommand } from "../config";
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    <title>Your first startup — Deploy Your Startup</title>
+    <meta name="description" content="Install the CLI. Connect GitHub. Deploy your first startup on Hetzner." />
+  </head>
+  <body>
+    <div class="grid"></div>
+    <main class="container quickstart-page">
+      <a class="back-link" href="/">← Deploy Your Startup</a>
+      <section class="quickstart" aria-labelledby="quickstart-title">
+        <span class="badge"><span class="pulse"></span>Early access · macOS</span>
+        <h1 id="quickstart-title">Your first startup.</h1>
+        <p class="section-intro">Django/FastAPI, Postgres, HTTPS. In your own accounts.</p>
+        <div class="requirements">
+          <h3>You need</h3>
+          <p>macOS, Chrome, GitHub, Hetzner Cloud and a domain you own.</p>
+          <p><strong>Servers are billed to your Hetzner account.</strong></p>
+        </div>
+        <article class="setup-step">
+          <div class="step-title"><span class="step-number">01</span><h3>Install</h3></div>
+          <Command id="prepare-code" command="brew install uv gh" label="Prerequisites" />
+          <Command id="install-code" command={installCommand} label="CLI" />
+          <details>
+            <summary>Missing Git, SSH key or command?</summary>
+            <p>Git: <code>xcode-select --install</code></p>
+            <p>SSH key: <code>ssh-keygen -t ed25519</code></p>
+            <p>Git identity:</p>
+            <pre><code>git config --global user.name "Your Name"<br />git config --global user.email "you@example.com"</code></pre>
+            <p>Command not found? Run <code>uv tool update-shell</code>, then open a new terminal.</p>
+          </details>
+        </article>
+        <article class="setup-step">
+          <div class="step-title"><span class="step-number">02</span><h3>Connect GitHub</h3></div>
+          <Command id="login-code" command={loginCommand} label="GitHub + setup check" />
+          <p>Sign in. Fix anything <code>startup doctor</code> reports.</p>
+        </article>
+        <article class="setup-step">
+          <div class="step-title"><span class="step-number">03</span><h3>Deploy</h3></div>
+          <Command id="bootstrap-code" command={bootstrapCommand} label="Create your project" />
+          <p>Choose a name and domain. The wizard sets up your private repos and deployment.</p>
+          <p>Check GitHub Actions. Point DNS at your server. Open your site over HTTPS.</p>
+        </article>
+        <div class="next-steps">
+          <h3>Make it yours.</h3>
+          <p>Follow your project's README. Push to <code>main</code> to deploy.</p>
+          <p>Want a frontend? Try the <a href="https://github.com/Deploy-your-Startup/vue-django-template">Vue + Django template</a>.</p>
+          <a href="https://github.com/Deploy-your-Startup/cli/issues">Stuck? Report an issue →</a>
+          <p class="feedback-note">Share the error. Keep passwords and tokens out.</p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

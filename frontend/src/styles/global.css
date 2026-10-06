@@ -81,6 +81,11 @@ details pre { padding-left: 0; }
 .next-steps { margin: 2rem 0; padding-left: 1.4rem; border-left: 2px solid var(--accent); }
 .next-steps > a { display: inline-block; margin-top: 1rem; font-size: 0.9rem; }
 .next-steps .feedback-note { font-size: 0.75rem; max-width: 620px; }
+.quickstart-page { text-align: left; }
+.quickstart-page .quickstart { margin-top: 2rem; }
+.quickstart-page h1 { font-size: clamp(2.5rem, 7vw, 4rem); }
+.back-link { display: inline-block; font-size: 0.8rem; text-decoration: none; }
+.setup-step .install-shell { margin-top: 1rem; }
 @media (max-width: 600px) {
   body { padding: 1.25rem; }
   .setup-step { padding: 1rem; }
