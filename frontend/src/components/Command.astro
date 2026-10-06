@@ -4,7 +4,9 @@ const { id, command, label = "Terminal" } = Astro.props;
 ---
 <div class="install-shell">
   <div class="shell-heading"><span>{label}</span><button type="button" data-copy={id} aria-label={`Copy ${label.toLowerCase()} command`}>Copy</button></div>
+  <Fragment set:html="<!--email_off-->" />
   <pre><code id={id}>{command}</code></pre>
+  <Fragment set:html="<!--/email_off-->" />
 </div>
 <script>
   document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach(button => {
