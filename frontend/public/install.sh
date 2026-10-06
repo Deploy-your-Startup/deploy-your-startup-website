@@ -75,6 +75,13 @@ case ":$PATH:" in
     echo "Open a new terminal to use startup."
     ;;
 esac
+# Coding agents learn the CLI from a bundled skill; older CLI releases lack it.
+startup_agent_skill=false
+if "$startup_target" skills --help >/dev/null 2>&1; then
+  for startup_agent_dir in .claude .codex .config/opencode; do
+    [ -d "$HOME/$startup_agent_dir" ] && startup_agent_skill=true
+  done
+fi
 if "$startup_onboard"; then
   export PATH="$startup_bin:$PATH"
   # The installer may arrive through a pipe; prompts must read from the terminal.
@@ -97,6 +104,12 @@ if "$startup_onboard"; then
       echo "Complete the missing setup above in another terminal."
       read -r -p "Press Return to check again (Ctrl-C to stop). "
     done
+    if "$startup_agent_skill"; then
+      read -r -p "Teach your coding agent (Claude Code, Codex, OpenCode) to use startup? [y/N] " startup_answer
+      case "$startup_answer" in
+        [yY]*) "$startup_target" skills install || echo "Skipped. Later: startup skills install" ;;
+      esac
+    fi
     printf "\n[3/3] Set up your project\n"
     "$startup_target" bootstrap --kind fullstack --provider hetzner --domain-owned --template-version v0.1.0
     echo "To run setup again: startup bootstrap --kind fullstack --provider hetzner --domain-owned --template-version v0.1.0"
@@ -104,4 +117,7 @@ if "$startup_onboard"; then
   startup_onboarding </dev/tty
 else
   echo "Installed. Next: startup doctor"
+  if "$startup_agent_skill"; then
+    echo "Using a coding agent? Run: startup skills install"
+  fi
 fi
