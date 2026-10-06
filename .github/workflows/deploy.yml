@@ -5,11 +5,21 @@ on:
     branches: [main]
     paths:
       - "frontend/**"
+      - "tests/**"
+      - "make.sh"
       - ".github/workflows/deploy.yml"
   workflow_dispatch:
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check installer
+        run: ./make.sh test
+
   deploy:
+    needs: test
     uses: philipp-lein/deploy-your-startup/.github/workflows/deploy-pages.yml@main
     with:
       project_name: deploy-your-startup-website

@@ -38,7 +38,7 @@ if [ -L "$startup_root" ]; then
 fi
 mkdir -p "$startup_root/runtime/bin" "$startup_bin"
 
-echo "Installing Startup CLI v0.1.0 with Python 3.14…"
+echo "Installing Startup CLI v0.1.1 with Python 3.14…"
 curl --proto '=https' --tlsv1.2 -fsSL \
   https://astral.sh/uv/0.12.23/install.sh -o "$startup_tmp/uv-install.sh"
 UV_UNMANAGED_INSTALL="$startup_root/runtime/bin" sh "$startup_tmp/uv-install.sh"
@@ -47,7 +47,7 @@ UV_PYTHON_INSTALL_DIR="$startup_root/python" \
 UV_TOOL_DIR="$startup_root/tools" \
 UV_TOOL_BIN_DIR="$startup_root/commands" \
   "$startup_root/runtime/bin/uv" tool install --reinstall --quiet --managed-python --python 3.14 \
-  git+https://github.com/Deploy-your-Startup/cli@v0.1.0
+  git+https://github.com/Deploy-your-Startup/cli@v0.1.1
 
 cat > "$startup_tmp/startup" <<'LAUNCHER'
 #!/bin/sh
@@ -79,9 +79,10 @@ if "$startup_onboard"; then
   export PATH="$startup_bin:$PATH"
   # The installer may arrive through a pipe; prompts must read from the terminal.
   startup_onboarding() {
-    echo "Welcome! Let's set up your first startup."
+    printf "\nYour terminal. Let's get started.\n\n"
     echo "You need GitHub, Hetzner Cloud and a domain you own."
     echo "Servers and your domain are billed by your providers."
+    printf "\n[1/3] Connect GitHub\n"
     while ! command -v gh >/dev/null 2>&1; do
       echo "Install GitHub CLI in another terminal: brew install gh"
       echo "Without Homebrew, get it from https://cli.github.com"
@@ -91,13 +92,14 @@ if "$startup_onboard"; then
       gh auth login -h github.com -p https -s repo,workflow,read:packages,write:packages
     fi
     gh auth setup-git
+    printf "\n[2/3] Check this Mac\n"
     until "$startup_target" doctor; do
       echo "Complete the missing setup above in another terminal."
       read -r -p "Press Return to check again (Ctrl-C to stop). "
     done
+    printf "\n[3/3] Set up your project\n"
     "$startup_target" bootstrap --kind fullstack --provider hetzner --domain-owned --template-version v0.1.0
-    echo "Next: check your GitHub Actions run, point your domain's DNS at your server,"
-    echo "then open your site over HTTPS to verify the deployment."
+    echo "To run setup again: startup bootstrap --kind fullstack --provider hetzner --domain-owned --template-version v0.1.0"
   }
   startup_onboarding </dev/tty
 else

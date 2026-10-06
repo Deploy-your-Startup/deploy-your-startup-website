@@ -6,3 +6,6 @@ run = "./make.sh run"
 
 [tasks.build]
 run = "./make.sh build"
+
+[tasks.test]
+run = "./make.sh test"
