@@ -4,13 +4,16 @@ The Deploy workflow checks the latest stable release of
 `Deploy-your-Startup/cli` every ten minutes. GitHub may delay scheduled runs;
 this is not an immediate release webhook.
 
-For a newer `vX.Y.Z` release, it updates only the CLI tag in
-`frontend/public/install.sh`, runs the website's tests and commits the pin to
+The CLI version is pinned in one place: `startup_cli_version` at the top of
+`frontend/public/install.sh`. Each CLI release pins its tested application
+template itself, so neither the installer nor the site names a template version.
+
+For a newer `vX.Y.Z` release, it updates only `startup_cli_version`, runs the website's tests and commits the pin to
 `main`. A fresh workflow dispatch then tests and deploys that commit through the
 shared Cloudflare Pages workflow. Dispatch Deploy manually to check sooner.
 
 Drafts, prereleases, invalid version tags and versions at or below the current
-pin are skipped. Application template versions are not changed. Existing CLI
+pin are skipped. Existing CLI
 installations update only when users rerun the installer.
 
 This uses the website repository's `GITHUB_TOKEN` with `contents: write` and

@@ -2,6 +2,10 @@
 # Deploy Your Startup installer. Runtime tools stay in our own directory.
 set -euo pipefail
 
+# The only place the CLI version is pinned; scripts/update_cli_release.py
+# advances it on stable releases. Each CLI release pins its tested template.
+startup_cli_version="v0.1.5"
+
 startup_onboard=false
 case "${1:-}" in
   --onboard) startup_onboard=true ;;
@@ -38,7 +42,7 @@ if [ -L "$startup_root" ]; then
 fi
 mkdir -p "$startup_root/runtime/bin" "$startup_bin"
 
-echo "Installing Startup CLI v0.1.1 with Python 3.14…"
+echo "Installing Startup CLI $startup_cli_version with Python 3.14…"
 curl --proto '=https' --tlsv1.2 -fsSL \
   https://astral.sh/uv/0.12.23/install.sh -o "$startup_tmp/uv-install.sh"
 UV_UNMANAGED_INSTALL="$startup_root/runtime/bin" sh "$startup_tmp/uv-install.sh"
@@ -47,7 +51,7 @@ UV_PYTHON_INSTALL_DIR="$startup_root/python" \
 UV_TOOL_DIR="$startup_root/tools" \
 UV_TOOL_BIN_DIR="$startup_root/commands" \
   "$startup_root/runtime/bin/uv" tool install --reinstall --quiet --managed-python --python 3.14 \
-  git+https://github.com/Deploy-your-Startup/cli@v0.1.3
+  "git+https://github.com/Deploy-your-Startup/cli@$startup_cli_version"
 
 cat > "$startup_tmp/startup" <<'LAUNCHER'
 #!/bin/sh
@@ -75,12 +79,19 @@ case ":$PATH:" in
     echo "Open a new terminal to use startup."
     ;;
 esac
+# Coding agents learn the CLI from a bundled skill; older CLI releases lack it.
+startup_agent_skill=false
+if "$startup_target" skills --help >/dev/null 2>&1; then
+  for startup_agent_dir in .claude .codex .config/opencode; do
+    [ -d "$HOME/$startup_agent_dir" ] && startup_agent_skill=true
+  done
+fi
 if "$startup_onboard"; then
   export PATH="$startup_bin:$PATH"
   # The installer may arrive through a pipe; prompts must read from the terminal.
   startup_onboarding() {
     printf "\nYour terminal. Let's get started.\n\n"
-    echo "You need GitHub, Hetzner Cloud and a domain you own."
+    echo "You need GitHub and Hetzner Cloud. Bring a domain or register one during setup."
     echo "Servers and your domain are billed by your providers."
     printf "\n[1/3] Connect GitHub\n"
     while ! command -v gh >/dev/null 2>&1; do
@@ -97,11 +108,21 @@ if "$startup_onboard"; then
       echo "Complete the missing setup above in another terminal."
       read -r -p "Press Return to check again (Ctrl-C to stop). "
     done
+    if "$startup_agent_skill"; then
+      read -r -p "Teach your coding agent (Claude Code, Codex, OpenCode) to use startup? [y/N] " startup_answer
+      case "$startup_answer" in
+        [yY]*) "$startup_target" skills install || echo "Skipped. Later: startup skills install" ;;
+      esac
+    fi
     printf "\n[3/3] Set up your project\n"
-    "$startup_target" bootstrap --kind fullstack --provider hetzner --domain-owned --template-version v0.1.0
-    echo "To run setup again: startup bootstrap --kind fullstack --provider hetzner --domain-owned --template-version v0.1.0"
+    # No --domain-owned: the CLI asks and offers registration without a domain.
+    "$startup_target" bootstrap --kind fullstack --provider hetzner
+    echo "To run setup again: startup bootstrap --kind fullstack --provider hetzner"
   }
   startup_onboarding </dev/tty
 else
   echo "Installed. Next: startup doctor"
+  if "$startup_agent_skill"; then
+    echo "Using a coding agent? Run: startup skills install"
+  fi
 fi

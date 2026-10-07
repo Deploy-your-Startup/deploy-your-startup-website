@@ -1,6 +1,7 @@
 """Drive the updater against real installer files and synthetic release metadata."""
 
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -17,8 +18,7 @@ class ReleaseUpdateTests(unittest.TestCase):
             installer = root / 'install.sh'
             original = (ROOT / 'frontend/public/install.sh').read_text()
             # GIVEN a published installer with an older fixed CLI pin.
-            import re
-            original = re.sub(r'cli@v\d+\.\d+\.\d+', 'cli@v0.1.1', original)
+            original = re.sub(r'startup_cli_version="v[\d.]+"', 'startup_cli_version="v0.1.1"', original)
             installer.write_text(original)
             release = root / 'release.json'
             release.write_text(json.dumps({'tag_name': tag, 'draft': False, 'prerelease': False, **metadata}))
@@ -30,7 +30,7 @@ class ReleaseUpdateTests(unittest.TestCase):
     def test_new_stable_release_changes_only_the_cli_pin(self):
         output, updated, original = self.update('v0.1.3')
         self.assertIn('changed=true', output)
-        self.assertEqual(updated, original.replace('cli@v0.1.1', 'cli@v0.1.3'))
+        self.assertEqual(updated, original.replace('startup_cli_version="v0.1.1"', 'startup_cli_version="v0.1.3"'))
 
     def test_prerelease_draft_and_invalid_tags_are_skipped(self):
         for tag, metadata in [('v0.1.2', {'prerelease': True}), ('v0.1.3', {'draft': True}), ('v0.1.3-rc1', {}), ('main', {})]:
@@ -45,7 +45,15 @@ class ReleaseUpdateTests(unittest.TestCase):
             self.assertIn('changed=false', output)
             self.assertEqual(updated, original)
 
+    def test_the_whole_installer_follows_the_single_cli_pin(self):
+        # GIVEN a new release, WHEN the updater runs,
+        # THEN only the pin changes and no other line names a CLI version.
+        _, updated, _ = self.update('v0.1.3')
+        self.assertEqual(len(re.findall(r'v\d+\.\d+\.\d+', updated)), 1)
+        self.assertIn('cli@$startup_cli_version', updated)
+        self.assertIn('Startup CLI $startup_cli_version', updated)
+
     def test_versions_are_compared_numerically(self):
         output, updated, original = self.update('v0.1.10')
         self.assertIn('changed=true', output)
-        self.assertEqual(updated, original.replace('cli@v0.1.1', 'cli@v0.1.10'))
+        self.assertEqual(updated, original.replace('startup_cli_version="v0.1.1"', 'startup_cli_version="v0.1.10"'))
