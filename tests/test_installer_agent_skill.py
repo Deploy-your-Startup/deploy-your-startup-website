@@ -24,7 +24,7 @@ case "$1 $2" in
   "skills --help") [ "$FAKE_SKILLS" = 1 ] ;;
   "skills install") echo "Installed for claude"; mkdir -p "$HOME/.claude/skills/deploy-your-startup" ;;
   "doctor "*) exit 0 ;;
-  "bootstrap "*) echo "BOOTSTRAP STARTED" ;;
+  "bootstrap "*) echo "BOOTSTRAP STARTED: $*" ;;
   *) exit 0 ;;
 esac
 '''
@@ -105,6 +105,16 @@ class InstallerAgentSkillTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout)
         self.assertFalse(installed)
         self.assertIn('BOOTSTRAP STARTED', result.stdout)
+
+    def test_onboarding_lets_the_cli_ask_about_the_domain(self):
+        # GIVEN guided onboarding for someone who may not own a domain yet,
+        # WHEN project setup starts,
+        # THEN the installer does not claim ownership, so the CLI can offer registration.
+        result, _ = self.install('--onboard', answers='\n')
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertIn('BOOTSTRAP STARTED: bootstrap --kind fullstack --provider hetzner', result.stdout)
+        self.assertNotIn('--domain-owned', result.stdout)
+        self.assertIn('register one during setup', result.stdout)
 
 
 if __name__ == '__main__':

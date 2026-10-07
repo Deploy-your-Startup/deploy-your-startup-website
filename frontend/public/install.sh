@@ -91,7 +91,7 @@ if "$startup_onboard"; then
   # The installer may arrive through a pipe; prompts must read from the terminal.
   startup_onboarding() {
     printf "\nYour terminal. Let's get started.\n\n"
-    echo "You need GitHub, Hetzner Cloud and a domain you own."
+    echo "You need GitHub and Hetzner Cloud. Bring a domain or register one during setup."
     echo "Servers and your domain are billed by your providers."
     printf "\n[1/3] Connect GitHub\n"
     while ! command -v gh >/dev/null 2>&1; do
@@ -115,8 +115,9 @@ if "$startup_onboard"; then
       esac
     fi
     printf "\n[3/3] Set up your project\n"
-    "$startup_target" bootstrap --kind fullstack --provider hetzner --domain-owned
-    echo "To run setup again: startup bootstrap --kind fullstack --provider hetzner --domain-owned"
+    # No --domain-owned: the CLI asks and offers registration without a domain.
+    "$startup_target" bootstrap --kind fullstack --provider hetzner
+    echo "To run setup again: startup bootstrap --kind fullstack --provider hetzner"
   }
   startup_onboarding </dev/tty
 else
