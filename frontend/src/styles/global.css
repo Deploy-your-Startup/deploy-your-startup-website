@@ -57,8 +57,17 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px soli
 .shell-heading { display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); color: var(--muted); font-size: 0.8rem; }
 pre { max-width: 100%; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; text-align: left; line-height: 1.7; font-size: 0.78rem; }
 code { font-family: "JetBrains Mono", monospace; }
-button[data-copy] { flex-shrink: 0; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.16); background: rgba(124, 92, 255, 0.16); color: var(--text); border-radius: 6px; padding: 0.45rem 0.7rem; font: inherit; font-size: 0.75rem; }
+button[data-copy] { display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; flex-shrink: 0; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.16); background: rgba(124, 92, 255, 0.16); color: var(--text); border-radius: 6px; padding: 0.45rem 0.7rem; font: inherit; font-size: 0.75rem; }
 button[data-copy]:hover { border-color: var(--accent-2); }
+.copy-icon { width: 20px; height: 20px; flex-shrink: 0; }
+.copy-front, .copy-back { opacity: 1; transition: opacity 120ms ease; }
+.copy-check { opacity: 0; stroke-dasharray: 24; stroke-dashoffset: 24; transition: opacity 120ms ease, stroke-dashoffset 180ms ease; }
+button[data-state="copied"] .copy-front, button[data-state="copied"] .copy-back { opacity: 0; }
+button[data-state="copied"] .copy-check { opacity: 1; stroke-dashoffset: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .copy-front, .copy-back, .copy-check { transition: none; }
+}
+.copy-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 .install-note { font-size: 0.78rem; color: var(--muted); margin-top: 0.8rem; line-height: 1.6; }
 .start-links { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.6rem; font-size: 0.85rem; }
 .primary-link { padding: 0.9rem 1.2rem; border-radius: 8px; color: white; background: var(--accent); text-decoration: none; font-weight: 600; }

@@ -22,6 +22,16 @@ test("GIVEN the landing page WHEN Astro builds THEN visitors see the harness and
   assert.match(html, /<span class="step"[^>]*>k3s<\/span>/);
   assert.doesNotMatch(html, /cloud os|the operating system of your cloud/);
   assert.match(html, /id="onboarding-code"/);
+  // THEN the copy action renders an accessible icon and a separate live feedback region.
+  const copyButton = html.match(/<button[^>]*data-copy="onboarding-code"[\s\S]*?<\/button>/)?.[0];
+  assert.ok(copyButton);
+  assert.match(copyButton, /aria-label="Copy start in your terminal command"/);
+  assert.match(copyButton, /<svg[^>]*aria-hidden="true"/);
+  assert.match(copyButton, /class="copy-back"/);
+  assert.match(copyButton, /class="copy-front"/);
+  assert.match(copyButton, /class="copy-check"/);
+  assert.match(copyButton, /class="copy-label">Copy<\/span>/);
+  assert.match(html, /class="copy-status" role="status" aria-live="polite"/);
   assert.ok(readFileSync(new URL("../dist/get-started/index.html", import.meta.url), "utf8").includes("--onboard"));
 });
 

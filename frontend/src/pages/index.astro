@@ -313,13 +313,21 @@ const baseDomain = "deploy-your-startup.com";
   .landing-description { font-size: 0.95rem; line-height: 1.8; color: var(--muted); }
   .landing-description strong { font-weight: 400; color: #c7c9cc; }
   .onboarding-command { max-width: 780px; margin: 2rem auto 0; }
-  .onboarding-command :global(.compact-command) { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; background: #111214; border: 1px solid #34373c; border-radius: 7px; padding: 0.35rem; transition: border-color 0.2s; }
-  .onboarding-command :global(.compact-command:focus-within), .onboarding-command :global(.compact-command:hover) { border-color: #71899d; }
+  .onboarding-command :global(.compact-command) { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; background: #111214; border: 1px solid #34373c; border-radius: 10px; padding: 0.35rem; overflow: visible; transition: border-color 160ms ease; }
+  .onboarding-command :global(.compact-command:focus-within), .onboarding-command :global(.compact-command:hover) { border-color: #535b65; }
   .onboarding-command :global(.shell-heading) { display: contents; }
   .onboarding-command :global(.shell-heading > span) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .onboarding-command :global(pre) { grid-row: 1; grid-column: 1; color: #d7dbe0; padding: 1rem 0.8rem; font-size: 0.75rem; }
-  .onboarding-command :global(button[data-copy]) { grid-row: 1; grid-column: 2; margin-right: 0.35rem; border: 0; border-radius: 4px; background: #9cbedc; color: #18212a; padding: 0.7rem 1rem; font-weight: 600; transition: background 0.2s; }
-  .onboarding-command :global(button[data-copy]:hover) { background: #bdd6ed; }
+  .onboarding-command :global(button[data-copy]) { position: relative; grid-row: 1; grid-column: 2; width: 44px; height: 44px; margin-right: 0.15rem; border: 1px solid transparent; border-radius: 6px; background: transparent; color: #a8b0ba; padding: 0; transition: color 140ms ease, background-color 140ms ease, border-color 140ms ease; -webkit-tap-highlight-color: transparent; }
+  .onboarding-command :global(button[data-copy]:hover), .onboarding-command :global(button[data-copy]:focus-visible) { background: #ffffff09; border-color: #ffffff0e; color: #e6edf3; }
+  .onboarding-command :global(button[data-copy]:active) { background: #ffffff14; }
+  .onboarding-command :global(.copy-icon) { width: 20px; height: 20px; }
+  .onboarding-command :global(.copy-label) { display: none; }
+  .onboarding-command :global(button[data-state="fallback"] .copy-label) { display: block; position: absolute; right: 0; bottom: calc(100% + 12px); width: max-content; padding: 0.4rem 0.6rem; border: 1px solid #ffffff18; border-radius: 6px; background: #24282d; color: #e8eef4; font-size: 0.7rem; font-weight: 400; pointer-events: none; }
+  .onboarding-command :global(button[data-state="copied"]) { color: #b5cfe5; }
+  @media (prefers-reduced-motion: reduce) {
+    .onboarding-command :global(.compact-command), .onboarding-command :global(button[data-copy]) { transition: none; }
+  }
   .onboarding-note { font: 0.7rem "JetBrains Mono", monospace; line-height: 1.8; margin-top: 0.9rem; color: var(--muted); }
   .onboarding-note a { margin-left: 0.75rem; color: #c7c9cc; }
   .landing-details { margin-top: 4rem; padding-top: 2.8rem; border-top: 1px solid #ffffff12; }
@@ -441,7 +449,6 @@ const baseDomain = "deploy-your-startup.com";
     .landing-description { font-size: 0.85rem; }
     .desktop-break { display: none; }
     .onboarding-command :global(pre) { font-size: 0.68rem; padding: 0.7rem 0.5rem; }
-    .onboarding-command :global(button[data-copy]) { padding: 0.6rem; }
     .line { gap: 1.1rem; }
     .factory .rail .spark { left: 50%; margin-top: -15px; animation-name: factory-travel-vertical; }
     .factory .spark :global(svg) { transform: rotate(180deg); }
