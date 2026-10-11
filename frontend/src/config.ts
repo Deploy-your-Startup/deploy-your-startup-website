@@ -1,4 +1,4 @@
-export const pitchTemplateVersion = "v0.1.0";
+export const pitchTemplateVersion = "v0.1.1";
 
 export const installCommand = "curl -fsSL https://deploy-your-startup.com/install.sh | bash";
 export const loginCommand = "gh auth login -h github.com -p https -s repo,workflow,read:packages,write:packages\ngh auth setup-git\nstartup doctor";
