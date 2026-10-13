@@ -1,0 +1,8 @@
+services:
+  test:
+    image: ${E2E_IMAGE:?Build the E2E image first}
+    environment:
+      CI: "true"
+      SHARD_INDEX: ${SHARD_INDEX:-1}
+      SHARD_TOTAL: ${SHARD_TOTAL:-1}
+    shm_size: 1gb
