@@ -1,0 +1,9 @@
+**/.venv
+**/node_modules
+**/.git
+**/__pycache__
+**/coverage
+**/test-results
+**/playwright-report
+**/media
+deployment

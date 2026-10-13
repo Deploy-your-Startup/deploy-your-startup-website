@@ -1,10 +1,14 @@
 name: Deploy
 
 on:
+  pull_request:
+    paths: ["frontend/**", "e2e_tests/**", ".dockerignore", ".github/workflows/deploy.yml", "tests/**", "scripts/**", "make.sh"]
   push:
     branches: [main]
     paths:
       - "frontend/**"
+      - "e2e_tests/**"
+      - ".dockerignore"
       - "tests/**"
       - "make.sh"
       - "scripts/**"
@@ -22,6 +26,7 @@ permissions:
 
 jobs:
   release:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -86,8 +91,25 @@ jobs:
       - name: Check installer and landing page
         run: ./make.sh test
 
+  browser:
+    needs: release
+    if: ${{ always() && (github.event_name == 'pull_request' || needs.release.outputs.deploy == 'true') }}
+    uses: philipp-lein/deploy-your-startup/.github/workflows/container-e2e.yml@feaba0ceca85b3f93acd1a4fc7dd1778d70e215c
+    with:
+      shards: 1
+
+  pull-request-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: ./make.sh test
+
   deploy:
-    needs: [release, test]
+    needs: [release, test, browser]
     uses: philipp-lein/deploy-your-startup/.github/workflows/deploy-pages.yml@main
     with:
       project_name: deploy-your-startup-website
