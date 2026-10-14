@@ -45,12 +45,15 @@ mkdir -p "$startup_root/runtime/bin" "$startup_bin"
 echo "Installing Startup CLI $startup_cli_version with Python 3.14…"
 curl --proto '=https' --tlsv1.2 -fsSL \
   https://astral.sh/uv/0.12.23/install.sh -o "$startup_tmp/uv-install.sh"
+# Match the launcher PATH so other uv installations do not trigger shadow warnings.
+PATH="$startup_root/runtime/bin:$PATH" \
 UV_UNMANAGED_INSTALL="$startup_root/runtime/bin" sh "$startup_tmp/uv-install.sh"
 
+echo "Installing Python 3.14 and Startup CLI $startup_cli_version. Downloads may take a few minutes…"
 UV_PYTHON_INSTALL_DIR="$startup_root/python" \
 UV_TOOL_DIR="$startup_root/tools" \
 UV_TOOL_BIN_DIR="$startup_root/commands" \
-  "$startup_root/runtime/bin/uv" tool install --reinstall --quiet --managed-python --python 3.14 \
+  "$startup_root/runtime/bin/uv" tool install --reinstall --managed-python --python 3.14 \
   "git+https://github.com/Deploy-your-Startup/cli@$startup_cli_version"
 
 cat > "$startup_tmp/startup" <<'LAUNCHER'
@@ -63,6 +66,7 @@ LAUNCHER
 chmod +x "$startup_tmp/startup"
 # Replace a previous symlink rather than writing through it into its environment.
 mv -f "$startup_tmp/startup" "$startup_target"
+echo "Verifying Startup CLI…"
 "$startup_target" --help >/dev/null
 printf '%s\n' 'Deploy Your Startup managed installation' > "$startup_root/.startup-install"
 

@@ -13,8 +13,24 @@ CURL = '''
 while [ "$#" -gt 0 ]; do [ "$1" = -o ] && out="$2"; shift; done
 cat > "$out" <<'UVINSTALL'
 mkdir -p "$UV_UNMANAGED_INSTALL"
-printf '#!/bin/sh\\nmkdir -p "$UV_TOOL_BIN_DIR"\\ncp "$FAKE_STARTUP" "$UV_TOOL_BIN_DIR/startup"\\n' > "$UV_UNMANAGED_INSTALL/uv"
+cat > "$UV_UNMANAGED_INSTALL/uv" <<'UV'
+#!/bin/sh
+for arg in "$@"; do
+  [ "$arg" = --quiet ] && quiet=true
+done
+if [ "${quiet:-false}" = false ]; then
+  echo "Downloading Python and CLI dependencies" >&2
+fi
+mkdir -p "$UV_TOOL_BIN_DIR"
+cp "$FAKE_STARTUP" "$UV_TOOL_BIN_DIR/startup"
+UV
 chmod +x "$UV_UNMANAGED_INSTALL/uv"
+cp "$UV_UNMANAGED_INSTALL/uv" "$UV_UNMANAGED_INSTALL/uvx"
+for tool in uv uvx; do
+  if [ "$(command -v "$tool")" != "$UV_UNMANAGED_INSTALL/$tool" ]; then
+    echo "WARN: shadowed $tool" >&2
+  fi
+done
 UVINSTALL
 '''
 
@@ -42,6 +58,8 @@ class InstallerAgentSkillTests(unittest.TestCase):
             for name, script in {
                 'curl': CURL, 'uname': 'echo Darwin',
                 'gh': 'exit 0',
+                'uv': 'echo WRONG UV >&2; exit 99',
+                'uvx': 'echo WRONG UVX >&2; exit 99',
             }.items():
                 (tools / name).write_text('#!/bin/sh\n' + script)
                 (tools / name).chmod(0o755)
@@ -68,6 +86,18 @@ class InstallerAgentSkillTests(unittest.TestCase):
             )
             installed = (home / '.claude/skills/deploy-your-startup').is_dir()
             return result, installed
+
+    def test_install_shows_progress_with_existing_uv(self):
+        # GIVEN uv and uvx already on PATH,
+        # WHEN the real installer runs with local download boundaries,
+        # THEN its private runtime takes precedence and installation stays visible.
+        result, _ = self.install()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn('shadowed', result.stderr)
+        self.assertNotIn('WRONG UV', result.stderr)
+        self.assertIn('Downloading Python and CLI dependencies', result.stderr)
+        self.assertIn('Installing Python 3.14 and Startup CLI', result.stdout)
+        self.assertIn('Verifying Startup CLI', result.stdout)
 
     def test_install_points_agent_users_to_the_skill(self):
         # GIVEN a Mac with Claude Code and a CLI release that ships the skill,
