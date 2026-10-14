@@ -20,3 +20,17 @@ test("GIVEN a mobile visitor WHEN the homepage opens THEN its content fits the v
   await expect(page.locator("main")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(391);
 });
+
+
+test("GIVEN a new visitor WHEN opening get-started THEN setup can finish before project and provider choices", async ({ page }) => {
+  // GIVEN the real built site.
+  // WHEN the visitor follows the installation instructions.
+  await page.goto("/get-started/");
+  // THEN the visible flow explains GitHub setup and optional project creation.
+  await expect(page.getByText("Create your first startup now or come back later.", { exact: false })).toBeVisible();
+  await expect(page.getByText("GitHub CLI is installed if needed.", { exact: false })).toBeVisible();
+  await expect(page.getByText("your own server", { exact: false })).toBeVisible();
+  await expect(page.locator("#onboarding-code")).toContainText("--onboard");
+  await page.getByText("Only need a landing page first?", { exact: true }).click();
+  await expect(page.locator("#pitch-code")).toContainText("startup bootstrap --kind pitch");
+});

@@ -68,6 +68,11 @@ for startup_profile in "$HOME/.zshrc" "$HOME/.bash_profile"; do
     cat "$startup_tmp/profile" > "$startup_profile"
   fi
 done
+# Remove only our GitHub CLI link, preserving any independently installed gh.
+startup_gh_target="$HOME/.local/bin/gh"
+if [ -L "$startup_gh_target" ] && [ "$(readlink "$startup_gh_target")" = "$startup_root/runtime/bin/gh" ]; then
+  rm -f "$startup_gh_target"
+fi
 rm -f "$startup_target"
 rm -rf "$startup_root"
 echo "Startup CLI removed. Projects, Keychain credentials and cloud resources are unchanged."

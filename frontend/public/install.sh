@@ -95,33 +95,71 @@ if "$startup_onboard"; then
   # The installer may arrive through a pipe; prompts must read from the terminal.
   startup_onboarding() {
     printf "\nYour terminal. Let's get started.\n\n"
-    echo "You need GitHub and Hetzner Cloud. Bring a domain or register one during setup."
-    echo "Servers and your domain are billed by your providers."
-    printf "\n[1/3] Connect GitHub\n"
-    while ! command -v gh >/dev/null 2>&1; do
-      echo "Install GitHub CLI in another terminal: brew install gh"
-      echo "Without Homebrew, get it from https://cli.github.com"
-      read -r -p "Press Return when ready (Ctrl-C to stop). "
-    done
+    echo "CLI installed. Next: connect GitHub; project and server setup are optional."
+    # Install the official GitHub CLI without requiring Homebrew or sudo.
+    # Existing gh installations and their credential stores are reused.
+    if ! command -v gh >/dev/null 2>&1; then
+      startup_gh_version="2.102.0"
+      case "$(uname -m)" in
+        arm64) startup_gh_arch=arm64; startup_gh_sha=da922c20d1792e5b2cbf375593d7a658acf034c12c84e007e71c76ef959c337e ;;
+        x86_64) startup_gh_arch=amd64; startup_gh_sha=b245f24eb2bf5f75b426b4c26da3651a107f8d5b6f4fddfbfccc5679041378b3 ;;
+        *) echo "Unsupported Mac architecture for GitHub CLI." >&2; return 1 ;;
+      esac
+      startup_gh_target="$startup_bin/gh"
+      if [ -e "$startup_gh_target" ] || [ -L "$startup_gh_target" ]; then
+        echo "Another file owns $startup_gh_target. Install GitHub CLI from https://cli.github.com and retry." >&2
+        return 1
+      fi
+      echo "Installing GitHub CLI $startup_gh_version…"
+      curl --proto '=https' --tlsv1.2 -fsSL \
+        "https://github.com/cli/cli/releases/download/v${startup_gh_version}/gh_${startup_gh_version}_macOS_${startup_gh_arch}.zip" \
+        -o "$startup_tmp/gh.zip"
+      printf '%s  %s\n' "$startup_gh_sha" "$startup_tmp/gh.zip" | shasum -a 256 -c -
+      unzip -q "$startup_tmp/gh.zip" -d "$startup_tmp/github-cli"
+      install -m 755 "$startup_tmp/github-cli/gh_${startup_gh_version}_macOS_${startup_gh_arch}/bin/gh" "$startup_root/runtime/bin/gh"
+      ln -s "$startup_root/runtime/bin/gh" "$startup_gh_target"
+    fi
+    printf "\nConnect GitHub\n"
     if ! gh auth status -h github.com >/dev/null 2>&1; then
-      gh auth login -h github.com -p https -s repo,workflow,read:packages,write:packages
+      if [ -n "${GH_TOKEN:-}" ] || [ -n "${GITHUB_TOKEN:-}" ]; then
+        echo "CLI installed. The supplied GitHub token could not authenticate. Update GH_TOKEN or GITHUB_TOKEN and retry." >&2
+        return 1
+      fi
+      if ! gh auth login -h github.com -p https -s repo,workflow,read:packages,write:packages; then
+        echo "CLI installed. GitHub is not connected. Retry this installer with --onboard when ready." >&2
+        return 1
+      fi
     fi
     gh auth setup-git
-    printf "\n[2/3] Check this Mac\n"
+    # This doctor profile belongs to the companion CLI release. Never run the
+    # older full-stack doctor here: it requires SSH/Chrome before target choice.
+    if ! "$startup_target" doctor --help | grep -q -- '--provider'; then
+      echo "CLI installed and GitHub connected. This CLI release does not yet support the new setup flow." >&2
+      echo "Update after the onboarding CLI release is published. Existing command: startup bootstrap" >&2
+      return 1
+    fi
     until "$startup_target" doctor; do
-      echo "Complete the missing setup above in another terminal."
+      echo "CLI installed. GitHub or Git setup is incomplete; follow the guidance above."
       read -r -p "Press Return to check again (Ctrl-C to stop). "
     done
+    echo "✓ Setup complete."
     if "$startup_agent_skill"; then
       read -r -p "Teach your coding agent (Claude Code, Codex, OpenCode) to use startup? [y/N] " startup_answer
       case "$startup_answer" in
         [yY]*) "$startup_target" skills install || echo "Skipped. Later: startup skills install" ;;
       esac
     fi
-    printf "\n[3/3] Set up your project\n"
-    # No --domain-owned: the CLI asks and offers registration without a domain.
-    "$startup_target" bootstrap --kind fullstack --provider hetzner
-    echo "To run setup again: startup bootstrap --kind fullstack --provider hetzner"
+    read -r -p "Create a startup now? [y/N] " startup_answer
+    case "$startup_answer" in
+      [yY]*)
+        if ! "$startup_target" bootstrap; then
+          echo "CLI setup is complete. Project setup did not finish; existing project files are preserved." >&2
+          echo "Follow the reported next step, or rerun startup bootstrap with the same project name and folder." >&2
+          return 1
+        fi
+        ;;
+      *) echo "Ready when you are. Create a startup with: startup bootstrap" ;;
+    esac
   }
   startup_onboarding </dev/tty
 else
