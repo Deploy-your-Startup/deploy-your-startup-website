@@ -15,6 +15,10 @@ cat > "$out" <<'UVINSTALL'
 mkdir -p "$UV_UNMANAGED_INSTALL"
 cat > "$UV_UNMANAGED_INSTALL/uv" <<'UV'
 #!/bin/sh
+case "$*" in
+  --version) echo "uv 0.12.23"; exit 0 ;;
+  "tool install --help") echo "--managed-python --python --quiet"; exit 0 ;;
+esac
 for arg in "$@"; do
   [ "$arg" = --quiet ] && quiet=true
 done
@@ -49,7 +53,7 @@ esac
 
 
 class InstallerAgentSkillTests(unittest.TestCase):
-    def install(self, *args, skills=True, agents=('.claude',), answers='', factory=True, factory_failure=False, gh='exit 0'):
+    def install(self, *args, skills=True, agents=('.claude',), answers='', factory=True, factory_failure=False, gh='exit 0', existing_uv=False, install_failure=False, private_uv=False):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             tools, home = root / 'tools', root / 'home'
@@ -60,11 +64,26 @@ class InstallerAgentSkillTests(unittest.TestCase):
             for name, script in {
                 'curl': CURL, 'uname': 'echo Darwin',
                 'gh': gh,
-                'uv': 'echo WRONG UV >&2; exit 99',
+                'uv': ('''case "$*" in
+  --version) echo 'uv 0.12.3'; exit 0 ;;
+  "tool install --help") echo '--managed-python --python --quiet'; exit 0 ;;
+esac
+if [ "$FAIL_INSTALL" = 1 ]; then echo 'Download unavailable' >&2; exit 1; fi
+mkdir -p "$UV_TOOL_BIN_DIR"
+cp "$FAKE_STARTUP" "$UV_TOOL_BIN_DIR/startup"
+''' if existing_uv else 'echo WRONG UV >&2; exit 99'),
                 'uvx': 'echo WRONG UVX >&2; exit 99',
             }.items():
                 (tools / name).write_text('#!/bin/sh\n' + script)
                 (tools / name).chmod(0o755)
+            if private_uv:
+                private = home / '.local/share/startup/runtime/bin'
+                private.mkdir(parents=True)
+                downloaded = root / 'uv-install.sh'
+                # GIVEN the runtime from an earlier installation.
+                subprocess.run([str(tools / 'curl'), '-o', str(downloaded)], check=True)
+                subprocess.run(['/bin/sh', str(downloaded)], check=True, capture_output=True,
+                               env={**os.environ, 'UV_UNMANAGED_INSTALL': str(private)})
             fake = root / 'startup'
             fake.write_text(STARTUP)
             fake.chmod(0o755)
@@ -84,22 +103,45 @@ class InstallerAgentSkillTests(unittest.TestCase):
                 check=False, start_new_session=True, timeout=60,
                 env={**os.environ, 'HOME': str(home), 'SHELL': '/bin/bash',
                      'PATH': f'{tools}:{os.environ["PATH"]}',
-                     'ANSWERS': answers, 'FAKE_STARTUP': str(fake), 'FAKE_SKILLS': '1' if skills else '0', 'FAKE_FACTORY': '1' if factory else '0', 'FAKE_FACTORY_FAILURE': '1' if factory_failure else '0'},
+                     'FAIL_INSTALL': '1' if install_failure else '0', 'ANSWERS': answers, 'FAKE_STARTUP': str(fake), 'FAKE_SKILLS': '1' if skills else '0', 'FAKE_FACTORY': '1' if factory else '0', 'FAKE_FACTORY_FAILURE': '1' if factory_failure else '0'},
             )
             installed = (home / '.claude/skills/deploy-your-startup').is_dir()
             return result, installed
 
-    def test_install_shows_progress_with_existing_uv(self):
+    def test_install_replaces_unusable_uv_with_private_fallback(self):
         # GIVEN uv and uvx already on PATH,
         # WHEN the real installer runs with local download boundaries,
-        # THEN its private runtime takes precedence and installation stays visible.
+        # THEN it uses a private fallback and shows concise installation progress.
         result, _ = self.install()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertNotIn('shadowed', result.stderr)
         self.assertNotIn('WRONG UV', result.stderr)
-        self.assertIn('Downloading Python and CLI dependencies', result.stderr)
-        self.assertIn('Installing Python 3.14 and Startup CLI', result.stdout)
-        self.assertIn('Verifying Startup CLI', result.stdout)
+        self.assertNotIn('Downloading Python and CLI dependencies', result.stderr)
+        self.assertIn('Installing a compatible uv', result.stdout)
+        self.assertIn('Verifying startup', result.stdout)
+
+    def test_reuses_compatible_uv_without_downloading_another_copy(self):
+        # GIVEN a compatible uv, WHEN installing, THEN reuse it without a uv download.
+        result, _ = self.install(existing_uv=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('Using existing uv', result.stdout)
+        self.assertNotIn('Installing a compatible uv', result.stdout)
+        self.assertIn('Startup CLI is ready', result.stdout)
+
+    def test_reuses_previous_private_uv(self):
+        # GIVEN an earlier private uv, WHEN installing, THEN do not download it again.
+        result, _ = self.install(private_uv=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('Using existing installer-managed uv', result.stdout)
+        self.assertNotIn('Installing a compatible uv', result.stdout)
+
+    def test_failed_install_preserves_diagnostics_and_never_claims_success(self):
+        # GIVEN a failed download, WHEN installing, THEN show the underlying error.
+        result, _ = self.install(existing_uv=True, install_failure=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Download unavailable', result.stderr)
+        self.assertIn('installation failed', result.stderr)
+        self.assertNotIn('Startup CLI is ready', result.stdout)
 
     def test_install_points_agent_users_to_the_skill(self):
         # GIVEN a Mac with Claude Code and a CLI release that ships the skill,
@@ -107,7 +149,7 @@ class InstallerAgentSkillTests(unittest.TestCase):
         # THEN the next steps mention the skill without installing it unasked.
         result, installed = self.install()
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn('Installed. Next: startup doctor', result.stdout)
+        self.assertIn('Startup CLI is ready. Next: startup doctor', result.stdout)
         self.assertIn('Using a coding agent? Run: startup skills install', result.stdout)
         self.assertFalse(installed)
 
