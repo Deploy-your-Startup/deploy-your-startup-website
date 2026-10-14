@@ -1,8 +1,8 @@
 name: Deploy
 
 on:
+  # Required PR checks must run even for documentation-only changes.
   pull_request:
-    paths: ["frontend/**", "e2e_tests/**", ".dockerignore", ".github/workflows/deploy.yml", "tests/**", "scripts/**", "make.sh"]
   push:
     branches: [main]
     paths:
