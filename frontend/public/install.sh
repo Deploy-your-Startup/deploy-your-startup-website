@@ -1,5 +1,5 @@
 #!/bin/bash
-# Deploy Your Startup installer. Runtime tools stay in our own directory.
+# Deploy Your Startup installer. Keep the CLI isolated; reuse compatible uv.
 set -euo pipefail
 
 # The only place the CLI version is pinned; scripts/update_cli_release.py
@@ -42,31 +42,72 @@ if [ -L "$startup_root" ]; then
 fi
 mkdir -p "$startup_root/runtime/bin" "$startup_bin"
 
-echo "Installing Startup CLI $startup_cli_version with Python 3.14…"
-curl --proto '=https' --tlsv1.2 -fsSL \
-  https://astral.sh/uv/0.12.23/install.sh -o "$startup_tmp/uv-install.sh"
-# Match the launcher PATH so other uv installations do not trigger shadow warnings.
-PATH="$startup_root/runtime/bin:$PATH" \
-UV_UNMANAGED_INSTALL="$startup_root/runtime/bin" sh "$startup_tmp/uv-install.sh"
+echo "Setting up Startup CLI ${startup_cli_version}…"
 
-echo "Installing Python 3.14 and Startup CLI $startup_cli_version. Downloads may take a few minutes…"
-UV_PYTHON_INSTALL_DIR="$startup_root/python" \
-UV_TOOL_DIR="$startup_root/tools" \
-UV_TOOL_BIN_DIR="$startup_root/commands" \
-  "$startup_root/runtime/bin/uv" tool install --reinstall --managed-python --python 3.14 \
-  "git+https://github.com/Deploy-your-Startup/cli@$startup_cli_version"
+# Check capabilities instead of replacing a working user-owned uv installation.
+startup_uv_compatible() {
+  [ -n "$1" ] || return 1
+  "$1" --version >/dev/null 2>&1 || return 1
+  startup_uv_help="$("$1" tool install --help 2>/dev/null)" || return 1
+  for startup_option in --managed-python --python --quiet; do
+    case "$startup_uv_help" in
+      *"$startup_option"*) ;;
+      *) return 1 ;;
+    esac
+  done
+}
+startup_uv="$(command -v uv || true)"
+if startup_uv_compatible "$startup_uv"; then
+  echo "✓ Using existing uv"
+elif startup_uv_compatible "$startup_root/runtime/bin/uv"; then
+  startup_uv="$startup_root/runtime/bin/uv"
+  echo "✓ Using existing installer-managed uv"
+else
+  echo "→ Installing a compatible uv for Startup CLI…"
+  curl --proto '=https' --tlsv1.2 -fsSL \
+    https://astral.sh/uv/0.12.23/install.sh -o "$startup_tmp/uv-install.sh"
+  if ! PATH="$startup_root/runtime/bin:$PATH" \
+    UV_UNMANAGED_INSTALL="$startup_root/runtime/bin" \
+    sh "$startup_tmp/uv-install.sh" >"$startup_tmp/uv.log" 2>&1; then
+    cat "$startup_tmp/uv.log" >&2
+    exit 1
+  fi
+  startup_uv="$startup_root/runtime/bin/uv"
+  if ! startup_uv_compatible "$startup_uv"; then
+    echo "The installed uv could not be verified. Run the installer again." >&2
+    exit 1
+  fi
+fi
 
+# Preserve older installations; new ones share uv's managed Python cache.
+if [ -d "$startup_root/python" ]; then
+  export UV_PYTHON_INSTALL_DIR="$startup_root/python"
+fi
+echo "→ Checking Startup CLI installation (first-time downloads may take a few minutes)…"
+if ! UV_TOOL_DIR="$startup_root/tools" \
+  UV_TOOL_BIN_DIR="$startup_root/commands" \
+  "$startup_uv" tool install --quiet --managed-python --python 3.14 \
+  "git+https://github.com/Deploy-your-Startup/cli@$startup_cli_version" \
+  >"$startup_tmp/install.log" 2>&1; then
+  echo "Startup CLI installation failed:" >&2
+  cat "$startup_tmp/install.log" >&2
+  exit 1
+fi
+
+printf '%s\n' "${startup_uv%/*}" > "$startup_root/uv-bin"
 cat > "$startup_tmp/startup" <<'LAUNCHER'
 #!/bin/sh
 # Deploy Your Startup launcher
-export PATH="$HOME/.local/share/startup/runtime/bin:$PATH"
-export UV_PYTHON_INSTALL_DIR="$HOME/.local/share/startup/python"
+export PATH="$(cat "$HOME/.local/share/startup/uv-bin"):$PATH"
+if [ -d "$HOME/.local/share/startup/python" ]; then
+  export UV_PYTHON_INSTALL_DIR="$HOME/.local/share/startup/python"
+fi
 exec "$HOME/.local/share/startup/commands/startup" "$@"
 LAUNCHER
 chmod +x "$startup_tmp/startup"
 # Replace a previous symlink rather than writing through it into its environment.
 mv -f "$startup_tmp/startup" "$startup_target"
-echo "Verifying Startup CLI…"
+echo "→ Verifying startup…"
 "$startup_target" --help >/dev/null
 printf '%s\n' 'Deploy Your Startup managed installation' > "$startup_root/.startup-install"
 
@@ -125,7 +166,7 @@ if "$startup_onboard"; then
   }
   startup_onboarding </dev/tty
 else
-  echo "Installed. Next: startup doctor"
+  echo "✓ Startup CLI is ready. Next: startup doctor"
   if "$startup_agent_skill"; then
     echo "Using a coding agent? Run: startup skills install"
   fi

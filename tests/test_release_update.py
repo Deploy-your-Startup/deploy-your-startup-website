@@ -51,7 +51,7 @@ class ReleaseUpdateTests(unittest.TestCase):
         _, updated, _ = self.update('v0.1.3')
         self.assertEqual(len(re.findall(r'v\d+\.\d+\.\d+', updated)), 1)
         self.assertIn('cli@$startup_cli_version', updated)
-        self.assertIn('Startup CLI $startup_cli_version', updated)
+        self.assertIn('Startup CLI ${startup_cli_version}', updated)
 
     def test_versions_are_compared_numerically(self):
         output, updated, original = self.update('v0.1.10')

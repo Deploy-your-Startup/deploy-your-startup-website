@@ -24,3 +24,27 @@ remain the deployment credentials.
 If an update or deploy fails, inspect the Deploy run before changing the pin.
 For a withdrawal, mark the CLI release as a prerelease and deploy the previous
 known-working installer pin manually. The automation never downgrades versions.
+
+## Runtime reuse
+
+The installer checks an existing `uv` for the required tool-install options.
+It reuses compatible installations without updating them. Otherwise it reuses
+its previous private uv or downloads the pinned fallback into its own directory.
+The launcher uses the selected uv directory for subsequent CLI operations.
+
+The CLI remains isolated under `~/.local/share/startup/tools`. Repeating the
+installer no longer forces reinstallation of the same pinned Git release.
+New installations use uv's managed Python storage; older installations keep
+using their private Python directory. Users do not need to install Python
+manually. Uninstalling removes the managed CLI and private fallback, while
+shared uv and Python installations remain available to other tools.
+
+Installation output shows the current step. Dependency output is suppressed on
+success and printed on failure; failures never print the ready message.
+
+Run the installer process tests with `python3 -m unittest discover -s tests -v`.
+On macOS, also run `python3 scripts/check_installer_e2e.py /path/to/cli-checkout`
+with uv available. This exercises real uv and the real CLI from the checkout's
+HEAD in a temporary home, replacing only the GitHub source URL with local Git.
+It verifies installation, repeat-install stability, CLI help, shell setup and
+uninstallation. Python and dependency downloads may require network access.
