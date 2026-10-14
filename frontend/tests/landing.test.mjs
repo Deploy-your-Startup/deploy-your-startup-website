@@ -46,7 +46,7 @@ test("GIVEN the get-started page WHEN Astro builds THEN installation and optiona
   execFileSync("npm", ["run", "build"], { cwd: new URL("../", import.meta.url), stdio: "pipe" });
   const html = readFileSync(new URL("../dist/get-started/index.html", import.meta.url), "utf8");
   // THEN visitors know they can postpone creation and choose their stack/target later.
-  for (const text of ["Create your first startup now or come back later", "GitHub CLI is installed if needed", "Django/FastAPI, Vue or Astro", "your own server", "Server access and domain setup come later"]) {
+  for (const text of ["Create your first startup now or come back later", "GitHub CLI is installed if needed", "Name your startup, choose a template (Django/FastAPI, Vue or Astro), then its folder and hosting", "your own server", "Confirm your GitHub account and review the plan before creating the project", "Server access and domain setup come later"]) {
     assert.ok(html.includes(text), `Missing visible content: ${text}`);
   }
   assert.doesNotMatch(html, /Bring macOS, Chrome, GitHub, Hetzner/);

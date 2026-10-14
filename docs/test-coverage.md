@@ -27,7 +27,8 @@ Follow the [testing policy](testing-policy.md) when reporting completion.
   invalid token, missing GitHub CLI, rejected checksum, CLI-version guard,
   optional skills, **Later**, **Create now**, and failed project setup.
 - Rendered-page integration (`frontend/tests/landing.test.mjs`): real Astro build
-  communicates optional project creation and stack/provider choices.
+  communicates optional project creation and the name/template/folder/hosting/
+  GitHub confirmation/review order.
 - Browser E2E (`e2e_tests/tests/site.spec.ts`): get-started instructions and the
   expandable Cloudflare landing-page command on the real production build.
 - Uninstaller integration (`tests/test_installer_agent_skill.py`): removes only

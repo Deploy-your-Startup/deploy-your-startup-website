@@ -152,6 +152,7 @@ if "$startup_onboard"; then
     read -r -p "Create a startup now? [y/N] " startup_answer
     case "$startup_answer" in
       [yY]*)
+        echo "Next: startup name → template → project folder → hosting → GitHub account → review and create."
         if ! "$startup_target" bootstrap; then
           echo "CLI setup is complete. Project setup did not finish; existing project files are preserved." >&2
           echo "Follow the reported next step, or rerun startup bootstrap with the same project name and folder." >&2

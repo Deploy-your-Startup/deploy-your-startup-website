@@ -30,6 +30,8 @@ test("GIVEN a new visitor WHEN opening get-started THEN setup can finish before 
   await expect(page.getByText("Create your first startup now or come back later.", { exact: false })).toBeVisible();
   await expect(page.getByText("GitHub CLI is installed if needed.", { exact: false })).toBeVisible();
   await expect(page.getByText("your own server", { exact: false })).toBeVisible();
+  await expect(page.getByText("Name your startup, choose a template", { exact: false })).toBeVisible();
+  await expect(page.getByText("Confirm your GitHub account and review the plan", { exact: false })).toBeVisible();
   await expect(page.locator("#onboarding-code")).toContainText("--onboard");
   await page.getByText("Only need a landing page first?", { exact: true }).click();
   await expect(page.locator("#pitch-code")).toContainText("startup bootstrap --kind pitch");

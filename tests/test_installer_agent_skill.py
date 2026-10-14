@@ -227,6 +227,8 @@ esac
         result, _ = self.install('--onboard', answers='\ny\n')
         self.assertEqual(result.returncode, 0, result.stdout)
         self.assertIn('BOOTSTRAP STARTED: bootstrap', result.stdout)
+        self.assertIn('startup name → template → project folder → hosting → GitHub account → review and create', result.stdout)
+        self.assertLess(result.stdout.index('Next: startup name'), result.stdout.index('BOOTSTRAP STARTED'))
         self.assertNotIn('--domain-owned', result.stdout)
         self.assertNotIn('--kind', result.stdout)
         self.assertNotIn('--provider', result.stdout)
