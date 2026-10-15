@@ -48,3 +48,12 @@ with uv available. This exercises real uv and the real CLI from the checkout's
 HEAD in a temporary home, replacing only the GitHub source URL with local Git.
 It verifies installation, repeat-install stability, CLI help, shell setup and
 uninstallation. Python and dependency downloads may require network access.
+
+## Factory onboarding
+
+`--onboard` delegates workspace creation, agent skill setup and first startup
+setup to `startup factory onboard`, avoiding a second skill-install prompt. The CLI owns the pinned public Factory source and
+version. Plain installation and CLI updates create no Factory. Existing Factory
+files survive onboarding retries; Sprowi requires a separate optional setup.
+Deploy this installer change only with a published CLI release containing the
+Factory command; the installer fails clearly if that capability is absent.

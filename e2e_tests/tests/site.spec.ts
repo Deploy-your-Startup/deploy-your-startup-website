@@ -20,3 +20,13 @@ test("GIVEN a mobile visitor WHEN the homepage opens THEN its content fits the v
   await expect(page.locator("main")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(391);
 });
+
+
+test("GIVEN a new user WHEN opening get-started THEN the command includes their Factory workspace", async ({ page }) => {
+  // GIVEN the production build, WHEN a visitor opens onboarding.
+  await page.goto("/get-started");
+  // THEN the visible instructions explain the workspace and offer the installer handoff.
+  await expect(page.getByText(/your own Factory workspace and your first project/).first()).toBeVisible();
+  await expect(page.locator("#onboarding-code")).toContainText("bash -s -- --onboard");
+  await expect(page.getByRole("button", { name: "Copy paste into your terminal command", exact: false })).toBeVisible();
+});

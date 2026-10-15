@@ -49,14 +49,16 @@ case "$1 $2" in
   "skills --help") [ "$FAKE_SKILLS" = 1 ] ;;
   "skills install") echo "Installed for claude"; mkdir -p "$HOME/.claude/skills/deploy-your-startup" ;;
   "doctor "*) exit 0 ;;
-  "bootstrap "*) echo "BOOTSTRAP STARTED: $*" ;;
+  "factory --help") [ "${FAKE_FACTORY:-1}" = 1 ] ;;
+  "factory onboard") echo "FACTORY ONBOARDING STARTED"; exit "${FAKE_FACTORY_FAILURE:-0}" ;;
+  "bootstrap "*) echo "UNEXPECTED DIRECT BOOTSTRAP"; exit 99 ;;
   *) exit 0 ;;
 esac
 '''
 
 
 class InstallerAgentSkillTests(unittest.TestCase):
-    def install(self, *args, skills=True, agents=('.claude',), answers='', existing_uv=False, install_failure=False, private_uv=False):
+    def install(self, *args, skills=True, agents=('.claude',), answers='', existing_uv=False, install_failure=False, private_uv=False, factory=True, factory_failure=False):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             tools, home = root / 'tools', root / 'home'
@@ -109,7 +111,7 @@ cp "$FAKE_STARTUP" "$UV_TOOL_BIN_DIR/startup"
                 check=False, start_new_session=True, timeout=60,
                 env={**os.environ, 'HOME': str(home), 'SHELL': '/bin/bash',
                      'PATH': f'{tools}:{os.environ["PATH"]}',
-                     'FAIL_INSTALL': '1' if install_failure else '0', 'ANSWERS': answers, 'FAKE_STARTUP': str(fake), 'FAKE_SKILLS': '1' if skills else '0'},
+                     'FAKE_FACTORY': '1' if factory else '0', 'FAKE_FACTORY_FAILURE': '1' if factory_failure else '0', 'FAIL_INSTALL': '1' if install_failure else '0', 'ANSWERS': answers, 'FAKE_STARTUP': str(fake), 'FAKE_SKILLS': '1' if skills else '0'},
             )
             installed = (home / '.claude/skills/deploy-your-startup').is_dir()
             return result, installed
@@ -173,24 +175,14 @@ cp "$FAKE_STARTUP" "$UV_TOOL_BIN_DIR/startup"
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertNotIn('startup skills install', result.stdout)
 
-    def test_onboarding_installs_skill_when_user_agrees(self):
-        # GIVEN guided onboarding on a Mac with Claude Code,
-        # WHEN the user answers yes to the agent question,
-        # THEN the skill is installed before project setup starts.
-        result, installed = self.install('--onboard', answers='y\n')
+    def test_factory_owns_agent_skill_setup(self):
+        # GIVEN a configured coding agent, WHEN onboarding creates the Factory,
+        # THEN setup is delegated once without a second skill-install prompt.
+        result, installed = self.install('--onboard')
         self.assertEqual(result.returncode, 0, result.stdout)
-        self.assertIn('Teach your coding agent', result.stdout)
-        self.assertTrue(installed)
-        self.assertLess(result.stdout.index('Installed for claude'),
-                        result.stdout.index('BOOTSTRAP STARTED'))
-
-    def test_onboarding_skips_skill_by_default(self):
-        # GIVEN the same onboarding, WHEN the user just presses Return,
-        # THEN nothing is installed and project setup continues.
-        result, installed = self.install('--onboard', answers='\n')
-        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertNotIn('Teach your coding agent', result.stdout)
         self.assertFalse(installed)
-        self.assertIn('BOOTSTRAP STARTED', result.stdout)
+        self.assertIn('FACTORY ONBOARDING STARTED', result.stdout)
 
     def test_onboarding_lets_the_cli_ask_about_the_domain(self):
         # GIVEN guided onboarding for someone who may not own a domain yet,
@@ -198,9 +190,25 @@ cp "$FAKE_STARTUP" "$UV_TOOL_BIN_DIR/startup"
         # THEN the installer does not claim ownership, so the CLI can offer registration.
         result, _ = self.install('--onboard', answers='\n')
         self.assertEqual(result.returncode, 0, result.stdout)
-        self.assertIn('BOOTSTRAP STARTED: bootstrap --kind fullstack --provider hetzner', result.stdout)
+        self.assertIn('FACTORY ONBOARDING STARTED', result.stdout)
+        self.assertNotIn('UNEXPECTED DIRECT BOOTSTRAP', result.stdout)
         self.assertNotIn('--domain-owned', result.stdout)
         self.assertIn('register one during setup', result.stdout)
+
+    def test_factory_capability_is_required_before_handoff(self):
+        # GIVEN an older installed CLI, WHEN onboarding reaches the Factory,
+        # THEN it stops clearly instead of starting a standalone startup.
+        result, _ = self.install('--onboard', answers='\n', factory=False)
+        self.assertIn('does not include Factory onboarding', result.stdout)
+        self.assertNotIn('FACTORY ONBOARDING STARTED', result.stdout)
+        self.assertNotIn('UNEXPECTED DIRECT BOOTSTRAP', result.stdout)
+
+    def test_factory_setup_failure_does_not_claim_completion(self):
+        # GIVEN failed workspace setup, WHEN the actual installer hands off,
+        # THEN the resume/success message is not printed.
+        result, _ = self.install('--onboard', answers='\n', factory_failure=True)
+        self.assertIn('FACTORY ONBOARDING STARTED', result.stdout)
+        self.assertNotIn('To continue or create another startup:', result.stdout)
 
 
 if __name__ == '__main__':

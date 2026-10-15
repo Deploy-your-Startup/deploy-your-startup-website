@@ -34,6 +34,7 @@ test("GIVEN the get-started page WHEN Astro builds THEN visitors find the landin
   // THEN the full application stays the default and the landing page is an explicit, copyable option.
   assert.ok(html.indexOf('id="onboarding-code"') < html.indexOf('id="pitch-code"'));
   assert.ok(option);
+  assert.ok(html.includes("your own Factory workspace and your first project"));
   for (const text of ["Only need a landing page first?", "Cloudflare Pages", "install.sh | bash", "gh auth setup-git", "startup bootstrap --kind pitch --template-version v0.1.1"]) {
     assert.ok(option.includes(text), `Missing visible content: ${text}`);
   }
