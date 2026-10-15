@@ -49,6 +49,11 @@ def main():
             )
             if result.returncode:
                 raise AssertionError(result.stdout + result.stderr)
+            # THEN successful steps never leak dependency chatter or PATH warnings.
+            assert not result.stderr, result.stderr
+            for noise in ('Resolved ', 'Prepared ', 'Installed 52 packages',
+                          'not on your PATH', 'uv tool update-shell'):
+                assert noise not in result.stdout, result.stdout
             return result.stdout
 
         # WHEN installing twice, THEN uv preserves the installed executable.
