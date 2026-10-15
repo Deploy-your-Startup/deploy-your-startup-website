@@ -118,10 +118,15 @@ if "$startup_onboard"; then
         [yY]*) "$startup_target" skills install || echo "Skipped. Later: startup skills install" ;;
       esac
     fi
-    printf "\n[3/3] Set up your project\n"
-    # No --domain-owned: the CLI asks and offers registration without a domain.
-    "$startup_target" bootstrap --kind fullstack --provider hetzner
-    echo "To run setup again: startup bootstrap --kind fullstack --provider hetzner"
+    printf "\n[3/3] Set up your Factory and first startup\n"
+    # Factory onboarding owns its template pin, setup and startup output folder.
+    if ! "$startup_target" factory --help >/dev/null 2>&1; then
+      echo "This CLI release does not include Factory onboarding. Update the installer and try again." >&2
+      return 1
+    fi
+    "$startup_target" factory onboard
+    echo "To continue or create another startup: cd ~/Projects/startup-factory && startup bootstrap"
+    echo "If you chose another Factory folder, use that folder instead."
   }
   startup_onboarding </dev/tty
 else

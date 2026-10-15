@@ -40,14 +40,16 @@ case "$1 $2" in
   "skills --help") [ "$FAKE_SKILLS" = 1 ] ;;
   "skills install") echo "Installed for claude"; mkdir -p "$HOME/.claude/skills/deploy-your-startup" ;;
   "doctor "*) exit 0 ;;
-  "bootstrap "*) echo "BOOTSTRAP STARTED: $*" ;;
+  "factory --help") [ "${FAKE_FACTORY:-1}" = 1 ] ;;
+  "factory onboard") echo "FACTORY ONBOARDING STARTED"; exit "${FAKE_FACTORY_FAILURE:-0}" ;;
+  "bootstrap "*) echo "UNEXPECTED DIRECT BOOTSTRAP"; exit 99 ;;
   *) exit 0 ;;
 esac
 '''
 
 
 class InstallerAgentSkillTests(unittest.TestCase):
-    def install(self, *args, skills=True, agents=('.claude',), answers=''):
+    def install(self, *args, skills=True, agents=('.claude',), answers='', factory=True, factory_failure=False):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             tools, home = root / 'tools', root / 'home'
@@ -82,7 +84,7 @@ class InstallerAgentSkillTests(unittest.TestCase):
                 check=False, start_new_session=True, timeout=60,
                 env={**os.environ, 'HOME': str(home), 'SHELL': '/bin/bash',
                      'PATH': f'{tools}:{os.environ["PATH"]}',
-                     'ANSWERS': answers, 'FAKE_STARTUP': str(fake), 'FAKE_SKILLS': '1' if skills else '0'},
+                     'ANSWERS': answers, 'FAKE_STARTUP': str(fake), 'FAKE_SKILLS': '1' if skills else '0', 'FAKE_FACTORY': '1' if factory else '0', 'FAKE_FACTORY_FAILURE': '1' if factory_failure else '0'},
             )
             installed = (home / '.claude/skills/deploy-your-startup').is_dir()
             return result, installed
@@ -126,7 +128,7 @@ class InstallerAgentSkillTests(unittest.TestCase):
         self.assertIn('Teach your coding agent', result.stdout)
         self.assertTrue(installed)
         self.assertLess(result.stdout.index('Installed for claude'),
-                        result.stdout.index('BOOTSTRAP STARTED'))
+                        result.stdout.index('FACTORY ONBOARDING STARTED'))
 
     def test_onboarding_skips_skill_by_default(self):
         # GIVEN the same onboarding, WHEN the user just presses Return,
@@ -134,7 +136,7 @@ class InstallerAgentSkillTests(unittest.TestCase):
         result, installed = self.install('--onboard', answers='\n')
         self.assertEqual(result.returncode, 0, result.stdout)
         self.assertFalse(installed)
-        self.assertIn('BOOTSTRAP STARTED', result.stdout)
+        self.assertIn('FACTORY ONBOARDING STARTED', result.stdout)
 
     def test_onboarding_lets_the_cli_ask_about_the_domain(self):
         # GIVEN guided onboarding for someone who may not own a domain yet,
@@ -142,9 +144,25 @@ class InstallerAgentSkillTests(unittest.TestCase):
         # THEN the installer does not claim ownership, so the CLI can offer registration.
         result, _ = self.install('--onboard', answers='\n')
         self.assertEqual(result.returncode, 0, result.stdout)
-        self.assertIn('BOOTSTRAP STARTED: bootstrap --kind fullstack --provider hetzner', result.stdout)
+        self.assertIn('FACTORY ONBOARDING STARTED', result.stdout)
+        self.assertNotIn('UNEXPECTED DIRECT BOOTSTRAP', result.stdout)
         self.assertNotIn('--domain-owned', result.stdout)
         self.assertIn('register one during setup', result.stdout)
+
+    def test_factory_capability_is_required_before_handoff(self):
+        # GIVEN an older installed CLI, WHEN onboarding reaches the Factory,
+        # THEN it stops clearly instead of starting a standalone startup.
+        result, _ = self.install('--onboard', answers='\n', factory=False)
+        self.assertIn('does not include Factory onboarding', result.stdout)
+        self.assertNotIn('FACTORY ONBOARDING STARTED', result.stdout)
+        self.assertNotIn('UNEXPECTED DIRECT BOOTSTRAP', result.stdout)
+
+    def test_factory_setup_failure_does_not_claim_completion(self):
+        # GIVEN failed workspace setup, WHEN the actual installer hands off,
+        # THEN the resume/success message is not printed.
+        result, _ = self.install('--onboard', answers='\n', factory_failure=True)
+        self.assertIn('FACTORY ONBOARDING STARTED', result.stdout)
+        self.assertNotIn('To continue or create another startup:', result.stdout)
 
 
 if __name__ == '__main__':

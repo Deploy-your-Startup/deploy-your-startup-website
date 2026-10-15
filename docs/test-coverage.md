@@ -18,3 +18,14 @@ For each changed critical flow record the integration case, browser case and
 status (covered, partial or unverified). Cover success, validation and denied
 access where applicable. Report skips and missing prerequisites explicitly.
 Follow the [testing policy](testing-policy.md) when reporting completion.
+
+
+## Factory onboarding
+
+The installer process tests exercise the real shell installer in a pseudo-terminal
+and verify delegation to `startup factory onboard` after GitHub, doctor and the
+optional agent skill. The installed CLI/downloads remain boundary stand-ins in
+that suite. The CLI Factory integration tests separately exercise real Copier,
+Git, bootstrap, registry persistence, failure/resume and owner preservation.
+Browser checks verify the built get-started page and copyable command. These
+checks do not establish one continuous fresh-Mac-to-live-cloud deployment.
