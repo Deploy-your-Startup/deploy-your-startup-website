@@ -49,8 +49,10 @@ esac
             'MISE_DATA_DIR': os.environ.get('MISE_DATA_DIR', str(Path.home() / '.local/share/mise')),
             'GIT_CONFIG_GLOBAL': '/dev/null', 'GIT_AUTHOR_NAME': 'Factory E2E',
             'GIT_AUTHOR_EMAIL': 'test@example.invalid', 'NO_COLOR': '1',
-            'GH_TOKEN': '', 'GITHUB_TOKEN': '',
+            'GH_TOKEN': '', 'GITHUB_TOKEN': '', 'npm_config_cache': str(root / 'npm-cache'),
         }
+        for key in ('CI', 'npm_config_yes', 'NPM_CONFIG_YES'):
+            environment.pop(key, None)
         # GIVEN an isolated home and the actual candidate installer.
         pid, terminal = pty.fork()
         if pid == 0:
@@ -105,8 +107,10 @@ esac
             assert (factory / 'projects/tooling' / entry['name'] / '.git').is_dir()
         answers = json.loads(subprocess.check_output(['yq', '-o=json', '.', str(factory / '.copier-answers.yml')], text=True))
         assert answers['_src_path'] == 'https://github.com/Deploy-your-Startup/startup-factory-template.git'
-        assert answers['_commit'] == 'v0.1.0'
+        assert answers['_commit'] == 'v0.1.1'
         assert (home / '.agents/skills/deploy-your-startup/SKILL.md').is_file()
+        assert 'sprowi-task — installing... ' in text
+        assert 'failed' not in text.lower()
         assert not (factory / 'projects/startups/example-app').exists()
         print('Real installer-to-Factory E2E passed; no cloud resources were created.')
 
