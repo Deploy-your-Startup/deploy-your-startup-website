@@ -29,3 +29,13 @@ that suite. The CLI Factory integration tests separately exercise real Copier,
 Git, bootstrap, registry persistence, failure/resume and owner preservation.
 Browser checks verify the built get-started page and copyable command. These
 checks do not establish one continuous fresh-Mac-to-live-cloud deployment.
+
+
+`python3 scripts/check_installer_factory_e2e.py` runs the real shell installer in
+a macOS pseudo-terminal, downloads the published CLI and runtimes, checks doctor,
+creates the public Factory, installs its skills and tooling, reviews the first
+startup plan and cancels. Only GitHub authentication/identity is substituted;
+there are no cloud or repository mutations. The `installer-factory` macOS CI job
+runs this scenario for PRs and production deployments and gates deployment.
+Actual GitHub OAuth, Keychain interaction, provider setup and a live application
+remain unverified by this cancellation scenario.

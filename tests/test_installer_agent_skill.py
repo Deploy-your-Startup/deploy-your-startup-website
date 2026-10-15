@@ -119,22 +119,12 @@ class InstallerAgentSkillTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertNotIn('startup skills install', result.stdout)
 
-    def test_onboarding_installs_skill_when_user_agrees(self):
-        # GIVEN guided onboarding on a Mac with Claude Code,
-        # WHEN the user answers yes to the agent question,
-        # THEN the skill is installed before project setup starts.
-        result, installed = self.install('--onboard', answers='y\n')
+    def test_factory_owns_agent_skill_setup(self):
+        # GIVEN a configured coding agent, WHEN onboarding creates the Factory,
+        # THEN setup is delegated once without a second skill-install prompt.
+        result, installed = self.install('--onboard')
         self.assertEqual(result.returncode, 0, result.stdout)
-        self.assertIn('Teach your coding agent', result.stdout)
-        self.assertTrue(installed)
-        self.assertLess(result.stdout.index('Installed for claude'),
-                        result.stdout.index('FACTORY ONBOARDING STARTED'))
-
-    def test_onboarding_skips_skill_by_default(self):
-        # GIVEN the same onboarding, WHEN the user just presses Return,
-        # THEN nothing is installed and project setup continues.
-        result, installed = self.install('--onboard', answers='\n')
-        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertNotIn('Teach your coding agent', result.stdout)
         self.assertFalse(installed)
         self.assertIn('FACTORY ONBOARDING STARTED', result.stdout)
 

@@ -28,8 +28,8 @@ known-working installer pin manually. The automation never downgrades versions.
 
 ## Factory onboarding
 
-`--onboard` delegates workspace creation and first startup setup to
-`startup factory onboard`. The CLI owns the pinned public Factory source and
+`--onboard` delegates workspace creation, agent skill setup and first startup
+setup to `startup factory onboard`, avoiding a second skill-install prompt. The CLI owns the pinned public Factory source and
 version. Plain installation and CLI updates create no Factory. Existing Factory
 files survive onboarding retries; Sprowi requires a separate optional setup.
 Deploy this installer change only with a published CLI release containing the

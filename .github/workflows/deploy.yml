@@ -91,6 +91,19 @@ jobs:
       - name: Check installer and landing page
         run: ./make.sh test
 
+  installer-factory:
+    needs: release
+    if: ${{ always() && (github.event_name == 'pull_request' || needs.release.outputs.deploy == 'true') }}
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.release.outputs.sha || github.sha }}
+      - name: Install Factory workspace prerequisites
+        run: brew install mise yq kubectl
+      - name: Test real installer and published CLI through Factory setup
+        run: python3 scripts/check_installer_factory_e2e.py
+
   browser:
     needs: release
     if: ${{ always() && (github.event_name == 'pull_request' || needs.release.outputs.deploy == 'true') }}
@@ -109,7 +122,7 @@ jobs:
       - run: ./make.sh test
 
   deploy:
-    needs: [release, test, browser]
+    needs: [release, test, browser, installer-factory]
     uses: philipp-lein/deploy-your-startup/.github/workflows/deploy-pages.yml@main
     with:
       project_name: deploy-your-startup-website

@@ -4,7 +4,7 @@ set -euo pipefail
 
 # The only place the CLI version is pinned; scripts/update_cli_release.py
 # advances it on stable releases. Each CLI release pins its tested template.
-startup_cli_version="v0.1.12"
+startup_cli_version="v0.1.14"
 
 startup_onboard=false
 case "${1:-}" in
@@ -112,12 +112,6 @@ if "$startup_onboard"; then
       echo "Complete the missing setup above in another terminal."
       read -r -p "Press Return to check again (Ctrl-C to stop). "
     done
-    if "$startup_agent_skill"; then
-      read -r -p "Teach your coding agent (Claude Code, Codex, OpenCode) to use startup? [y/N] " startup_answer
-      case "$startup_answer" in
-        [yY]*) "$startup_target" skills install || echo "Skipped. Later: startup skills install" ;;
-      esac
-    fi
     printf "\n[3/3] Set up your Factory and first startup\n"
     # Factory onboarding owns its template pin, setup and startup output folder.
     if ! "$startup_target" factory --help >/dev/null 2>&1; then
