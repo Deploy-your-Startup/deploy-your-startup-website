@@ -12,6 +12,8 @@ INSTALLER = Path(__file__).resolve().parents[1] / 'frontend/public/install.sh'
 CURL = '''
 while [ "$#" -gt 0 ]; do [ "$1" = -o ] && out="$2"; shift; done
 cat > "$out" <<'UVINSTALL'
+echo "downloading uv 0.12.23 aarch64-apple-darwin"
+echo "everything's installed!"
 mkdir -p "$UV_UNMANAGED_INSTALL"
 cat > "$UV_UNMANAGED_INSTALL/uv" <<'UV'
 #!/bin/sh
@@ -25,6 +27,9 @@ done
 if [ "${quiet:-false}" = false ]; then
   echo "Downloading Python and CLI dependencies" >&2
 fi
+echo 'Resolved 52 packages' >&2
+echo 'Installed 52 packages' >&2
+echo 'warning: commands is not on your PATH; run uv tool update-shell' >&2
 mkdir -p "$UV_TOOL_BIN_DIR"
 cp "$FAKE_STARTUP" "$UV_TOOL_BIN_DIR/startup"
 UV
@@ -67,6 +72,9 @@ class InstallerAgentSkillTests(unittest.TestCase):
   "tool install --help") echo '--managed-python --python --quiet'; exit 0 ;;
 esac
 if [ "$FAIL_INSTALL" = 1 ]; then echo 'Download unavailable' >&2; exit 1; fi
+echo 'Resolved 52 packages' >&2
+echo 'Installed 52 packages' >&2
+echo 'warning: commands is not on your PATH; run uv tool update-shell' >&2
 mkdir -p "$UV_TOOL_BIN_DIR"
 cp "$FAKE_STARTUP" "$UV_TOOL_BIN_DIR/startup"
 ''' if existing_uv else 'echo WRONG UV >&2; exit 99'),
@@ -117,6 +125,11 @@ cp "$FAKE_STARTUP" "$UV_TOOL_BIN_DIR/startup"
         self.assertNotIn('Downloading Python and CLI dependencies', result.stderr)
         self.assertIn('Installing a compatible uv', result.stdout)
         self.assertIn('Verifying startup', result.stdout)
+        self.assertEqual(result.stderr, '')
+        for noise in ('downloading uv', "everything's installed!", 'Resolved 52 packages',
+                      'Installed 52 packages', 'not on your PATH', 'uv tool update-shell'):
+            self.assertNotIn(noise, result.stdout)
+
 
     def test_reuses_compatible_uv_without_downloading_another_copy(self):
         # GIVEN a compatible uv, WHEN installing, THEN reuse it without a uv download.
@@ -125,6 +138,7 @@ cp "$FAKE_STARTUP" "$UV_TOOL_BIN_DIR/startup"
         self.assertIn('Using existing uv', result.stdout)
         self.assertNotIn('Installing a compatible uv', result.stdout)
         self.assertIn('Startup CLI is ready', result.stdout)
+        self.assertEqual(result.stderr, '')
 
     def test_reuses_previous_private_uv(self):
         # GIVEN an earlier private uv, WHEN installing, THEN do not download it again.
