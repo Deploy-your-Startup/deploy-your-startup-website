@@ -32,5 +32,7 @@ known-working installer pin manually. The automation never downgrades versions.
 setup to `startup factory onboard`, avoiding a second skill-install prompt. The CLI owns the pinned public Factory source and
 version. Plain installation and CLI updates create no Factory. Existing Factory
 files survive onboarding retries; Sprowi requires a separate optional setup.
+Before the setup check, onboarding requests missing GitHub workflow and package
+scopes with `gh auth refresh` in the same terminal and names the signed-in account.
 Deploy this installer change only with a published CLI release containing the
 Factory command; the installer fails clearly if that capability is absent.

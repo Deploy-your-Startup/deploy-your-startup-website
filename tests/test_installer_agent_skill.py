@@ -49,7 +49,7 @@ esac
 
 
 class InstallerAgentSkillTests(unittest.TestCase):
-    def install(self, *args, skills=True, agents=('.claude',), answers='', factory=True, factory_failure=False):
+    def install(self, *args, skills=True, agents=('.claude',), answers='', factory=True, factory_failure=False, gh='exit 0'):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             tools, home = root / 'tools', root / 'home'
@@ -59,7 +59,7 @@ class InstallerAgentSkillTests(unittest.TestCase):
                 (home / agent).mkdir(parents=True)
             for name, script in {
                 'curl': CURL, 'uname': 'echo Darwin',
-                'gh': 'exit 0',
+                'gh': gh,
                 'uv': 'echo WRONG UV >&2; exit 99',
                 'uvx': 'echo WRONG UVX >&2; exit 99',
             }.items():
@@ -127,6 +127,38 @@ class InstallerAgentSkillTests(unittest.TestCase):
         self.assertNotIn('Teach your coding agent', result.stdout)
         self.assertFalse(installed)
         self.assertIn('FACTORY ONBOARDING STARTED', result.stdout)
+
+    def test_onboarding_repairs_missing_github_scopes_in_place(self):
+        # GIVEN a GitHub login without the workflow scope (a GitHub boundary),
+        # WHEN onboarding connects GitHub,
+        # THEN the installer requests the scopes itself and names the account.
+        calls = Path(tempfile.mkdtemp()) / 'gh-calls'
+        gh = f'''echo "$*" >> {calls}
+case "$*" in
+  "auth status -h github.com --active") echo "  - Token scopes: 'gist', 'repo', 'write:packages'" ;;
+  "api user --jq .login") echo example-owner ;;
+esac'''
+        result, _ = self.install('--onboard', answers='\n', gh=gh)
+        self.assertEqual(result.returncode, 0, result.stdout)
+        requested = calls.read_text().splitlines()
+        self.assertIn('auth refresh -h github.com -s repo,workflow,read:packages,write:packages', requested)
+        self.assertIn('Using GitHub account example-owner.', result.stdout)
+        self.assertLess(result.stdout.index('Using GitHub account'), result.stdout.index('[2/3] Check this Mac'))
+        # The new-terminal hint waits until onboarding no longer needs this one.
+        self.assertEqual(result.stdout.count('Open a new terminal to use startup.'), 1)
+        self.assertLess(result.stdout.index('FACTORY ONBOARDING STARTED'), result.stdout.index('Open a new terminal'))
+
+    def test_onboarding_keeps_a_complete_github_login(self):
+        # GIVEN a GitHub login that already has every required scope,
+        # WHEN onboarding connects GitHub, THEN no browser refresh is requested.
+        calls = Path(tempfile.mkdtemp()) / 'gh-calls'
+        gh = f'''echo "$*" >> {calls}
+case "$*" in
+  "auth status -h github.com --active") echo "  - Token scopes: 'repo', 'workflow', 'write:packages'" ;;
+esac'''
+        result, _ = self.install('--onboard', answers='\n', gh=gh)
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertNotIn('auth refresh', calls.read_text())
 
     def test_onboarding_lets_the_cli_ask_about_the_domain(self):
         # GIVEN guided onboarding for someone who may not own a domain yet,
