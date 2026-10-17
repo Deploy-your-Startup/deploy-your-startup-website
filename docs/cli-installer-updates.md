@@ -8,16 +8,26 @@ The CLI version is pinned in one place: `startup_cli_version` at the top of
 `frontend/public/install.sh`. Each CLI release pins its tested application
 template itself, so neither the installer nor the site names a template version.
 
-For a newer `vX.Y.Z` release, it updates only `startup_cli_version`, runs the website's tests and commits the pin to
-`main`. A fresh workflow dispatch then tests and deploys that commit through the
-shared Cloudflare Pages workflow. Dispatch Deploy manually to check sooner.
+For a newer `vX.Y.Z` release, it updates only `startup_cli_version`, runs the
+website's tests and opens a pull request from `release/cli-vX.Y.Z`
+(`scripts/cli_release_pr.sh`). `main` is protected, so the pin never lands
+without review. Pull requests opened with the workflow token start no
+`pull_request` runs; the workflow therefore dispatches Deploy on the release
+branch, which runs the required checks there and never deploys. While that pull
+request is open, scheduled runs skip the release; a newer release closes older
+pin proposals. Merging the pull request deploys the pin. Dispatch Deploy on
+`main` manually to check for a release sooner.
+
+Opening the pull request requires the repository setting **Allow GitHub Actions
+to create and approve pull requests** (Settings → Actions → General).
 
 Drafts, prereleases, invalid version tags and versions at or below the current
 pin are skipped. Existing CLI
 installations update only when users rerun the installer.
 
-This uses the website repository's `GITHUB_TOKEN` with `contents: write` and
-`actions: write`; no cross-repository personal token is needed. The public CLI
+This uses the website repository's `GITHUB_TOKEN` with `contents: write`,
+`pull-requests: write` and `actions: write`; no cross-repository personal token
+is needed. The public CLI
 release metadata is read through the GitHub API. Existing Cloudflare credentials
 remain the deployment credentials.
 

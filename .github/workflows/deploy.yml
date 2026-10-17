@@ -25,12 +25,15 @@ permissions:
   contents: read
 
 jobs:
+  # Only main releases and deploys. A dispatch on a release/cli-* branch runs
+  # the pull request checks for a pin proposal instead.
   release:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
       actions: write
+      pull-requests: write
     outputs:
       deploy: ${{ steps.result.outputs.deploy }}
       sha: ${{ steps.result.outputs.sha }}
@@ -50,21 +53,25 @@ jobs:
           set -euo pipefail
           gh api repos/Deploy-your-Startup/cli/releases/latest > "$RUNNER_TEMP/cli-release.json"
           python3 scripts/update_cli_release.py --release "$RUNNER_TEMP/cli-release.json" >> "$GITHUB_OUTPUT"
-      - name: Test and commit a new installer pin
+      - name: Check for an open pin proposal
+        id: proposal
         if: steps.update.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.update.outputs.tag }}
+        run: scripts/cli_release_pr.sh pending "$TAG" >> "$GITHUB_OUTPUT"
+      # main is protected: propose the tested pin as a pull request.
+      - name: Test and propose a new installer pin
+        if: steps.update.outputs.changed == 'true' && steps.proposal.outputs.pending == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.update.outputs.tag }}
         run: |
           set -euo pipefail
           ./make.sh test
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add frontend/public/install.sh
-          git commit -m "Update installer to latest stable CLI release"
-          git push origin HEAD:main
-          # Token-authenticated pushes do not trigger another push workflow.
-          # Dispatch a fresh run so the reusable deploy checks out the new SHA.
-          gh workflow run deploy.yml --ref main
+          scripts/cli_release_pr.sh open "$TAG"
       - name: Select deployment commit
         id: result
         env:
@@ -93,7 +100,7 @@ jobs:
 
   installer-factory:
     needs: release
-    if: ${{ always() && (github.event_name == 'pull_request' || needs.release.outputs.deploy == 'true') }}
+    if: ${{ always() && (github.event_name == 'pull_request' || github.ref != 'refs/heads/main' || needs.release.outputs.deploy == 'true') }}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v7
@@ -106,13 +113,13 @@ jobs:
 
   browser:
     needs: release
-    if: ${{ always() && (github.event_name == 'pull_request' || needs.release.outputs.deploy == 'true') }}
+    if: ${{ always() && (github.event_name == 'pull_request' || github.ref != 'refs/heads/main' || needs.release.outputs.deploy == 'true') }}
     uses: philipp-lein/deploy-your-startup/.github/workflows/container-e2e.yml@feaba0ceca85b3f93acd1a4fc7dd1778d70e215c
     with:
       shards: 1
 
   pull-request-contract:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
