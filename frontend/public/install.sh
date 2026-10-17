@@ -4,9 +4,10 @@ set -euo pipefail
 
 # The only place the CLI version is pinned; scripts/update_cli_release.py
 # advances it on stable releases. Each CLI release pins its tested template.
-startup_cli_version="v0.1.17"
+startup_cli_version="v0.1.19"
 
 startup_onboard=false
+startup_new_terminal=false
 case "${1:-}" in
   --onboard) startup_onboard=true ;;
   "") ;;
@@ -50,6 +51,8 @@ PATH="$startup_root/runtime/bin:$PATH" \
 UV_UNMANAGED_INSTALL="$startup_root/runtime/bin" sh "$startup_tmp/uv-install.sh"
 
 echo "Installing Python 3.14 and Startup CLI $startup_cli_version. Downloads may take a few minutes…"
+# The launcher, not this directory, goes on PATH; hide uv's PATH warning about it.
+PATH="$startup_root/commands:$PATH" \
 UV_PYTHON_INSTALL_DIR="$startup_root/python" \
 UV_TOOL_DIR="$startup_root/tools" \
 UV_TOOL_BIN_DIR="$startup_root/commands" \
@@ -80,7 +83,8 @@ case ":$PATH:" in
     if ! grep -Fq 'export PATH="$HOME/.local/bin:$PATH"' "$startup_profile" 2>/dev/null; then
       printf '\n# Deploy Your Startup\nexport PATH="$HOME/.local/bin:$PATH"\n' >> "$startup_profile"
     fi
-    echo "Open a new terminal to use startup."
+    startup_new_terminal=true
+    "$startup_onboard" || echo "Open a new terminal to use startup."
     ;;
 esac
 # Coding agents learn the CLI from a bundled skill; older CLI releases lack it.
@@ -93,6 +97,13 @@ fi
 if "$startup_onboard"; then
   export PATH="$startup_bin:$PATH"
   # The installer may arrive through a pipe; prompts must read from the terminal.
+  startup_github_scopes() {
+    local status
+    status="$(gh auth status -h github.com --active 2>&1)" || return 1
+    case "$status" in *"'workflow'"*) ;; *) return 1 ;; esac
+    case "$status" in *"'read:packages'"*|*"'write:packages'"*) return 0 ;; esac
+    return 1
+  }
   startup_onboarding() {
     printf "\nYour terminal. Let's get started.\n\n"
     echo "You need GitHub and Hetzner Cloud. Bring a domain or register one during setup."
@@ -106,7 +117,15 @@ if "$startup_onboard"; then
     if ! gh auth status -h github.com >/dev/null 2>&1; then
       gh auth login -h github.com -p https -s repo,workflow,read:packages,write:packages
     fi
+    # An existing login may lack scopes the deployment needs; fix it here
+    # instead of sending the user to another terminal.
+    if ! startup_github_scopes; then
+      echo "GitHub needs access to workflows and packages. Approve it in your browser."
+      gh auth refresh -h github.com -s repo,workflow,read:packages,write:packages || true
+    fi
     gh auth setup-git
+    startup_github_account="$(gh api user --jq .login 2>/dev/null || true)"
+    [ -z "$startup_github_account" ] || echo "Using GitHub account $startup_github_account."
     printf "\n[2/3] Check this Mac\n"
     until "$startup_target" doctor; do
       echo "Complete the missing setup above in another terminal."
@@ -119,6 +138,7 @@ if "$startup_onboard"; then
       return 1
     fi
     "$startup_target" factory onboard
+    "$startup_new_terminal" && echo "Open a new terminal to use startup."
     echo "To continue or create another startup: cd ~/Projects/startup-factory && startup bootstrap"
     echo "If you chose another Factory folder, use that folder instead."
   }
