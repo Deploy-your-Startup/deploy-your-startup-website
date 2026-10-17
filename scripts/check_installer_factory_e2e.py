@@ -1,6 +1,6 @@
 """Real macOS installer → published CLI → Factory → startup-plan cancellation.
 
-Run with Python 3 on macOS with Git, mise, yq and kubectl installed. Public
+Run with Python 3 on macOS with Git, mise and yq installed. Public
 runtime/template downloads are real; only GitHub identity/auth is substituted.
 No account, cloud resource or remote repository is created.
 """
@@ -9,6 +9,7 @@ import errno
 import json
 import os
 import pty
+import re
 import select
 import shutil
 import signal
@@ -24,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main():
     if sys.platform != 'darwin':
         raise SystemExit('This E2E check requires macOS.')
-    missing = [tool for tool in ('git', 'mise', 'yq', 'kubectl') if not shutil.which(tool)]
+    missing = [tool for tool in ('git', 'mise', 'yq') if not shutil.which(tool)]
     if missing:
         raise SystemExit('Install E2E prerequisites: ' + ', '.join(missing))
     with tempfile.TemporaryDirectory(prefix='installer-factory-e2e-') as temporary:
@@ -107,7 +108,11 @@ esac
             assert (factory / 'projects/tooling' / entry['name'] / '.git').is_dir()
         answers = json.loads(subprocess.check_output(['yq', '-o=json', '.', str(factory / '.copier-answers.yml')], text=True))
         assert answers['_src_path'] == 'https://github.com/Deploy-your-Startup/startup-factory-template.git'
-        assert answers['_commit'] == 'v0.1.1'
+        # The released CLI pins its tested Factory template; expect that release.
+        factory_help = subprocess.run([str(launcher), 'factory', 'init', '--help'], env=environment, text=True, capture_output=True, check=True)
+        pinned = re.search(r'--version TEXT\s+\[default: (v\d+\.\d+\.\d+)\]', factory_help.stdout)
+        assert pinned, factory_help.stdout
+        assert answers['_commit'] == pinned.group(1)
         assert (home / '.agents/skills/deploy-your-startup/SKILL.md').is_file()
         assert 'sprowi-task — installing... ' in text
         assert 'failed' not in text.lower()
