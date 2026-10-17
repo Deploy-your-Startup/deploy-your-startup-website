@@ -3,19 +3,21 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 
-test("GIVEN the landing page WHEN Astro builds THEN visitors see the harness and two startups on a shared harness", () => {
+test("GIVEN the landing page WHEN Astro builds THEN visitors see the harness and four startups on a shared harness", () => {
   // GIVEN the real site, WHEN its production build renders the pages.
   execFileSync("npm", ["run", "build"], { cwd: new URL("../", import.meta.url), stdio: "pipe" });
   const html = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
   const section = html.match(/<section class="how-it-works"[\s\S]*?<\/section>/)?.[0];
 
-  // THEN the rendered section shows both apps on the shared foundation with working destinations.
+  // THEN the rendered section shows every app on the shared foundation with working destinations.
   assert.ok(section);
-  for (const text of ["Build your idea. Find out what works.", "features, real users and feedback", "About Phil", "Gaming Buch Club", "We take care of the harness.", "Agent-ready projects", "Automated checks", "Deployment & operations", "community contribution", "Ballern", "Go all in. Build. Ship. Validate."]) {
+  for (const text of ["Build your idea. Find out what works.", "features, real users and feedback", "About Phil", "Gaming Buch Club", "Kartenalbum", "Panda &amp; Puff", "We take care of the harness.", "Agent-ready projects", "Automated checks", "Deployment & operations", "community contribution", "Ballern", "Go all in. Build. Ship. Validate."]) {
     assert.ok(section.includes(text), `Missing visible content: ${text}`);
   }
   assert.match(section, /href="https:\/\/aboutphil\.de"/);
   assert.match(section, /href="https:\/\/gamingbuchclub\.de"/);
+  assert.match(section, /href="https:\/\/kartenalbum\.de"/);
+  assert.match(section, /href="https:\/\/shisha\.justin-salzburg\.de"/);
   assert.doesNotMatch(section, /runtime-flow|HTTPS|<script|Einfach ballern|Dann validieren/);
   assert.match(html, /class="factory"/);
   assert.match(html, /title="k3s - lightweight Kubernetes"/);

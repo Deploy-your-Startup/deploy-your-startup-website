@@ -168,6 +168,21 @@ const baseDomain = "deploy-your-startup.com";
               </div>
               <div class="example-caption"><h3>Gaming Buch Club</h3><span>Community app <b aria-hidden="true">↗</b></span></div>
             </a>
+            <a class="example-app" href="https://kartenalbum.de" target="_blank" rel="noopener">
+              <div class="app-preview preview-cards" aria-hidden="true">
+                <div class="preview-toolbar"><i></i><i></i><i></i><span>kartenalbum.de</span></div>
+                <div class="preview-deck"><span>✦</span><span>✦</span><span>✦</span></div>
+              </div>
+              <div class="example-caption"><h3>Kartenalbum</h3><span>Collector app <b aria-hidden="true">↗</b></span></div>
+            </a>
+            <a class="example-app" href="https://shisha.justin-salzburg.de" target="_blank" rel="noopener">
+              <div class="app-preview preview-journal" aria-hidden="true">
+                <div class="preview-toolbar"><i></i><i></i><i></i><span>shisha.justin-salzburg.de</span></div>
+                <div class="preview-entry"><svg class="journal-panda" viewBox="0 0 40 40" fill="none"><circle cx="11" cy="11" r="5" fill="currentColor"/><circle cx="29" cy="11" r="5" fill="currentColor"/><circle cx="20" cy="22" r="13" fill="#111214" stroke="currentColor" stroke-width="2"/><ellipse cx="15" cy="21" rx="3" ry="4" fill="currentColor"/><ellipse cx="25" cy="21" rx="3" ry="4" fill="currentColor"/><circle cx="20" cy="28" r="1.5" fill="currentColor"/></svg><div><span class="preview-stroke long"></span><span class="preview-stroke short"></span></div></div>
+                <div class="preview-entry"><svg class="journal-panda" viewBox="0 0 40 40" fill="none"><circle cx="11" cy="11" r="5" fill="currentColor"/><circle cx="29" cy="11" r="5" fill="currentColor"/><circle cx="20" cy="22" r="13" fill="#111214" stroke="currentColor" stroke-width="2"/><ellipse cx="15" cy="21" rx="3" ry="4" fill="currentColor"/><ellipse cx="25" cy="21" rx="3" ry="4" fill="currentColor"/><circle cx="20" cy="28" r="1.5" fill="currentColor"/></svg><div><span class="preview-stroke long"></span><span class="preview-stroke short"></span></div></div>
+              </div>
+              <div class="example-caption"><h3>Panda &amp; Puff</h3><span>Shisha journal <b aria-hidden="true">↗</b></span></div>
+            </a>
           </div>
           <div class="harness-connectors" aria-hidden="true"><span></span><span></span></div>
           <div class="harness-foundation">
@@ -379,6 +394,15 @@ const baseDomain = "deploy-your-startup.com";
   .preview-votes { display: flex; align-items: center; gap: 5px; margin-top: 15px; }
   .preview-votes .preview-stroke { margin-right: auto; width: 45%; background: #a3b9a330; }
   .preview-votes i { height: 6px; width: 6px; border-radius: 50%; background: #a3b9a345; }
+  .preview-deck { display: flex; justify-content: center; align-items: center; gap: 10px; height: 100px; }
+  .preview-deck span { display: grid; place-items: center; width: 40px; height: 56px; border: 1px solid #b5a6d640; border-radius: 4px; background: linear-gradient(160deg, #b5a6d61f, #b5a6d606); color: #b5a6d6; font-size: 0.9rem; }
+  .preview-deck span:first-child { transform: rotate(-8deg) translateY(4px); }
+  .preview-deck span:last-child { transform: rotate(8deg) translateY(4px); }
+  .preview-deck span:nth-child(2) { width: 46px; height: 64px; border-color: #d6b46a66; background: linear-gradient(160deg, #d6b46a30, #d6b46a0a); color: #d6b46a; }
+  .preview-entry { display: flex; align-items: center; gap: 12px; margin-top: 16px; padding: 7px 8px; border: 1px solid #b5c99a1f; border-radius: 4px; background: #b5c99a08; }
+  .preview-entry > div { flex: 1; }
+  .preview-entry .preview-stroke.long { background: #b5c99a38; }
+  .journal-panda { flex: none; width: 24px; height: 24px; color: #b5c99a; }
   .example-caption { padding: 0.9rem 1rem; }
   .example-caption h3 { font-size: 0.85rem; font-weight: 600; letter-spacing: -0.025em; }
   .example-caption > span { display: flex; justify-content: space-between; margin-top: 0.35rem; color: var(--muted); font-size: 0.7rem; }
@@ -403,6 +427,8 @@ const baseDomain = "deploy-your-startup.com";
     .preview-profile { gap: 8px; }
     .profile-avatar { width: 28px; height: 28px; }
     .preview-games > span { height: 45px; }
+    .preview-entry { gap: 8px; margin-top: 10px; padding: 4px 6px; }
+    .journal-panda { width: 20px; height: 20px; }
     .example-caption { padding: 0.75rem 0.6rem; }
     .example-caption h3 { font-size: 0.75rem; }
     .example-caption > span { font-size: 0.6rem; }
