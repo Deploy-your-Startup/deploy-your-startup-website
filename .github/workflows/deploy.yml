@@ -100,7 +100,7 @@ jobs:
         with:
           ref: ${{ needs.release.outputs.sha || github.sha }}
       - name: Install Factory workspace prerequisites
-        run: brew install mise yq kubectl
+        run: brew install mise yq
       - name: Test real installer and published CLI through Factory setup
         run: python3 scripts/check_installer_factory_e2e.py
 
