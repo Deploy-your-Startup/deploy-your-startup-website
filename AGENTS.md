@@ -54,6 +54,7 @@ and arrive through template updates; number project ADRs from 0100 upward.
 - [ADR 0001](docs/architecture/0001-documentation-at-interfaces.md) — load when adding comments, documentation or an ADR.
 - [ADR 0002](docs/architecture/0002-static-landing-page.md) — load for hosting, framework or backend choices.
 - [ADR 0003](docs/architecture/0003-test-strategy.md) — load when writing integration or browser E2E scenarios; includes GIVEN / WHEN / THEN.
+- [ADR 0004](docs/architecture/0004-tests-as-specification.md) — load when specifying behaviour, writing a task or adding a requirement.
 
 ## Template updates (Copier)
 
