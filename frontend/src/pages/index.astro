@@ -154,7 +154,7 @@ const baseDomain = "deploy-your-startup.com";
           <div class="example-apps">
             <a class="example-app" href="https://aboutphil.de" target="_blank" rel="noopener">
               <div class="app-preview preview-phil" aria-hidden="true">
-                <div class="preview-toolbar"><i></i><i></i><i></i><span>aboutphil.de</span></div>
+                <b class="deploy-status" aria-hidden="true"></b><div class="preview-toolbar"><i></i><i></i><i></i><span>aboutphil.de</span></div>
                 <div class="preview-profile"><span class="profile-avatar">P</span><div><span class="preview-stroke long"></span><span class="preview-stroke short"></span></div></div>
                 <div class="preview-tiles"><span></span><span></span><span></span></div>
               </div>
@@ -162,7 +162,7 @@ const baseDomain = "deploy-your-startup.com";
             </a>
             <a class="example-app" href="https://gamingbuchclub.de" target="_blank" rel="noopener">
               <div class="app-preview preview-club" aria-hidden="true">
-                <div class="preview-toolbar"><i></i><i></i><i></i><span>gamingbuchclub.de</span></div>
+                <b class="deploy-status" aria-hidden="true"></b><div class="preview-toolbar"><i></i><i></i><i></i><span>gamingbuchclub.de</span></div>
                 <div class="preview-games"><span><svg viewBox="0 0 40 40" fill="none"><path d="M12 13h16l5 15c1 4-3 6-5 3l-4-4h-8l-4 4c-2 3-6 1-5-3l5-15Z" stroke="currentColor" stroke-width="2"/><path d="M13 19h8m-4-4v8" stroke="currentColor" stroke-width="2"/><circle cx="27" cy="19" r="1.5" fill="currentColor"/></svg></span><span></span><span></span></div>
                 <div class="preview-votes"><span class="preview-stroke long"></span><i></i><i></i><i></i></div>
               </div>
@@ -170,26 +170,30 @@ const baseDomain = "deploy-your-startup.com";
             </a>
             <a class="example-app" href="https://kartenalbum.de" target="_blank" rel="noopener">
               <div class="app-preview preview-cards" aria-hidden="true">
-                <div class="preview-toolbar"><i></i><i></i><i></i><span>kartenalbum.de</span></div>
+                <b class="deploy-status" aria-hidden="true"></b><div class="preview-toolbar"><i></i><i></i><i></i><span>kartenalbum.de</span></div>
                 <div class="preview-deck"><span>✦</span><span>✦</span><span>✦</span></div>
               </div>
               <div class="example-caption"><h3>Kartenalbum</h3><span>Collector app <b aria-hidden="true">↗</b></span></div>
             </a>
             <a class="example-app" href="https://shisha.justin-salzburg.de" target="_blank" rel="noopener">
               <div class="app-preview preview-journal" aria-hidden="true">
-                <div class="preview-toolbar"><i></i><i></i><i></i><span>shisha.justin-salzburg.de</span></div>
+                <b class="deploy-status" aria-hidden="true"></b><div class="preview-toolbar"><i></i><i></i><i></i><span>shisha.justin-salzburg.de</span></div>
                 <div class="preview-entry"><svg class="journal-panda" viewBox="0 0 40 40" fill="none"><circle cx="11" cy="11" r="5" fill="currentColor"/><circle cx="29" cy="11" r="5" fill="currentColor"/><circle cx="20" cy="22" r="13" fill="#111214" stroke="currentColor" stroke-width="2"/><ellipse cx="15" cy="21" rx="3" ry="4" fill="currentColor"/><ellipse cx="25" cy="21" rx="3" ry="4" fill="currentColor"/><circle cx="20" cy="28" r="1.5" fill="currentColor"/></svg><div><span class="preview-stroke long"></span><span class="preview-stroke short"></span></div></div>
                 <div class="preview-entry"><svg class="journal-panda" viewBox="0 0 40 40" fill="none"><circle cx="11" cy="11" r="5" fill="currentColor"/><circle cx="29" cy="11" r="5" fill="currentColor"/><circle cx="20" cy="22" r="13" fill="#111214" stroke="currentColor" stroke-width="2"/><ellipse cx="15" cy="21" rx="3" ry="4" fill="currentColor"/><ellipse cx="25" cy="21" rx="3" ry="4" fill="currentColor"/><circle cx="20" cy="28" r="1.5" fill="currentColor"/></svg><div><span class="preview-stroke long"></span><span class="preview-stroke short"></span></div></div>
               </div>
               <div class="example-caption"><h3>Panda &amp; Puff</h3><span>Shisha journal <b aria-hidden="true">↗</b></span></div>
             </a>
           </div>
+          <span class="harness-rocket" aria-hidden="true"><Rocket /><i></i></span>
           <div class="harness-connectors" aria-hidden="true"><span></span><span></span></div>
           <div class="harness-foundation">
+            <span class="foundation-scan" aria-hidden="true"></span>
+            <p class="foundation-status"><span class="status-dot" aria-hidden="true"></span>Built and maintained by us</p>
             <div class="foundation-heading"><BrandMark /><strong>We take care of the harness.</strong></div>
             <ul><li>Agent-ready projects</li><li>Automated checks</li><li>Deployment & operations</li></ul>
             <div class="community-loop"><span aria-hidden="true">↻</span><p>Improved together. One community contribution at a time.</p></div>
           </div>
+          <div class="foundation-layers" aria-hidden="true"><span></span><span></span></div>
           <p class="ballern-signature"><span lang="de">Ballern</span><sup>*</sup></p>
           <p class="ballern-meaning">* Go all in. Build. Ship. Validate.</p>
         </div>
@@ -243,6 +247,50 @@ const baseDomain = "deploy-your-startup.com";
       headlineRocket?.addEventListener('animationend', event => {
         if (event.animationName === 'copy-launch') headlineRocket.classList.remove('launch-on-copy');
       });
+
+      const graphic = document.querySelector<HTMLElement>('.harness-graphic');
+      const shipRocket = graphic?.querySelector<HTMLElement>('.harness-rocket');
+      const foundation = graphic?.querySelector<HTMLElement>('.harness-foundation');
+      if (graphic && shipRocket && foundation && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const apps = [...graphic.querySelectorAll<HTMLElement>('.example-app')];
+        const route = [2, 1, 3, 0];
+        const statuses = ['✓ deployed', '✓ checks passed', '✓ harness updated', '✓ deployed'];
+        let step = 0;
+        let timer: number | undefined;
+        function ship() {
+          const app = apps[route[step % route.length]];
+          const status = statuses[step % statuses.length];
+          step += 1;
+          const g = graphic!.getBoundingClientRect();
+          const f = foundation!.getBoundingClientRect();
+          const a = app.getBoundingClientRect();
+          const x = f.left + f.width / 2 - g.left;
+          const y = f.top - g.top;
+          const fromLeft = a.left + a.width / 2 < g.left + g.width / 2;
+          const endX = (fromLeft ? a.right - 18 : a.left + 18) - g.left;
+          const endY = a.top + a.height * 0.4 - g.top;
+          const tilt = fromLeft ? -55 : 55;
+          foundation!.classList.add('is-launching');
+          setTimeout(() => foundation!.classList.remove('is-launching'), 450);
+          shipRocket!.animate([
+            { transform: `translate(${x}px, ${y + 12}px)`, opacity: 0 },
+            { transform: `translate(${x}px, ${y - 6}px)`, opacity: 1, offset: 0.18 },
+            { transform: `translate(${x}px, ${endY + 40}px)`, opacity: 1, offset: 0.7 },
+            { transform: `translate(${endX}px, ${endY}px) rotate(${tilt}deg) scale(0.6)`, opacity: 0 },
+          ], { duration: 1500, easing: 'cubic-bezier(.55,0,.35,1)' }).finished.then(() => {
+            const badge = app.querySelector<HTMLElement>('.deploy-status');
+            if (badge) badge.textContent = status;
+            app.classList.add('is-shipped');
+            setTimeout(() => app.classList.remove('is-shipped'), 1800);
+          });
+        }
+        new IntersectionObserver(([entry]) => {
+          clearInterval(timer);
+          if (!entry.isIntersecting) return;
+          ship();
+          timer = window.setInterval(ship, 3600);
+        }, { threshold: 0.35 }).observe(graphic);
+      }
 
       const line = document.querySelector<HTMLElement>('.factory .line');
       if (line) {
@@ -407,9 +455,31 @@ const baseDomain = "deploy-your-startup.com";
   .example-caption h3 { font-size: 0.85rem; font-weight: 600; letter-spacing: -0.025em; }
   .example-caption > span { display: flex; justify-content: space-between; margin-top: 0.35rem; color: var(--muted); font-size: 0.7rem; }
   .example-caption b { color: var(--accent); font-weight: 400; }
+  .harness-graphic { position: relative; }
+  .harness-rocket { position: absolute; top: 0; left: 0; z-index: 2; width: 20px; height: 25px; margin: -12px 0 0 -10px; color: #a9c5df; opacity: 0; pointer-events: none; filter: drop-shadow(0 0 6px #9cbedc66); }
+  .harness-rocket :global(svg) { display: block; width: 100%; height: 100%; }
+  .harness-rocket i { position: absolute; top: 88%; left: 50%; width: 2px; height: 26px; margin-left: -1px; border-radius: 1px; background: linear-gradient(#cfe3f5, #9cbedc55 40%, transparent); }
+  .app-preview { position: relative; }
+  .deploy-status { position: absolute; right: 0.6rem; bottom: 0.55rem; z-index: 1; padding: 0.2rem 0.45rem; border: 1px solid #9cbedc40; border-radius: 4px; background: #111214e6; color: #cfe3f5; font: 600 0.5rem "JetBrains Mono", monospace; letter-spacing: 0.06em; opacity: 0; transform: translateY(4px); transition: opacity 0.3s, transform 0.3s; }
+  .example-app.is-shipped { border-color: #9cbedc; box-shadow: 0 0 0 1px #9cbedc30, 0 0 28px #9cbedc1f; }
+  .example-app.is-shipped .deploy-status { opacity: 1; transform: none; }
+  .foundation-heading :global(svg) { transition: transform 0.25s; }
+  .harness-foundation.is-launching .foundation-heading :global(svg) { transform: translate(1px, -3px); }
   .harness-connectors { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; height: 28px; }
-  .harness-connectors span { width: 1px; height: 100%; margin-inline: auto; background: #71899d70; }
-  .harness-foundation { padding: 1.2rem; border: 1px solid #71899d70; border-radius: 8px; background: #9cbedc08; text-align: center; }
+  .harness-connectors span { position: relative; width: 1px; height: 100%; margin-inline: auto; background: #71899d70; overflow: hidden; }
+  .harness-connectors span::after { content: ""; position: absolute; left: 0; bottom: -14px; width: 1px; height: 14px; background: linear-gradient(to top, transparent, #cfe3f5); box-shadow: 0 0 6px #9cbedc; animation: harness-feed 3.2s ease-in infinite; }
+  .harness-connectors span:last-child::after { animation-delay: 1.6s; }
+  .harness-foundation { position: relative; padding: 1.2rem; border: 1px solid #71899d70; border-radius: 8px; background: #9cbedc08; text-align: center; overflow: hidden; }
+  .foundation-scan { position: absolute; top: -1px; left: 0; width: 30%; height: 1px; background: linear-gradient(90deg, transparent, #9cbedc, transparent); animation: harness-scan 6s ease-in-out infinite; }
+  .foundation-status { display: inline-flex; align-items: center; gap: 0.45rem; margin-bottom: 0.7rem; color: #828b96; font: 0.55rem "JetBrains Mono", monospace; letter-spacing: 0.12em; text-transform: uppercase; }
+  .foundation-status .status-dot { margin: 0; }
+  .foundation-layers span { display: block; height: 1px; margin-inline: auto; background: #71899d80; }
+  .foundation-layers span:first-child { width: calc(100% - 16px); margin-top: 5px; }
+  .foundation-layers span:last-child { width: calc(100% - 40px); margin-top: 5px; background: #71899d45; }
+  .community-loop > span { display: inline-block; animation: harness-loop 8s linear infinite; }
+  @keyframes harness-feed { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 70%, 100% { transform: translateY(-40px); opacity: 0; } }
+  @keyframes harness-scan { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(340%); } }
+  @keyframes harness-loop { to { transform: rotate(360deg); } }
   .foundation-heading { display: flex; align-items: center; justify-content: center; gap: 0.6rem; }
   .foundation-heading :global(svg) { width: 25px; height: 25px; color: var(--accent); }
   .foundation-heading strong { font-size: 0.9rem; font-weight: 600; letter-spacing: -0.025em; }
