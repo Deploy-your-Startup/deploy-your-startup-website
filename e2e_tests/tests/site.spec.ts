@@ -30,3 +30,12 @@ test("GIVEN a new user WHEN opening get-started THEN the command includes their 
   await expect(page.locator("#onboarding-code")).toContainText("bash -s -- --onboard");
   await expect(page.getByRole("button", { name: "Copy paste into your terminal command", exact: false })).toBeVisible();
 });
+
+test("GIVEN the harness section WHEN a visitor scrolls to it THEN the rocket ships to an app", async ({ page }) => {
+  // GIVEN the production build.
+  await page.goto("/");
+  // WHEN the visitor scrolls to the shared harness.
+  await page.locator(".harness-foundation").scrollIntoViewIfNeeded();
+  // THEN an app lights up with a delivery status from the harness.
+  await expect(page.locator(".example-app.is-shipped .deploy-status")).toHaveText(/✓ deployed/, { timeout: 5000 });
+});
