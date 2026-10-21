@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 
 test("GIVEN the landing page WHEN Astro builds THEN visitors see the harness and four startups on a shared harness", () => {
   // GIVEN the real site, WHEN its production build renders the pages.
@@ -43,4 +43,23 @@ test("GIVEN the get-started page WHEN Astro builds THEN visitors find the landin
     assert.ok(option.includes(text), `Missing visible content: ${text}`);
   }
   assert.doesNotMatch(option, /--onboard|startup doctor|Hetzner Cloud/);
+});
+
+test("GIVEN the landing page WHEN Astro builds THEN the teaser stays a quiet link that loads its video on demand", () => {
+  // GIVEN the real site, WHEN its production build renders the homepage.
+  execFileSync("npm", ["run", "build"], { cwd: new URL("../", import.meta.url), stdio: "pipe" });
+  const html = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
+  const note = html.match(/<p class="onboarding-note[\s\S]*?<\/p>/)?.[0];
+  const dialog = html.match(/<dialog class="teaser-dialog[\s\S]*?<\/dialog>/)?.[0];
+
+  // THEN the link sits next to onboarding help, falls back to the file and the self-hosted video loads only on play.
+  assert.ok(note?.includes("Watch the 30-second teaser"));
+  assert.match(note, /href="\/videos\/startup-factory-teaser\.mp4"/);
+  assert.ok(dialog);
+  assert.match(dialog, /preload="none"/);
+  assert.match(dialog, /poster="\/videos\/startup-factory-teaser-poster\.jpg"/);
+  assert.doesNotMatch(dialog, /youtube|vimeo|autoplay/i);
+  for (const file of ["startup-factory-teaser.mp4", "startup-factory-teaser-poster.jpg"]) {
+    assert.ok(statSync(new URL(`../dist/videos/${file}`, import.meta.url)).size > 10_000, `Missing ${file}`);
+  }
 });

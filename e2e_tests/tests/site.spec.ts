@@ -39,3 +39,22 @@ test("GIVEN the harness section WHEN a visitor scrolls to it THEN the rocket shi
   // THEN an app lights up with a delivery status from the harness.
   await expect(page.locator(".example-app.is-shipped .deploy-status")).toHaveText(/✓ deployed/, { timeout: 5000 });
 });
+
+test("GIVEN the homepage WHEN a visitor opens the teaser THEN it plays in a dialog that closes again", async ({ page }) => {
+  // GIVEN the production build.
+  await page.goto("/");
+  const dialog = page.getByRole("dialog", { name: "Deploy Your Startup teaser" });
+  await expect(dialog).toBeHidden();
+  // WHEN the visitor follows the teaser link next to onboarding help.
+  const video = page.waitForResponse(response => response.url().endsWith("/videos/startup-factory-teaser.mp4") && response.status() < 400);
+  await page.getByRole("link", { name: "Watch the 30-second teaser" }).click();
+  // THEN the self-hosted video loads inside the dialog.
+  await expect(dialog).toBeVisible();
+  // Playwright's Chromium ships without H.264, so this checks delivery, not decoding.
+  expect((await video).headers()["content-type"]).toContain("video/mp4");
+  // AND closing the dialog pauses the video and hides it.
+  await page.getByRole("button", { name: "Close teaser" }).click();
+  await expect(dialog).toBeHidden();
+  // A closed dialog leaves the accessibility tree, so the video is found by its element.
+  expect(await page.locator(".teaser-dialog video").evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
+});
