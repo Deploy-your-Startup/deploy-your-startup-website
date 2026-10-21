@@ -13,7 +13,10 @@ It has no users to log in, no data of its own and no server-side logic.
 - **Astro** builds the page to static HTML and CSS. It ships no JavaScript to
   the browser unless a component needs it.
 - **Cloudflare Pages** serves the build. Every push to `main` builds and
-  deploys it through GitHub Actions; credentials live in repository secrets.
+  deploys it through GitHub Actions. Credentials are repository secrets while
+  the repository is private; a public repository keeps them in a `production`
+  environment that only `main` can deploy to, which GitHub's free plan offers
+  for public repositories only.
 - **No backend.** Anything dynamic (a sign-up form, analytics) uses a hosted
   service or becomes a separate module with its own `make.sh` next to
   `frontend/`.

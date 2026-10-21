@@ -13,7 +13,9 @@ Cloudflare Pages by `.github/workflows/deploy.yml` on every push to `main`.
 `mise.toml` tasks delegating to it. A new module (for example `backend/`) lives
 next to `frontend/` with its own `make.sh`.
 
-Cloudflare credentials stay in repository secrets set by `startup bootstrap`.
+Cloudflare credentials stay in secrets set by `startup bootstrap`: repository
+secrets while the repository is private, a `production` environment limited to
+`main` once it is public.
 Never print, commit or hard-code them, and do not deploy manually unless the
 user asks for it.
 

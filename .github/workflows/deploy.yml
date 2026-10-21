@@ -36,10 +36,10 @@ jobs:
       deploy: ${{ steps.result.outputs.deploy }}
       sha: ${{ steps.result.outputs.sha }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: main
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "24"
       - name: Find the latest stable CLI release
@@ -83,10 +83,10 @@ jobs:
     if: needs.release.outputs.deploy == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ needs.release.outputs.sha }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "24"
       - name: Check installer and landing page
@@ -97,7 +97,7 @@ jobs:
     if: ${{ always() && (github.event_name == 'pull_request' || needs.release.outputs.deploy == 'true') }}
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ needs.release.outputs.sha || github.sha }}
       - name: Install Factory workspace prerequisites
@@ -116,8 +116,8 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "24"
       - run: ./make.sh test
@@ -127,6 +127,9 @@ jobs:
     uses: Deploy-your-Startup/deploy-your-startup/.github/workflows/deploy-pages.yml@main
     with:
       project_name: deploy-your-startup-website
+      # Public repositories deploy through the main-only production environment;
+      # private ones use repository secrets (environments there need a paid plan).
+      environment: ${{ github.event.repository.visibility == 'public' && 'production' || '' }}
     secrets:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

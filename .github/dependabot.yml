@@ -12,3 +12,17 @@ updates:
           - "@astrojs/*"
       dev-dependencies:
         dependency-type: development
+
+  # Actions are pinned to commit SHAs; Dependabot keeps the SHAs and their tag
+  # comments current. Our own shared workflows are versioned by `startup sync`.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      actions:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: "*/deploy-your-startup/*"
