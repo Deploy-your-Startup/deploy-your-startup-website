@@ -108,7 +108,7 @@ jobs:
   browser:
     needs: release
     if: ${{ always() && (github.event_name == 'pull_request' || needs.release.outputs.deploy == 'true') }}
-    uses: philipp-lein/deploy-your-startup/.github/workflows/container-e2e.yml@feaba0ceca85b3f93acd1a4fc7dd1778d70e215c
+    uses: Deploy-your-Startup/deploy-your-startup/.github/workflows/container-e2e.yml@70ef841b99dbc03e5e762a83da93ae5476ab6488
     with:
       shards: 1
 
@@ -124,7 +124,7 @@ jobs:
 
   deploy:
     needs: [release, test, browser, installer-factory]
-    uses: philipp-lein/deploy-your-startup/.github/workflows/deploy-pages.yml@main
+    uses: Deploy-your-Startup/deploy-your-startup/.github/workflows/deploy-pages.yml@main
     with:
       project_name: deploy-your-startup-website
     secrets:
