@@ -48,3 +48,18 @@ third-party player) and ships the MP4 and poster. The browser case opens the
 dialog from the link, checks that the MP4 is delivered and that closing pauses
 and hides it. Playwright's Chromium cannot decode H.264, so actual playback is
 verified manually in a full browser, not in CI. Status: covered, playback partial.
+
+## Installer runtime reuse
+
+- `test_installer_agent_skill.py`: compatible external uv, incompatible uv with
+  private fallback, reuse of an existing private uv, concise progress and
+  preserved failure diagnostics. Successful fallback installs suppress uv download
+  chatter, package lists and the internal tool-directory PATH warning; existing pseudo-terminal onboarding scenarios
+  remain enabled. Download/account boundaries use local stand-ins.
+- `scripts/check_installer_e2e.py`: real uv and real CLI installation from a local
+  Git revision, unchanged executable after a repeat install, runnable CLI help,
+  nonduplicated shell setup, empty stderr on success and uninstall preserving shared uv/Python. Run on
+  macOS with a CLI checkout; this explicit local check is not a Linux CI gate.
+- Remaining gaps: real first-time uv download on a clean Mac, migration of an
+  actual older private Python installation, live GitHub login and cloud bootstrap
+  are not established by these scenarios. No browser interaction changed.
