@@ -48,7 +48,13 @@ const baseDomain = "deploy-your-startup.com";
       <div class="onboarding-command">
         <Command id="onboarding-code" command={onboardingCommand} label="Start in your terminal" compact />
       </div>
-      <p class="onboarding-note">Paste. Run. We’ll guide you. <a href="/get-started">Need help?</a></p>
+      <p class="onboarding-note">Paste. Run. We’ll guide you. <a href="/get-started">Need help?</a><a class="teaser-link" href="/videos/startup-factory-teaser.mp4" data-teaser-open><span aria-hidden="true">▶ </span>Watch the 30-second teaser</a></p>
+      <dialog class="teaser-dialog" aria-label="Deploy Your Startup teaser">
+        <form class="teaser-bar" method="dialog"><span>The startup factory · 30 s teaser</span><button class="teaser-close" aria-label="Close teaser">×</button></form>
+        <video controls preload="none" playsinline width="1920" height="1080" poster="/videos/startup-factory-teaser-poster.jpg">
+          <source src="/videos/startup-factory-teaser.mp4" type="video/mp4" />
+        </video>
+      </dialog>
       <div class="landing-details">
       <section class="harness-intro" aria-labelledby="harness-title">
         <h2 id="harness-title">Harness engineering for startups.</h2>
@@ -236,6 +242,18 @@ const baseDomain = "deploy-your-startup.com";
       </div>
     </footer>
     <script>
+      // The teaser link stays a plain video link without JavaScript; with it, the video plays in a dialog.
+      const teaserDialog = document.querySelector<HTMLDialogElement>('.teaser-dialog');
+      const teaserVideo = teaserDialog?.querySelector('video');
+      document.querySelector('[data-teaser-open]')?.addEventListener('click', event => {
+        if (!teaserDialog) return;
+        event.preventDefault();
+        teaserDialog.showModal();
+        teaserVideo?.play().catch(() => {});
+      });
+      teaserDialog?.addEventListener('click', event => { if (event.target === teaserDialog) teaserDialog.close(); });
+      teaserDialog?.addEventListener('close', () => teaserVideo?.pause());
+
       const headlineRocket = document.querySelector<HTMLElement>('.headline-rocket');
       document.addEventListener('command-copied', event => {
         const { id } = (event as CustomEvent<{ id: string }>).detail;
@@ -385,6 +403,12 @@ const baseDomain = "deploy-your-startup.com";
   .onboarding-command :global(button[data-copy]:hover) { background: #bdd6ed; }
   .onboarding-note { font: 0.7rem "JetBrains Mono", monospace; line-height: 1.8; margin-top: 0.9rem; color: var(--muted); }
   .onboarding-note a { margin-left: 0.75rem; color: #c7c9cc; }
+  .teaser-dialog { width: min(960px, calc(100vw - 2rem)); max-width: none; margin: auto; padding: 0; overflow: hidden; border: 1px solid #34373c; border-radius: 10px; background: #111214; color: #c7c9cc; }
+  .teaser-dialog::backdrop { background: rgb(10 10 12 / 0.82); }
+  .teaser-bar { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 0.6rem 0.45rem 1rem; border-bottom: 1px solid #34373c; font: 0.7rem "JetBrains Mono", monospace; letter-spacing: 0.08em; color: var(--muted); }
+  .teaser-dialog video { display: block; width: 100%; height: auto; }
+  .teaser-close { padding: 0.1rem 0.5rem; border: 0; border-radius: 4px; background: none; color: #c7c9cc; font-size: 1.4rem; line-height: 1; cursor: pointer; }
+  .teaser-close:hover { background: #24282d; }
   .landing-details { margin-top: 4rem; padding-top: 2.8rem; border-top: 1px solid #ffffff12; }
   .harness-intro h2 { font: 600 clamp(1.4rem, 3vw, 2rem) "Inter", sans-serif; letter-spacing: -0.04em; }
   .harness-intro p { max-width: 620px; margin: 0.8rem auto 0; color: var(--muted); font-size: 0.9rem; line-height: 1.8; }

@@ -39,3 +39,12 @@ there are no cloud or repository mutations. The `installer-factory` macOS CI job
 runs this scenario for PRs and production deployments and gates deployment.
 Actual GitHub OAuth, Keychain interaction, provider setup and a live application
 remain unverified by this cancellation scenario.
+
+## Teaser video
+
+The integration case checks that the built homepage links the self-hosted
+teaser next to onboarding help, loads it only on play (`preload="none"`, no
+third-party player) and ships the MP4 and poster. The browser case opens the
+dialog from the link, checks that the MP4 is delivered and that closing pauses
+and hides it. Playwright's Chromium cannot decode H.264, so actual playback is
+verified manually in a full browser, not in CI. Status: covered, playback partial.
