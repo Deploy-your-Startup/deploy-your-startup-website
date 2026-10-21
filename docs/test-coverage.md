@@ -39,3 +39,13 @@ there are no cloud or repository mutations. The `installer-factory` macOS CI job
 runs this scenario for PRs and production deployments and gates deployment.
 Actual GitHub OAuth, Keychain interaction, provider setup and a live application
 remain unverified by this cancellation scenario.
+
+## Installer pin updates
+
+The scheduled release check advances the installer's CLI pin through a pull
+request, because `main` requires owner review and PR checks. The integration
+test runs the workflow's proposal step against real Git repositories: the pin
+lands on `chore/cli-<tag>`, `main` is untouched, the checks are dispatched on
+that branch, and an existing proposal is not repeated. `gh` is a recording
+stand-in, so creating the PR and running the dispatched checks on GitHub are
+verified only by the first real scheduled run.
