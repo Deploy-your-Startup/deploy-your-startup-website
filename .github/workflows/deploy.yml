@@ -18,21 +18,20 @@ on:
     - cron: '17 */6 * * *'
 
 concurrency:
-  # PRs and proposal branches cannot displace a queued production deployment.
-  group: website-${{ github.ref != 'refs/heads/main' && github.ref || 'production' }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  # PRs cannot displace a queued production deployment or an unrelated PR.
+  group: website-${{ github.event_name == 'pull_request' && github.ref || 'production' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
 
 jobs:
   release:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: write
       actions: write
-      pull-requests: write
     outputs:
       deploy: ${{ steps.result.outputs.deploy }}
       sha: ${{ steps.result.outputs.sha }}
@@ -52,32 +51,21 @@ jobs:
           set -euo pipefail
           gh api repos/Deploy-your-Startup/cli/releases/latest > "$RUNNER_TEMP/cli-release.json"
           python3 scripts/update_cli_release.py --release "$RUNNER_TEMP/cli-release.json" >> "$GITHUB_OUTPUT"
-      - name: Test and propose a new installer pin
+      - name: Test and commit a new installer pin
         if: steps.update.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.update.outputs.tag }}
         run: |
           set -euo pipefail
-          # main requires owner review and PR checks, so the pin arrives as a PR.
-          branch="chore/cli-$TAG"
-          if git ls-remote --exit-code --heads origin "$branch" >/dev/null; then
-            echo "$branch is already proposed."
-            exit 0
-          fi
           ./make.sh test
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git switch -c "$branch"
           git add frontend/public/install.sh
-          git commit -m "chore: update installer to CLI $TAG"
-          git push origin "$branch"
-          gh pr create --base main --head "$branch" \
-            --title "chore: update installer to CLI $TAG" \
-            --body "The scheduled release check found CLI $TAG. Merging deploys the new installer pin."
-          # Token-created PRs trigger no pull_request run; dispatch the
-          # required checks on the branch so the PR can be merged.
-          gh workflow run deploy.yml --ref "$branch"
+          git commit -m "Update installer to latest stable CLI release"
+          git push origin HEAD:main
+          # Token-authenticated pushes do not trigger another push workflow.
+          # Dispatch a fresh run so the reusable deploy checks out the new SHA.
+          gh workflow run deploy.yml --ref main
       - name: Select deployment commit
         id: result
         env:
@@ -106,7 +94,7 @@ jobs:
 
   installer-factory:
     needs: release
-    if: ${{ always() && (github.ref != 'refs/heads/main' || needs.release.outputs.deploy == 'true') }}
+    if: ${{ always() && (github.event_name == 'pull_request' || needs.release.outputs.deploy == 'true') }}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v7
@@ -119,13 +107,13 @@ jobs:
 
   browser:
     needs: release
-    if: ${{ always() && (github.ref != 'refs/heads/main' || needs.release.outputs.deploy == 'true') }}
+    if: ${{ always() && (github.event_name == 'pull_request' || needs.release.outputs.deploy == 'true') }}
     uses: philipp-lein/deploy-your-startup/.github/workflows/container-e2e.yml@feaba0ceca85b3f93acd1a4fc7dd1778d70e215c
     with:
       shards: 1
 
   pull-request-contract:
-    if: github.ref != 'refs/heads/main'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
