@@ -4,7 +4,7 @@ set -euo pipefail
 
 # The only place the CLI version is pinned; scripts/update_cli_release.py
 # advances it on stable releases. Each CLI release pins its tested template.
-startup_cli_version="v0.1.23"
+startup_cli_version="v0.1.24"
 
 startup_onboard=false
 startup_new_terminal=false
