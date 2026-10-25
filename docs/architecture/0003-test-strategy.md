@@ -49,8 +49,8 @@ to increase a coverage percentage. Use GIVEN / WHEN / THEN for them too.
 A green pipeline proves that its enabled checks passed, not that every feature
 has complete E2E coverage. Smoke tests cover only their named scenarios. Record
 uncovered user flows and report provider scenarios skipped because credentials
-or external environments are unavailable. Keep required E2E checks enabled while
-improving CI speed through isolation, caching and independent parallel jobs.
+or external environments are unavailable. Run all tests locally before
+completing code changes; CI browser execution follows the shared testing policy.
 See [Testing policy and completion evidence](../testing-policy.md).
 
 ## Consequences
