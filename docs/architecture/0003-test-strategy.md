@@ -49,12 +49,8 @@ to increase a coverage percentage. Use GIVEN / WHEN / THEN for them too.
 A green pipeline proves that its enabled checks passed, not that every feature
 has complete E2E coverage. Smoke tests cover only their named scenarios. Record
 uncovered user flows and report provider scenarios skipped because credentials
-or external environments are unavailable. E2E may execute locally or in CI under
-the explicit shared execution policy; a local run must cover the final committed
-source and its results must be recorded before approval. CI must not label that
-run as a CI E2E pass. Keep configuration matrices focused on distinct behaviour
-and consolidate duplicate scenarios. Execution mode is implemented centrally in
-[the shared testing decision](https://github.com/Deploy-your-Startup/deploy-template/blob/main/docs/adr/0005-local-or-ci-e2e.md).
+or external environments are unavailable. Run all tests locally before
+completing code changes; CI browser execution follows the shared testing policy.
 See [Testing policy and completion evidence](../testing-policy.md).
 
 ## Consequences

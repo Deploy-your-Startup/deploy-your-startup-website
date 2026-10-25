@@ -45,8 +45,8 @@ flow and update it with new scenarios and gaps.
 - Never push directly to `main`; every push deploys. Open a pull request with
   an English title and description; branch and commit format:
   [commit conventions](.github/git-commit-instructions.md).
-- Before finishing, run `./make.sh build`, the affected integration tests and
-  browser E2E for changed visitor flows.
+- Before completing code changes, run the build, lint and all tests locally:
+  integration, existing unit and browser E2E. Record failures and skips.
 
 ## Architecture decisions
 
