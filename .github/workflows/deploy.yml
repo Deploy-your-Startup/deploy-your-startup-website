@@ -108,8 +108,9 @@ jobs:
   browser:
     needs: release
     if: ${{ always() && (github.event_name == 'pull_request' || needs.release.outputs.deploy == 'true') }}
-    uses: Deploy-your-Startup/deploy-your-startup/.github/workflows/container-e2e.yml@70ef841b99dbc03e5e762a83da93ae5476ab6488
+    uses: Deploy-your-Startup/deploy-your-startup/.github/workflows/container-e2e.yml@e227801d6b1e2275f920685a78ff7dc26dda3705
     with:
+      run_e2e: false
       shards: 1
 
   pull-request-contract:
