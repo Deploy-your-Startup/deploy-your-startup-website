@@ -58,3 +58,22 @@ test("GIVEN the homepage WHEN a visitor opens the teaser THEN it plays in a dial
   // A closed dialog leaves the accessibility tree, so the video is found by its element.
   expect(await page.locator(".teaser-dialog video").evaluate((element: HTMLVideoElement) => element.paused)).toBe(true);
 });
+
+for (const width of [1440, 390]) {
+  test(`GIVEN a ${width}px viewport WHEN viewing startup examples THEN MalleableMail is visible with its external destination`, async ({ page }) => {
+    // GIVEN the real production build at desktop or mobile width.
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    // WHEN a visitor browses the startup examples.
+    const mail = page.getByRole("link", { name: "MalleableMail Email app" });
+    await mail.scrollIntoViewIfNeeded();
+    // THEN the fifth example is readable and opens the supplied destination in a separate tab.
+    await expect(mail).toBeVisible();
+    await expect(mail.getByRole("heading", { name: "MalleableMail" })).toBeVisible();
+    await expect(mail).toHaveAttribute("href", "https://malleablemail.iljabauer.email");
+    await expect(mail).toHaveAttribute("target", "_blank");
+    await expect(mail).toHaveAttribute("rel", "noopener");
+    await expect(page.locator(".example-app")).toHaveCount(5);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  });
+}

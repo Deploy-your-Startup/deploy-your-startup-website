@@ -63,3 +63,11 @@ verified manually in a full browser, not in CI. Status: covered, playback partia
 - Remaining gaps: real first-time uv download on a clean Mac, migration of an
   actual older private Python installation, live GitHub login and cloud bootstrap
   are not established by these scenarios. No browser interaction changed.
+
+## Startup examples
+
+The rendered-page integration case checks all five examples, including
+MalleableMail and its supplied HTTPS destination. Browser cases verify its
+visible link, separate-tab attributes and lack of horizontal overflow at
+1440px and 390px. External startup availability is checked separately; browser
+tests do not navigate to live third-party applications. Status: covered.
