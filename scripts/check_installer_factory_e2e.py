@@ -9,7 +9,6 @@ import errno
 import json
 import os
 import pty
-import re
 import select
 import shutil
 import signal
@@ -108,11 +107,20 @@ esac
             assert (factory / 'projects/tooling' / entry['name'] / '.git').is_dir()
         answers = json.loads(subprocess.check_output(['yq', '-o=json', '.', str(factory / '.copier-answers.yml')], text=True))
         assert answers['_src_path'] == 'https://github.com/Deploy-your-Startup/startup-factory-template.git'
-        # The released CLI pins its tested Factory template; expect that release.
-        factory_help = subprocess.run([str(launcher), 'factory', 'init', '--help'], env=environment, text=True, capture_output=True, check=True)
-        pinned = re.search(r'--version TEXT\s+\[default: (v\d+\.\d+\.\d+)\]', factory_help.stdout)
-        assert pinned, factory_help.stdout
-        assert answers['_commit'] == pinned.group(1)
+        # Read the plan the installed CLI actually used, rather than parsing help layout.
+        saved = subprocess.run([str(launcher), 'factory', 'status'], env=environment, text=True, capture_output=True, check=True)
+        progress = dict(line.split(': ', 1) for line in saved.stdout.splitlines() if ': ' in line)
+        assert Path(progress['Folder']).resolve() == factory.resolve()
+        assert progress['Version'] == answers['_commit']
+        assert progress['Template'] == answers['_src_path']
+        assert progress['Current step'] == 'complete'
+        assert progress['Last failure'] == 'None'
+        assert progress['Files'] == 'Recorded files match.'
+        # Resume in another process and prove owner files survive real repeated setup.
+        notes = factory / 'owner-notes.md'
+        notes.write_text('Preserve my Factory notes.\n')
+        subprocess.run([str(launcher), 'factory', 'init', '--resume'], env=environment, text=True, capture_output=True, check=True)
+        assert notes.read_text() == 'Preserve my Factory notes.\n'
         assert (home / '.agents/skills/deploy-your-startup/SKILL.md').is_file()
         assert 'sprowi-task — installing... ' in text
         assert 'failed' not in text.lower()

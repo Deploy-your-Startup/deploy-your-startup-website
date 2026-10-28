@@ -71,3 +71,14 @@ MalleableMail and its supplied HTTPS destination. Browser cases verify its
 visible link, separate-tab attributes and lack of horizontal overflow at
 1440px and 390px. External startup availability is checked separately; browser
 tests do not navigate to live third-party applications. Status: covered.
+
+
+## Factory progress across installer runs
+
+The real installer-to-Factory E2E reads `startup factory status` from the installed
+CLI and compares its folder, template and version with the actual generated
+workspace and Copier answers. It verifies completed setup, no recorded failure,
+matching generated files and owner-note preservation after `factory init --resume`
+in a separate process. This checks the executed plan without depending on help
+text formatting. The existing public-template downloads and cancellation checks
+remain enabled.
