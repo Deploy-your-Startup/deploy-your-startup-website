@@ -189,9 +189,16 @@ const baseDomain = "deploy-your-startup.com";
               </div>
               <div class="example-caption"><h3>Panda &amp; Puff</h3><span>Shisha journal <b aria-hidden="true">↗</b></span></div>
             </a>
+            <a class="example-app" href="https://malleablemail.iljabauer.email" target="_blank" rel="noopener">
+              <div class="app-preview preview-mail" aria-hidden="true">
+                <b class="deploy-status" aria-hidden="true"></b><div class="preview-toolbar"><i></i><i></i><i></i><span>malleablemail.iljabauer.email</span></div>
+                <div class="preview-inbox"><svg viewBox="0 0 40 32" fill="none"><rect x="2" y="3" width="36" height="26" rx="4" stroke="currentColor" stroke-width="2"/><path d="m3 6 17 13L37 6" stroke="currentColor" stroke-width="2"/></svg><div><span class="preview-stroke long"></span><span class="preview-stroke short"></span><span class="preview-stroke long"></span><span class="preview-stroke short"></span></div></div>
+              </div>
+              <div class="example-caption"><h3>MalleableMail</h3><span>Email app <b aria-hidden="true">↗</b></span></div>
+            </a>
           </div>
           <span class="harness-rocket" aria-hidden="true"><Rocket /><i></i></span>
-          <div class="harness-connectors" aria-hidden="true"><span></span><span></span></div>
+          <div class="harness-connectors" aria-hidden="true"><span></span></div>
           <div class="harness-foundation">
             <span class="foundation-scan" aria-hidden="true"></span>
             <p class="foundation-status"><span class="status-dot" aria-hidden="true"></span>Built and maintained by us</p>
@@ -271,7 +278,7 @@ const baseDomain = "deploy-your-startup.com";
       const foundation = graphic?.querySelector<HTMLElement>('.harness-foundation');
       if (graphic && shipRocket && foundation && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
         const apps = [...graphic.querySelectorAll<HTMLElement>('.example-app')];
-        const route = [2, 1, 3, 0];
+        const route = [2, 1, 3, 0, 4];
         const statuses = ['✓ deployed', '✓ checks passed', '✓ harness updated', '✓ deployed'];
         let step = 0;
         let timer: number | undefined;
@@ -444,12 +451,13 @@ const baseDomain = "deploy-your-startup.com";
   .harness-graphic { max-width: 680px; margin: 2rem auto 0; }
   .example-apps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; }
   .example-app { display: block; color: var(--text); text-decoration: none; border: 1px solid #373e47; border-radius: 9px; overflow: hidden; background: #1c1e21; transition: border-color 0.2s, transform 0.2s; }
+  .example-app:last-child:nth-child(odd) { grid-column: 1 / -1; width: calc((100% - 2rem) / 2); justify-self: center; }
   .example-app:hover { border-color: #71899d; transform: translateY(-3px); }
   .example-app:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
   .app-preview { height: 145px; padding: 0 1rem; background: #111214; }
   .preview-toolbar { display: flex; align-items: center; gap: 4px; height: 30px; border-bottom: 1px solid #ffffff0a; }
   .preview-toolbar i { width: 4px; height: 4px; border-radius: 50%; background: #42474e; }
-  .preview-toolbar > span { margin-left: auto; color: #828b96; font: 0.5rem "JetBrains Mono", monospace; }
+  .preview-toolbar > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-left: auto; color: #828b96; font: 0.5rem "JetBrains Mono", monospace; }
   .preview-profile { display: flex; align-items: center; gap: 12px; margin-top: 18px; }
   .profile-avatar { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #9cbedc1a; color: var(--accent); font-size: 0.9rem; }
   .preview-profile > div { flex: 1; }
@@ -475,6 +483,10 @@ const baseDomain = "deploy-your-startup.com";
   .preview-entry > div { flex: 1; }
   .preview-entry .preview-stroke.long { background: #b5c99a38; }
   .journal-panda { flex: none; width: 24px; height: 24px; color: #b5c99a; }
+  .preview-inbox { display: flex; align-items: center; gap: 18px; margin-top: 22px; color: #c4b5e3; }
+  .preview-inbox svg { flex: none; width: 40px; height: 32px; }
+  .preview-inbox > div { flex: 1; }
+  .preview-inbox .preview-stroke.long { margin-top: 10px; background: #c4b5e338; }
   .example-caption { padding: 0.9rem 1rem; }
   .example-caption h3 { font-size: 0.85rem; font-weight: 600; letter-spacing: -0.025em; }
   .example-caption > span { display: flex; justify-content: space-between; margin-top: 0.35rem; color: var(--muted); font-size: 0.7rem; }
@@ -489,10 +501,9 @@ const baseDomain = "deploy-your-startup.com";
   .example-app.is-shipped .deploy-status { opacity: 1; transform: none; }
   .foundation-heading :global(svg) { transition: transform 0.25s; }
   .harness-foundation.is-launching .foundation-heading :global(svg) { transform: translate(1px, -3px); }
-  .harness-connectors { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; height: 28px; }
+  .harness-connectors { display: grid; grid-template-columns: 1fr; gap: 2rem; height: 28px; }
   .harness-connectors span { position: relative; width: 1px; height: 100%; margin-inline: auto; background: #71899d70; overflow: hidden; }
   .harness-connectors span::after { content: ""; position: absolute; left: 0; bottom: -14px; width: 1px; height: 14px; background: linear-gradient(to top, transparent, #cfe3f5); box-shadow: 0 0 6px #9cbedc; animation: harness-feed 3.2s ease-in infinite; }
-  .harness-connectors span:last-child::after { animation-delay: 1.6s; }
   .harness-foundation { position: relative; padding: 1.2rem; border: 1px solid #71899d70; border-radius: 8px; background: #9cbedc08; text-align: center; overflow: hidden; }
   .foundation-scan { position: absolute; top: -1px; left: 0; width: 30%; height: 1px; background: linear-gradient(90deg, transparent, #9cbedc, transparent); animation: harness-scan 6s ease-in-out infinite; }
   .foundation-status { display: inline-flex; align-items: center; gap: 0.45rem; margin-bottom: 0.7rem; color: #828b96; font: 0.55rem "JetBrains Mono", monospace; letter-spacing: 0.12em; text-transform: uppercase; }
@@ -516,6 +527,9 @@ const baseDomain = "deploy-your-startup.com";
   .community-loop p { font-size: 0.7rem; line-height: 1.7; }
   @media (max-width: 600px) {
     .example-apps, .harness-connectors { gap: 0.75rem; }
+    .example-app:last-child:nth-child(odd) { width: calc((100% - 0.75rem) / 2); }
+    .preview-inbox { gap: 10px; }
+    .preview-inbox svg { width: 28px; }
     .app-preview { height: 130px; padding-inline: 0.6rem; }
     .preview-toolbar > span { font-size: 0.4rem; }
     .preview-profile { gap: 8px; }
