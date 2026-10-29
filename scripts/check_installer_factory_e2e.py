@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main():
     if sys.platform != 'darwin':
         raise SystemExit('This E2E check requires macOS.')
-    missing = [tool for tool in ('git', 'mise', 'yq') if not shutil.which(tool)]
+    missing = [tool for tool in ('git', 'mise', 'yq', 'gh') if not shutil.which(tool)]
     if missing:
         raise SystemExit('Install E2E prerequisites: ' + ', '.join(missing))
     with tempfile.TemporaryDirectory(prefix='installer-factory-e2e-') as temporary:
@@ -39,6 +39,7 @@ case "$*" in
   'auth status'*) echo "- Token scopes: 'repo', 'workflow', 'read:packages'" ;;
   'auth setup-git'*) exit 0 ;;
   *api*user*) echo example-owner ;;
+  skill\\ install*|skills\\ install*) exec "$STARTUP_E2E_REAL_GH" "$@" ;;
   *) echo 'Unexpected GitHub mutation' >&2; exit 99 ;;
 esac
 """)
@@ -49,7 +50,8 @@ esac
             'MISE_DATA_DIR': os.environ.get('MISE_DATA_DIR', str(Path.home() / '.local/share/mise')),
             'GIT_CONFIG_GLOBAL': '/dev/null', 'GIT_AUTHOR_NAME': 'Factory E2E',
             'GIT_AUTHOR_EMAIL': 'test@example.invalid', 'NO_COLOR': '1',
-            'GH_TOKEN': '', 'GITHUB_TOKEN': '', 'npm_config_cache': str(root / 'npm-cache'),
+            'GH_TOKEN': '', 'GITHUB_TOKEN': '',
+            'STARTUP_E2E_REAL_GH': shutil.which('gh') or '', 'npm_config_cache': str(root / 'npm-cache'),
         }
         for key in ('CI', 'npm_config_yes', 'NPM_CONFIG_YES'):
             environment.pop(key, None)
@@ -122,7 +124,9 @@ esac
         subprocess.run([str(launcher), 'factory', 'init', '--resume'], env=environment, text=True, capture_output=True, check=True)
         assert notes.read_text() == 'Preserve my Factory notes.\n'
         assert (home / '.agents/skills/deploy-your-startup/SKILL.md').is_file()
-        assert 'sprowi-task — installing... ' in text
+        assert (factory / '.agents/skills/sprowi-task/SKILL.md').is_file()
+        if (factory / 'skills/idea-personas/SKILL.md').is_file():
+            assert (factory / '.agents/skills/idea-personas/SKILL.md').is_file()
         assert 'failed' not in text.lower()
         assert not (factory / 'projects/startups/example-app').exists()
         print('Real installer-to-Factory E2E passed; no cloud resources were created.')
