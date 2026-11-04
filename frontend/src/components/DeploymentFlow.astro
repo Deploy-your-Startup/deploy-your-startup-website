@@ -1,0 +1,145 @@
+---
+import BrandMark from "./BrandMark.astro";
+---
+
+<section class="ownership" id="ownership" aria-labelledby="ownership-title">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">BUILT WITH US. OWNED BY YOU.</p>
+      <h2 id="ownership-title">Your startup. <span>In your hands.</span></h2>
+    </div>
+    <p class="section-intro">One path from your laptop to a live app.<br />Here’s where everything lives.</p>
+  </div>
+
+  <div class="deployment-map">
+    <div class="template-source">
+      <span class="source-mark"><BrandMark /></span>
+      <span><strong>Our open-source templates</strong><span class="source-detail">The starting point. Updates you choose to apply.</span></span>
+      <span class="source-route" aria-hidden="true">setup & updates <span>↘</span></span>
+    </div>
+    <div class="account-labels" aria-hidden="true"><span>ON YOUR MACHINE</span><span>IN YOUR GITHUB ACCOUNT</span><span>IN YOUR CLOUD ACCOUNT</span></div>
+    <ol class="flow-steps" aria-label="Full-stack deployment flow">
+      <li class="flow-step">
+        <div class="step-top"><span class="step-index">01</span><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="5" y="5" width="22" height="17" rx="2"/><path d="M2 26h28M12 11l4 3-4 3m7 0h3"/></svg></div>
+        <h3>Your computer</h3>
+        <p>Factory, CLI & coding agent.</p>
+        <div class="step-detail"><span class="mini-prompt" aria-hidden="true">›_</span><span>Build your idea locally</span></div>
+        <span class="connector" aria-hidden="true"><i></i><span>push</span></span>
+      </li>
+      <li class="flow-step">
+        <div class="step-top"><span class="step-index">02</span><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="6" y="3" width="21" height="26" rx="2"/><path d="M11 3v26M16 10h6m-6 5h6m-6 5h4M3 8h5m-5 8h5m-5 8h5"/></svg></div>
+        <h3>Your repositories</h3>
+        <p>App code & encrypted config.</p>
+        <div class="step-detail"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="3.5" y="7" width="9" height="7" rx="1.5"/><path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7"/></svg><span>Created private by default</span></div>
+        <span class="connector" aria-hidden="true"><i></i><span>run</span></span>
+      </li>
+      <li class="flow-step">
+        <div class="step-top"><span class="step-index">03</span><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="12"/><path d="m13 10 8 6-8 6V10Z"/></svg></div>
+        <h3>GitHub Actions</h3>
+        <p>Checks, builds & deployment.</p>
+        <div class="step-detail"><span class="check" aria-hidden="true">✓</span><span>Uses deployment secrets</span></div>
+        <span class="connector" aria-hidden="true"><i></i><span>SSH</span></span>
+      </li>
+      <li class="flow-step">
+        <div class="step-top"><span class="step-index">04</span><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="4" y="4" width="24" height="10" rx="2"/><rect x="4" y="18" width="24" height="10" rx="2"/><path d="M9 9h.01M9 23h.01M15 9h8m-8 14h8"/></svg></div>
+        <h3>Your server</h3>
+        <p>Your app & its database.</p>
+        <div class="step-detail"><span class="live-dot" aria-hidden="true"></span><span>Served to users over HTTPS</span></div>
+      </li>
+    </ol>
+    <div class="map-caption"><span class="caption-line" aria-hidden="true"></span><p>The full-stack path · Hetzner or your own server. <a href="/faq#deployment">Landing page? Cloudflare Pages.</a></p></div>
+  </div>
+
+  <div class="ownership-footer">
+    <p><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="8" cy="9" r="4"/><path d="m11 12 8 8m-4-4 3-3m-1 5 3-3"/></svg><span><strong>Your accounts. Explicit access.</strong> The deployment runner can decrypt secrets and access your server.</span></p>
+    <a class="faq-link" href="/faq">Explore the FAQ <span aria-hidden="true">↗</span></a>
+  </div>
+</section>
+
+<script>
+  // Play a single short sequence on entry; keep the explanation readable without JS.
+  const map = document.querySelector<HTMLElement>('.deployment-map');
+  if (map && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      map.classList.add('is-arriving');
+      observer.disconnect();
+    }, { threshold: 0.45 });
+    observer.observe(map);
+  }
+</script>
+
+<style>
+  .ownership { margin-top: 3.5rem; padding-top: 2.8rem; border-top: 1px solid #ffffff12; text-align: left; scroll-margin-top: 2rem; }
+  .section-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 1.5rem; margin-bottom: 2rem; }
+  .eyebrow { font: .6rem "JetBrains Mono", monospace; letter-spacing: .13em; color: #a9c5df; margin-bottom: .85rem; }
+  h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 600; letter-spacing: -.05em; line-height: 1.2; }
+  h2 span { color: #a9c5df; }
+  .section-intro { font-size: .75rem; line-height: 1.8; color: #aeb2b8; margin: 0; }
+  .deployment-map { padding: 1.4rem; border: 1px solid #34383f; border-radius: 12px; background: radial-gradient(ellipse at 50% 0, #a9c5df09, transparent 60%), #141517; }
+  .template-source { display: flex; align-items: center; gap: .65rem; padding-bottom: 1.4rem; margin-bottom: 1.5rem; border-bottom: 1px dashed #34383f; }
+  .source-mark { width: 32px; color: #a9c5df; flex-shrink: 0; }
+  .source-mark :global(svg) { width: 100%; display: block; }
+  .template-source strong { font-weight: 400; font-size: .75rem; color: #e7e7e4; }
+  .source-detail { display: block; margin-top: .3rem; font-size: .65rem; color: #aeb2b8; line-height: 1.6; }
+  .source-route { margin-left: auto; color: #aeb2b8; font: .55rem "JetBrains Mono", monospace; }
+  .source-route > span { color: #a9c5df; margin-left: .6rem; font-size: 1rem; }
+  .account-labels { display: grid; grid-template-columns: 1fr 2fr 1fr; color: #a9adb4; font: .5rem "JetBrains Mono", monospace; letter-spacing: .07em; gap: 1.8rem; margin-bottom: .85rem; }
+  .account-labels span { border-top: 1px solid #3a414b; padding-top: .7rem; text-align: center; }
+  .flow-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); list-style: none; gap: 1.6rem; }
+  .flow-step { position: relative; min-width: 0; border: 1px solid #363a40; border-radius: 7px; padding: .9rem .8rem; background: #1b1d20; transition: transform .25s ease, border-color .25s ease, background .25s ease; }
+  .flow-step:hover { transform: translateY(-3px); border-color: #71899d; background: #20252a; }
+  .step-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.15rem; }
+  .step-index { font: .6rem "JetBrains Mono", monospace; color: #a5aab2; }
+  .step-top svg { width: 27px; height: 27px; stroke: #a9c5df; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+  h3 { font-size: .9rem; font-weight: 600; letter-spacing: -.02em; white-space: nowrap; }
+  .flow-step > p { margin-top: .5rem; color: #adb2ba; font-size: .75rem; line-height: 1.7; min-height: 2.6rem; }
+  .step-detail { display: flex; align-items: center; gap: .35rem; border-top: 1px solid #34383f; margin-top: .85rem; padding-top: .7rem; font-size: .7rem; line-height: 1.6; color: #b4c4d2; }
+  .step-detail svg { width: 12px; height: 14px; stroke: currentColor; stroke-width: 1.2; flex-shrink: 0; }
+  .mini-prompt, .check { font: .8rem "JetBrains Mono", monospace; }
+  .live-dot { width: 5px; height: 5px; background: #a9c5df; border-radius: 50%; flex-shrink: 0; }
+  .connector { position: absolute; left: 100%; width: 1.6rem; top: 43%; height: 1px; background: #4c5b69; }
+  .connector::after { content: ''; position: absolute; width: 4px; height: 4px; right: 1px; top: -2px; border-top: 1px solid #91adc5; border-right: 1px solid #91adc5; transform: rotate(45deg); }
+  .connector > span { position: absolute; top: -14px; width: 100%; text-align: center; color: #a9adb4; font: .45rem "JetBrains Mono", monospace; }
+  .connector i { position: absolute; top: -2px; width: 5px; height: 5px; background: #c9e2f8; border-radius: 50%; opacity: 0; box-shadow: 0 0 8px #a9c5df88; }
+  .is-arriving .connector i { animation: packet .65s ease-in-out both; }
+  .is-arriving .flow-step { animation: step-arrival .8s ease both; }
+  .is-arriving .flow-step:nth-child(2), .is-arriving .flow-step:nth-child(2) .connector i { animation-delay: .65s; }
+  .is-arriving .flow-step:nth-child(3), .is-arriving .flow-step:nth-child(3) .connector i { animation-delay: 1.3s; }
+  .is-arriving .flow-step:nth-child(4) { animation-delay: 1.95s; }
+  .map-caption { display: flex; align-items: center; gap: .6rem; margin-top: 1.15rem; }
+  .caption-line { width: 18px; height: 1px; background: #71899d; flex-shrink: 0; }
+  .map-caption p { color: #a9adb4; font-size: .7rem; line-height: 1.8; }
+  .map-caption a { color: #c0cedb; text-decoration-color: #71899d77; }
+  .ownership-footer { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; margin-top: 1.15rem; }
+  .ownership-footer p { display: flex; align-items: flex-start; gap: .6rem; max-width: 580px; color: #aeb2b8; font-size: .7rem; line-height: 1.8; }
+  .ownership-footer p svg { width: 20px; height: 20px; flex-shrink: 0; stroke: #a9c5df; stroke-width: 1.5; margin-top: 2px; }
+  .ownership-footer strong { color: #e7e7e4; font-weight: 400; }
+  .faq-link { flex-shrink: 0; font-size: .75rem; text-decoration: none; color: #a9c5df; padding-block: .65rem; }
+  .faq-link span { display: inline-block; margin-left: .4rem; transition: transform .2s ease; }
+  .faq-link:hover span { transform: translate(2px, -2px); }
+  @keyframes packet { 0% { left: 0; opacity: 0; } 20%, 80% { opacity: 1; } 100% { left: 100%; opacity: 0; } }
+  @keyframes step-arrival { 0%, 100% { border-color: #363a40; } 45% { border-color: #a9c5df; box-shadow: 0 0 18px #a9c5df10; } }
+  @media (max-width: 750px) {
+    .section-heading { display: block; }
+    .section-intro { margin-top: .9rem; }
+    .account-labels { display: none; }
+    .flow-steps { grid-template-columns: 1fr; gap: 1.8rem; }
+    .flow-step { padding: .9rem 1rem; display: grid; grid-template-columns: 35px 1fr; column-gap: .8rem; }
+    .step-top { grid-row: 1 / 4; margin: 0; flex-direction: column; justify-content: flex-start; gap: .6rem; }
+    .flow-step > p { min-height: 0; margin-top: .25rem; }
+    .step-detail { margin-top: .6rem; padding-top: .5rem; }
+    .flow-step h3 { font-size: .85rem; }
+    .flow-step > p, .step-detail { font-size: .7rem; }
+    .connector { left: 50%; top: 100%; width: 1px; height: 1.8rem; }
+    .connector::after { top: auto; bottom: 1px; left: -2px; transform: rotate(135deg); }
+    .connector > span { top: .6rem; left: 8px; width: auto; font-size: .5rem; }
+    .connector i { left: -2px; top: 0; }
+    .is-arriving .connector i { animation-name: packet-vertical; }
+    .source-route { display: none; }
+    .ownership-footer { align-items: flex-start; flex-direction: column; gap: .5rem; }
+    .ownership-footer p { font-size: .75rem; }
+    .map-caption p { font-size: .65rem; }
+    @keyframes packet-vertical { 0% { top: 0; opacity: 0; } 20%, 80% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+  }
+</style>

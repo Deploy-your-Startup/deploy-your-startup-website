@@ -1,0 +1,163 @@
+---
+import "../styles/global.css";
+import BrandMark from "../components/BrandMark.astro";
+
+const groups = [
+  {
+    id: "basics", label: "The basics", number: "01", note: "What’s yours, from day one.",
+    questions: [
+      { id: "ownership", title: "Where do my code and data live?", answer: "Your Factory workspace lives on your computer, with an optional private GitHub backup. New app repositories and the shared deployment repository are created in your GitHub account, private by default. In the standard full-stack setup, your application and database run on servers in your hosting account. Static landing pages use your Cloudflare Pages account.", detail: "The public templates are the starting point. Your Factory, portfolio and application repositories are separate from them." },
+      { id: "cost", title: "What do I pay for?", answer: "There is no platform fee during early access. You pay your providers directly: hosting, domains, coding agents and any other services you choose. Their own pricing and usage limits apply.", detail: "Removing the CLI does not cancel cloud resources or stop their bills. You manage those in your provider accounts." },
+      { id: "leaving", title: "Can I keep working without Deploy Your Startup?", answer: "Yes. Your repositories, application code and infrastructure stay in your accounts. You can edit the generated code and deployment configuration, use the underlying tools directly, or move to a different deployment setup.", detail: "You remain responsible for maintaining the application, dependencies, backups and hosting." },
+    ],
+  },
+  {
+    id: "access", label: "Ownership & access", number: "02", note: "Your accounts. Real trust boundaries.",
+    questions: [
+      { id: "our-access", title: "Can Deploy Your Startup access my accounts?", answer: "The standard setup does not add Deploy Your Startup as a collaborator to your private repositories or create a separate operator account for us on your server. The CLI runs on your computer using the accounts and credentials you authorize.", detail: "You still trust the CLI, templates and dependencies you run. GitHub processes your repository and CI jobs; your host runs the application. Any access you separately grant to collaborators or support is additional." },
+      { id: "secrets", title: "Where are passwords and API keys stored?", answer: "For full-stack deployments, deployment secrets are encrypted with Ansible Vault before being committed. The Vault password is stored separately in your configured local backend (macOS Keychain or 1Password) and as a GitHub Actions secret.", detail: "The deployment runner can decrypt these secrets to deploy your app, including the SSH key used to access your server. Encryption in Git does not protect against a compromised authorized runner. Static Cloudflare Pages deployments use Cloudflare credentials stored in GitHub secrets instead." },
+      { id: "agents", title: "What can my coding agent access?", answer: "That depends on the agent, its sandbox, permissions and your local credential access. An agent with permission to run commands may be able to use your GitHub login, SSH agent or CLI secret backend. Instructions in an AGENTS.md file guide behavior; they are not a security boundary.", detail: "A hosted AI provider may receive code and context you give the agent. Review that provider’s settings and grant access deliberately. Do not paste passwords or tokens into chats." },
+      { id: "security", title: "Does this make my application secure?", answer: "The templates provide deployment defaults, not a security guarantee for your application. You still need to review authentication, authorization, dependencies, backups and how your app handles user data.", detail: "Deployment SSH keys have administrative access. Protect the accounts and workflows that can use them. Shared clusters are intended for mutually trusted projects belonging to one owner; namespaces do not isolate independent customers from a cluster administrator." },
+    ],
+  },
+  {
+    id: "deployment", label: "Deployments & updates", number: "03", note: "From a commit to a running app.",
+    questions: [
+      { id: "how-deploy", title: "How does a deployment work?", answer: "For a standard full-stack project, a push to main starts GitHub Actions in your account. The configured workflows check and build your application, then deploy to your server over SSH using Ansible. The app runs on k3s and serves visitors over HTTPS.", detail: "The deployment runner has access to the credentials needed for this work, so repository and workflow permissions matter. Static landing pages take a separate path: GitHub Actions builds the site and deploys it to Cloudflare Pages." },
+      { id: "updates", title: "How do template updates reach my project?", answer: "Your project is an independent repository. Updating the public template does not automatically rewrite your application. You choose when to update, inspect the diff and run your project’s checks before deploying.", detail: "Application template updates and shared deployment updates are separate. Review both the copied workflows and the versions your project references: a reference to a branch such as main can change as that branch advances. Fixed commit references give you an explicit revision to review." },
+    ],
+  },
+];
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    <title>FAQ — Deploy Your Startup</title>
+    <meta name="description" content="Where your code lives, who can access your secrets and how deployments work. Straight answers about building with Deploy Your Startup." />
+  </head>
+  <body class="faq-page">
+    <div class="faq-shell">
+      <header class="faq-header">
+        <a class="brand" href="/" aria-label="Deploy Your Startup home"><span class="brand-symbol"><BrandMark /></span><span>deploy your<strong>startup</strong></span></a>
+        <nav aria-label="Main navigation"><a href="/factory">The Factory</a><a href="/get-started">Get started <span aria-hidden="true">↗</span></a></nav>
+      </header>
+      <main>
+        <section class="faq-hero" aria-labelledby="faq-title">
+          <p class="eyebrow"><span aria-hidden="true"></span> A FEW THINGS WORTH KNOWING</p>
+          <h1 id="faq-title">Good questions.<br /><span>Straight answers.</span></h1>
+          <p class="intro">Your code, your keys, your next idea.<br />Understand what you own and how it all connects.</p>
+          <a class="flow-backlink" href="/#ownership"><svg viewBox="0 0 38 16" fill="none" aria-hidden="true"><rect x="1" y="4" width="8" height="8" rx="2"/><path d="M9 8h6m8 0h6"/><rect x="15" y="4" width="8" height="8" rx="2"/><rect x="29" y="4" width="8" height="8" rx="2"/></svg>See the deployment flow<span aria-hidden="true">↗</span></a>
+        </section>
+        <div class="faq-layout">
+          <aside>
+            <nav class="topic-nav" aria-label="FAQ topics">
+              <p>IN THIS FAQ</p>
+              {groups.map(group => <a href={`#${group.id}`}><span>{group.number}</span>{group.label}</a>)}
+            </nav>
+            <div class="source-note"><span aria-hidden="true">{ "</>" }</span><p>Open source.<br />Open to inspection.</p><a href="https://github.com/Deploy-your-Startup/cli">Explore the CLI ↗</a><a href="https://github.com/Deploy-your-Startup/deploy-template">Deployment templates ↗</a></div>
+          </aside>
+          <div class="faq-groups">
+            {groups.map((group, groupIndex) => (
+              <section class="faq-group" id={group.id} aria-labelledby={`${group.id}-title`}>
+                <div class="group-heading"><span>{group.number}</span><div><h2 id={`${group.id}-title`}>{group.label}</h2><p>{group.note}</p></div></div>
+                {group.questions.map((question, questionIndex) => (
+                  <details id={question.id} open={groupIndex === 0 && questionIndex === 0}>
+                    <summary>{question.title}<span class="toggle" aria-hidden="true"></span></summary>
+                    <div class="answer"><p>{question.answer}</p><p class="answer-detail">{question.detail}</p></div>
+                  </details>
+                ))}
+              </section>
+            ))}
+          </div>
+        </div>
+        <section class="next-step" aria-labelledby="next-title"><div><p class="eyebrow">MAKE SOMETHING YOURS</p><h2 id="next-title">Your next idea starts here.</h2></div><a href="/get-started">Get started <span aria-hidden="true">↗</span></a></section>
+      </main>
+      <footer><span>deploy-your-startup.com</span><a href="https://github.com/Deploy-your-Startup/cli/issues">Still have a question? Open an issue ↗</a></footer>
+    </div>
+  </body>
+</html>
+
+<style>
+  :global(body.faq-page) { background: #18191b; color: #e7e7e4; padding: 0 1.5rem; --accent-2: #a9c5df; --muted: #aeb2b8; --text: #e7e7e4; }
+  .faq-shell { width: 100%; max-width: 920px; }
+  .faq-header { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; padding: 1.6rem 0; border-bottom: 1px solid #ffffff12; }
+  .brand { display: inline-flex; align-items: center; gap: .65rem; text-decoration: none; color: #aeb2b8; font-size: .7rem; }
+  .brand-symbol { width: 45px; color: #a9c5df; transition: transform .25s ease; }
+  .brand-symbol :global(svg) { display: block; width: 100%; }
+  .brand:hover .brand-symbol { transform: translate(1px, -2px); }
+  .brand strong { display: block; font-size: 1.15rem; font-weight: 600; letter-spacing: -.05em; color: #e7e7e4; }
+  .faq-header nav { display: flex; align-items: center; gap: 1.6rem; }
+  .faq-header nav a { font-size: .75rem; text-decoration: none; color: #aeb2b8; transition: color .2s; padding-block: .7rem; }
+  .faq-header nav a:last-child { color: #a9c5df; }
+  .faq-header nav a:hover { color: #e7e7e4; }
+  .faq-hero { padding: 4.5rem 0 3.5rem; }
+  .eyebrow { font: .6rem "JetBrains Mono", monospace; letter-spacing: .13em; color: #a9c5df; margin-bottom: 1.4rem; }
+  .faq-hero .eyebrow { display: flex; align-items: center; gap: .6rem; }
+  .eyebrow > span { width: 5px; height: 5px; border-radius: 50%; background: #a9c5df; box-shadow: 0 0 0 4px #a9c5df0d; }
+  h1 { font-size: clamp(2.7rem, 6vw, 4.4rem); line-height: 1.08; letter-spacing: -.06em; font-weight: 600; background: none; -webkit-text-fill-color: currentColor; margin: 0; }
+  h1 span { color: #a9c5df; }
+  .intro { color: #aeb2b8; font-size: .9rem; line-height: 1.85; margin-top: 1.5rem; }
+  .flow-backlink { display: inline-flex; align-items: center; gap: .7rem; margin-top: 1.5rem; padding-block: .6rem; font-size: .7rem; color: #c1cbd5; text-decoration: none; }
+  .flow-backlink svg { width: 38px; height: 16px; stroke: #a9c5df; stroke-width: 1; }
+  .flow-backlink > span { transition: transform .2s; }
+  .flow-backlink:hover > span { transform: translate(2px, -2px); }
+  .faq-layout { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 3.8rem; border-top: 1px solid #343639; padding-top: 2.5rem; }
+  aside { align-self: start; position: sticky; top: 2rem; }
+  .topic-nav > p { color: #aeb2b8; font: .55rem "JetBrains Mono", monospace; letter-spacing: .12em; margin-bottom: 1.2rem; }
+  .topic-nav a { display: flex; align-items: center; gap: .9rem; font-size: .75rem; text-decoration: none; color: #c3c5c9; padding: .8rem 0; transition: color .2s, transform .2s; }
+  .topic-nav a:hover { color: #a9c5df; transform: translateX(3px); }
+  .topic-nav a span { color: #8f9ca9; font: .6rem "JetBrains Mono", monospace; }
+  .source-note { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #343639; }
+  .source-note > span { font: .8rem "JetBrains Mono", monospace; color: #a9c5df; }
+  .source-note p { font-size: .75rem; line-height: 1.7; margin: .7rem 0 1rem; color: #aeb2b8; }
+  .source-note a { display: block; font-size: .65rem; margin-top: .7rem; text-decoration: none; }
+  .faq-group { scroll-margin-top: 2rem; margin-bottom: 3rem; }
+  .group-heading { display: flex; align-items: baseline; gap: .8rem; margin-bottom: 1.4rem; }
+  .group-heading > span { font: .6rem "JetBrains Mono", monospace; color: #a9c5df; }
+  h2 { font-size: 1.3rem; font-weight: 600; letter-spacing: -.04em; }
+  .group-heading p { color: #aeb2b8; font-size: .7rem; line-height: 1.6; margin-top: .45rem; }
+  details { margin: 0; border-top: 1px solid #343639; scroll-margin-top: 2rem; }
+  details:last-child { border-bottom: 1px solid #343639; }
+  summary { display: flex; align-items: center; justify-content: space-between; gap: 1.2rem; padding: 1.2rem 0; list-style: none; font-size: .85rem; font-weight: 400; color: #e7e7e4; transition: color .2s; }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover, details[open] summary { color: #a9c5df; }
+  .toggle { width: 20px; height: 20px; position: relative; flex-shrink: 0; border: 1px solid #414850; border-radius: 50%; transition: border-color .2s, transform .25s; }
+  .toggle::before, .toggle::after { content: ''; width: 7px; height: 1px; position: absolute; left: 5.5px; top: 8.5px; background: currentColor; transition: transform .25s; }
+  .toggle::after { transform: rotate(90deg); }
+  details[open] .toggle { border-color: #71899d; transform: rotate(180deg); }
+  details[open] .toggle::after { transform: rotate(0); }
+  .answer { padding: 0 2rem 1.35rem 0; }
+  details[open] .answer { animation: answer-in .25s ease-out; }
+  .answer p { color: #bec1c7; font-size: .8rem; line-height: 1.9; }
+  .answer .answer-detail { margin-top: .9rem; padding-left: .85rem; border-left: 2px solid #a9c5df55; color: #aeb2b8; font-size: .75rem; }
+  .next-step { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; padding: 2rem 0; border-top: 1px solid #343639; }
+  .next-step .eyebrow { font-size: .55rem; margin-bottom: .7rem; }
+  .next-step h2 { font-size: 1.5rem; }
+  .next-step > a { padding: .85rem 1.2rem; background: #a9c5df; border: 1px solid #a9c5df; border-radius: 6px; color: #18212a; text-decoration: none; font-size: .8rem; font-weight: 600; white-space: nowrap; transition: background .2s, transform .2s; }
+  .next-step > a:hover { background: #c6ddf1; transform: translateY(-2px); }
+  .next-step > a span { margin-left: .7rem; }
+  footer { flex-direction: row; justify-content: space-between; gap: 1rem; margin: 0; padding: 1.5rem 0 2.5rem; border-top: 1px solid #343639; font-size: .6rem; letter-spacing: 0; line-height: 1.8; text-align: left; }
+  footer a { text-decoration: none; }
+  @keyframes answer-in { from { opacity: .3; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 750px) {
+    .faq-header nav { gap: 1rem; }
+    .faq-header nav a { font-size: .7rem; }
+    .faq-hero { padding: 3.5rem 0 2.5rem; }
+    .faq-layout { grid-template-columns: 1fr; gap: 2rem; padding-top: 1.5rem; }
+    aside { position: static; }
+    .topic-nav > p { margin-bottom: .6rem; }
+    .topic-nav a { padding: .65rem 0; }
+    .source-note { display: none; }
+    .faq-group { margin-bottom: 2.5rem; }
+    summary { font-size: .85rem; padding: 1.15rem 0; }
+    .answer { padding-right: 0; }
+    .next-step { align-items: flex-start; flex-direction: column; }
+    footer { align-items: flex-start; flex-direction: column; }
+  }
+</style>

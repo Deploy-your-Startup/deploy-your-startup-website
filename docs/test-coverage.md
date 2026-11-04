@@ -40,6 +40,36 @@ runs this scenario for PRs and production deployments and gates deployment.
 Actual GitHub OAuth, Keychain interaction, provider setup and a live application
 remain unverified by this cancellation scenario.
 
+## Ownership diagram and FAQ
+
+- Rendered-page integration: the homepage links to the generated FAQ, core
+  ownership/access questions render as native disclosures, and the page explains
+  administrative deployment access and the separate Cloudflare Pages path.
+- Browser E2E: desktop (1440px) and mobile (390px) navigation from the diagram
+  to the FAQ, keyboard opening/closing of the secrets answer, no horizontal
+  overflow, and onward navigation to onboarding.
+- Browser E2E: reduced-motion mode leaves the deployment explanation visible
+  without running animations; FAQ disclosures and home navigation work with
+  JavaScript disabled.
+- Status: covered by `frontend/tests/landing.test.mjs` and
+  `e2e_tests/tests/faq.spec.ts`. Invalid input and denied access do not apply to
+  these public, read-only pages. External provider access and actual production
+  security are not established by these tests. CI currently sets
+  `run_e2e: false`; run the browser suite locally.
+
+## Factory overview
+
+- Rendered-page integration checks the homepage link and the overview's core
+  concepts: the owner's Factory repository, independent startups, shared
+  tooling, skills, templates and optional Sprowi.
+- Desktop and mobile browser scenarios follow the homepage tour link, use the
+  workspace diagram to reach skills, check that the four components are visible
+  without horizontal overflow and navigate onward to the access FAQ.
+- Covered in `frontend/tests/landing.test.mjs` and
+  `e2e_tests/tests/factory.spec.ts`. This is public static content; input validation
+  and denied access do not apply. Real setup/provider operations remain outside
+  these page checks.
+
 ## Teaser video
 
 The integration case checks that the built homepage links the self-hosted

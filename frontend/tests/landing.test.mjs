@@ -3,6 +3,18 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { readFileSync, statSync } from "node:fs";
 
+test("GIVEN someone exploring the Factory WHEN the site builds THEN its overview distinguishes owner repos from shared foundations", () => {
+  execFileSync("npm", ["run", "build"], { cwd: new URL("../", import.meta.url), stdio: "pipe" });
+  const home = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
+  assert.match(home, /href="\/factory"/);
+  const overview = readFileSync(new URL("../dist/factory/index.html", import.meta.url), "utf8");
+  for (const text of ["Your Factory", "Your startups", "Shared tooling", "Agent skills", "Project templates", "Sprowi", "own Git repository", "private GitHub backup"]) {
+    assert.ok(overview.includes(text), `Missing Factory concept: ${text}`);
+  }
+  assert.match(overview, /href="\/faq"/);
+  assert.match(overview, /href="\/get-started"/);
+});
+
 test("GIVEN the landing page WHEN Astro builds THEN visitors see the harness and five startups on a shared harness", () => {
   // GIVEN the real site, WHEN its production build renders the pages.
   execFileSync("npm", ["run", "build"], { cwd: new URL("../", import.meta.url), stdio: "pipe" });
@@ -63,4 +75,19 @@ test("GIVEN the landing page WHEN Astro builds THEN the teaser stays a quiet lin
   for (const file of ["startup-factory-teaser.mp4", "startup-factory-teaser-poster.jpg"]) {
     assert.ok(statSync(new URL(`../dist/videos/${file}`, import.meta.url)).size > 10_000, `Missing ${file}`);
   }
+});
+
+test("GIVEN a new visitor WHEN the site builds THEN ownership and deployment answers are reachable without JavaScript", () => {
+  execFileSync("npm", ["run", "build"], { cwd: new URL("../", import.meta.url), stdio: "pipe" });
+  const home = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
+  assert.match(home, /href="\/faq"/);
+  const faq = readFileSync(new URL("../dist/faq/index.html", import.meta.url), "utf8");
+  for (const text of ["Where do my code and data live?", "Can Deploy Your Startup access my accounts?", "Where are passwords and API keys stored?", "What can my coding agent access?", "How does a deployment work?", "How do template updates reach my project?"]) {
+    assert.ok(faq.includes(text), `Missing answer: ${text}`);
+  }
+  assert.match(faq, /<details/);
+  assert.match(faq, /GitHub Actions/);
+  assert.match(faq, /administrative/);
+  assert.match(faq, /Cloudflare Pages/);
+  assert.match(faq, /href="\/get-started"/);
 });
