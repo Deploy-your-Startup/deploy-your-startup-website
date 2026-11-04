@@ -57,6 +57,19 @@ remain unverified by this cancellation scenario.
   security are not established by these tests. CI currently sets
   `run_e2e: false`; run the browser suite locally.
 
+## Factory overview
+
+- Rendered-page integration checks the homepage link and the overview's core
+  concepts: the owner's Factory repository, independent startups, shared
+  tooling, skills, templates and optional Sprowi.
+- Desktop and mobile browser scenarios follow the homepage tour link, use the
+  workspace diagram to reach skills, check that the four components are visible
+  without horizontal overflow and navigate onward to the access FAQ.
+- Covered in `frontend/tests/landing.test.mjs` and
+  `e2e_tests/tests/factory.spec.ts`. This is public static content; input validation
+  and denied access do not apply. Real setup/provider operations remain outside
+  these page checks.
+
 ## Teaser video
 
 The integration case checks that the built homepage links the self-hosted

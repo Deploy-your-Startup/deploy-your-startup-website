@@ -62,6 +62,7 @@ const baseDomain = "deploy-your-startup.com";
         <p>Your agent builds the app. We improve the harness: <br class="desktop-break" />
           the instructions, tools and checks it works with.</p>
         <p>A reusable foundation for this startup. And the next.<br /><strong>A harness, not a cage.</strong></p>
+        <a class="factory-tour-link" href="/factory">Take a look inside the Factory <span aria-hidden="true">↗</span></a>
       </section>
       <div class="factory">
         <span class="stack-label">The startup factory</span>
@@ -246,6 +247,7 @@ const baseDomain = "deploy-your-startup.com";
     <footer class="landing-footer">
       <div class="footer-links">
         <span>{baseDomain}</span>
+        <a href="/factory">The Factory</a>
         <a href="/faq">FAQ</a>
         <a href="https://github.com/Deploy-your-Startup/cli" target="_blank" rel="noopener">GitHub</a>
         <a href="https://aboutphil.de" target="_blank" rel="noopener">By aboutphil</a>
@@ -421,6 +423,9 @@ const baseDomain = "deploy-your-startup.com";
   .teaser-close:hover { background: #24282d; }
   .landing-details { margin-top: 4rem; padding-top: 2.8rem; border-top: 1px solid #ffffff12; }
   .harness-intro h2 { font: 600 clamp(1.4rem, 3vw, 2rem) "Inter", sans-serif; letter-spacing: -0.04em; }
+  .factory-tour-link { display: inline-block; margin-top: 1rem; padding: .4rem 0; font-size: .75rem; color: #a9c5df; text-decoration: none; }
+  .factory-tour-link span { display: inline-block; margin-left: .3rem; transition: transform .2s; }
+  .factory-tour-link:hover span { transform: translate(2px, -2px); }
   .harness-intro p { max-width: 620px; margin: 0.8rem auto 0; color: var(--muted); font-size: 0.9rem; line-height: 1.8; }
   .factory { margin-top: 3rem; padding: 1.5rem 0; gap: 2rem; }
   .stack-label { color: var(--muted); font-size: 0.6rem; }

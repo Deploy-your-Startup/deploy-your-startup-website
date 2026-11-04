@@ -56,9 +56,9 @@ No infrastructure, permissions or credentials were changed for this draft.
 
 ## Draft validation
 
-- Website `mise run test`: 22 Python integration tests and four rendered-page
+- Website `mise run test`: 22 Python integration tests and five rendered-page
   scenarios passed; the latter build the real Astro site.
-- Local browser E2E: all 11 scenarios passed, including four new FAQ scenarios.
+- Local browser E2E: all 13 scenarios passed, including FAQ and Factory overview navigation.
 - Both macOS installer E2E scripts passed (isolated homes and cancelled cloud
   setup; no production provisioning).
 - Hub `mise run test`: all 69 tests passed using `FACTORY_TEST_PYTHON` set to the
