@@ -10,6 +10,7 @@ import json
 import os
 import pty
 import select
+import shlex
 import shutil
 import signal
 import subprocess
@@ -24,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main():
     if sys.platform != 'darwin':
         raise SystemExit('This E2E check requires macOS.')
-    missing = [tool for tool in ('git', 'mise', 'yq', 'gh') if not shutil.which(tool)]
+    missing = [tool for tool in ('git', 'mise', 'yq', 'gh', 'uv') if not shutil.which(tool)]
     if missing:
         raise SystemExit('Install E2E prerequisites: ' + ', '.join(missing))
     with tempfile.TemporaryDirectory(prefix='installer-factory-e2e-') as temporary:
@@ -32,6 +33,11 @@ def main():
         home, binaries, factory = root / 'home', root / 'bin', root / 'my factory'
         (home / '.codex').mkdir(parents=True)
         binaries.mkdir()
+        # Keep the launcher's uv PATH prefix in this boundary directory. A real
+        # Homebrew uv otherwise prepends its directory and shadows the fake gh.
+        uv = binaries / 'uv'
+        uv.write_text('#!/bin/sh\nexec ' + shlex.quote(shutil.which('uv')) + ' "$@"\n')
+        uv.chmod(0o755)
         gh = binaries / 'gh'
         gh.write_text("""#!/bin/sh
 case "$*" in
