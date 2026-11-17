@@ -36,8 +36,9 @@ def main():
         gh.write_text("""#!/bin/sh
 case "$*" in
   *--version*) echo 'gh identity boundary' ;;
-  'auth status'*) echo "- Token scopes: 'repo', 'workflow', 'read:packages'" ;;
+  'auth status'*) echo "- Token scopes: 'repo', 'workflow', 'read:packages', 'write:packages'" ;;
   'auth setup-git'*) exit 0 ;;
+  *api*user*@tsv*) printf '42\\texample-owner\\n' ;;
   *api*user*) echo example-owner ;;
   skill\\ install*|skills\\ install*) exec "$STARTUP_E2E_REAL_GH" "$@" ;;
   *) echo 'Unexpected GitHub mutation' >&2; exit 99 ;;
@@ -62,6 +63,7 @@ esac
         output = bytearray()
         steps = [
             (b'Factory folder', str(factory).encode() + b'\n'),
+            (b'private GitHub repository example-owner/my-factory?', b'n\n'),
             (b'Project name (for example, my-startup)', b'example-app\n'),
             (b'Which stack would you like to start with?', b'3\n'),
             (b'Domain (for example, example.com)', b'app.example.com\n'),
