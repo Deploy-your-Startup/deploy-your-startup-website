@@ -108,7 +108,7 @@ jobs:
   browser:
     needs: release
     if: ${{ always() && (github.event_name == 'pull_request' || needs.release.outputs.deploy == 'true') }}
-    uses: Deploy-your-Startup/deploy-your-startup/.github/workflows/container-e2e.yml@d62483ec1af3a74116297b67c1ef951b1db27afd # v0.1.10
+    uses: Deploy-your-Startup/deploy/.github/workflows/container-e2e.yml@64ec3a5f13de5328f02272cccaa3bcffde768fcf # v1.0.0
     with:
       run_e2e: false
       shards: 1
@@ -125,7 +125,7 @@ jobs:
 
   deploy:
     needs: [release, test, browser, installer-factory]
-    uses: Deploy-your-Startup/deploy-your-startup/.github/workflows/deploy-pages.yml@d62483ec1af3a74116297b67c1ef951b1db27afd # v0.1.10
+    uses: Deploy-your-Startup/deploy/.github/workflows/deploy-pages.yml@64ec3a5f13de5328f02272cccaa3bcffde768fcf # v1.0.0
     with:
       project_name: deploy-your-startup-website
       # Public repositories deploy through the main-only production environment;
