@@ -1,7 +1,7 @@
 # Automatic CLI installer updates
 
 The Deploy workflow checks the latest stable release of
-`Deploy-your-Startup/cli` every ten minutes. GitHub may delay scheduled runs;
+`Deploy-your-Startup/cli` every six hours. GitHub may delay scheduled runs;
 this is not an immediate release webhook.
 
 The CLI version is pinned in one place: `startup_cli_version` at the top of

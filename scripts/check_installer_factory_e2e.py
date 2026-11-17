@@ -10,6 +10,7 @@ import json
 import os
 import pty
 import select
+import shlex
 import shutil
 import signal
 import subprocess
@@ -32,12 +33,20 @@ def main():
         home, binaries, factory = root / 'home', root / 'bin', root / 'my factory'
         (home / '.codex').mkdir(parents=True)
         binaries.mkdir()
+        # Keep the launcher's uv PATH prefix in this boundary directory. A real
+        # Homebrew uv otherwise prepends its directory and shadows the fake gh.
+        real_uv = shutil.which('uv')
+        if real_uv:
+            uv = binaries / 'uv'
+            uv.write_text('#!/bin/sh\nexec ' + shlex.quote(real_uv) + ' "$@"\n')
+            uv.chmod(0o755)
         gh = binaries / 'gh'
         gh.write_text("""#!/bin/sh
 case "$*" in
   *--version*) echo 'gh identity boundary' ;;
-  'auth status'*) echo "- Token scopes: 'repo', 'workflow', 'read:packages'" ;;
+  'auth status'*) echo "- Token scopes: 'repo', 'workflow', 'read:packages', 'write:packages'" ;;
   'auth setup-git'*) exit 0 ;;
+  *api*user*@tsv*) printf '42\\texample-owner\\n' ;;
   *api*user*) echo example-owner ;;
   skill\\ install*|skills\\ install*) exec "$STARTUP_E2E_REAL_GH" "$@" ;;
   *) echo 'Unexpected GitHub mutation' >&2; exit 99 ;;
@@ -62,6 +71,7 @@ esac
         output = bytearray()
         steps = [
             (b'Factory folder', str(factory).encode() + b'\n'),
+            (b'private GitHub repository example-owner/my-factory?', b'n\n'),
             (b'Project name (for example, my-startup)', b'example-app\n'),
             (b'Which stack would you like to start with?', b'3\n'),
             (b'Domain (for example, example.com)', b'app.example.com\n'),
@@ -121,7 +131,9 @@ esac
         # Resume in another process and prove owner files survive real repeated setup.
         notes = factory / 'owner-notes.md'
         notes.write_text('Preserve my Factory notes.\n')
-        subprocess.run([str(launcher), 'factory', 'init', '--resume'], env=environment, text=True, capture_output=True, check=True)
+        # Resume offers the optional backup again; decline it explicitly, as above.
+        resumed = subprocess.run([str(launcher), 'factory', 'init', '--resume'], env=environment, input='n\n', text=True, capture_output=True, check=False, timeout=180)
+        assert resumed.returncode == 0, resumed.stdout + resumed.stderr
         assert notes.read_text() == 'Preserve my Factory notes.\n'
         assert (home / '.agents/skills/deploy-your-startup/SKILL.md').is_file()
         assert (factory / '.agents/skills/sprowi-task/SKILL.md').is_file()
