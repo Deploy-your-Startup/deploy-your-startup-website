@@ -123,7 +123,13 @@ esac
         saved = subprocess.run([str(launcher), 'factory', 'status'], env=environment, text=True, capture_output=True, check=True)
         progress = dict(line.split(': ', 1) for line in saved.stdout.splitlines() if ': ' in line)
         assert Path(progress['Folder']).resolve() == factory.resolve()
-        assert progress['Version'] == answers['_commit']
+        # Copier records git-describe ancestry for commit pins. Resolve both
+        # identities against the real public template instead of comparing labels.
+        template = root / 'template-identity'
+        subprocess.run(['git', 'clone', '--quiet', '--no-checkout', progress['Template'], str(template)], env=environment, check=True)
+        selected = subprocess.check_output(['git', '-C', str(template), 'rev-parse', '--verify', progress['Version'] + '^{commit}'], env=environment, text=True).strip()
+        recorded = subprocess.check_output(['git', '-C', str(template), 'rev-parse', '--verify', answers['_commit'] + '^{commit}'], env=environment, text=True).strip()
+        assert selected == recorded
         assert progress['Template'] == answers['_src_path']
         assert progress['Current step'] == 'complete'
         assert progress['Last failure'] == 'None'
