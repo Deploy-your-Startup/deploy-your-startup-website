@@ -123,7 +123,9 @@ esac
         # Resume in another process and prove owner files survive real repeated setup.
         notes = factory / 'owner-notes.md'
         notes.write_text('Preserve my Factory notes.\n')
-        subprocess.run([str(launcher), 'factory', 'init', '--resume'], env=environment, text=True, capture_output=True, check=True)
+        # Resume offers the optional backup again; decline it explicitly, as above.
+        resumed = subprocess.run([str(launcher), 'factory', 'init', '--resume'], env=environment, input='n\n', text=True, capture_output=True, check=False, timeout=180)
+        assert resumed.returncode == 0, resumed.stdout + resumed.stderr
         assert notes.read_text() == 'Preserve my Factory notes.\n'
         assert (home / '.agents/skills/deploy-your-startup/SKILL.md').is_file()
         assert (factory / '.agents/skills/sprowi-task/SKILL.md').is_file()
