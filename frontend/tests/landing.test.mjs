@@ -91,3 +91,10 @@ test("GIVEN a new visitor WHEN the site builds THEN ownership and deployment ans
   assert.match(faq, /Cloudflare Pages/);
   assert.match(faq, /href="\/get-started"/);
 });
+
+test("GIVEN the production site WHEN Astro builds THEN Pages receives its HTTPS and framing headers", () => {
+  execFileSync("npm", ["run", "build"], { cwd: new URL("../", import.meta.url), stdio: "pipe" });
+  const headers = readFileSync(new URL("../dist/_headers", import.meta.url), "utf8");
+  assert.match(headers, /^\/\*\n\s+Strict-Transport-Security: max-age=86400$/m);
+  assert.match(headers, /Content-Security-Policy: .*frame-ancestors 'none'/);
+});
