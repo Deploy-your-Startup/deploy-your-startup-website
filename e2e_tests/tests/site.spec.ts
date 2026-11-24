@@ -60,19 +60,20 @@ test("GIVEN the homepage WHEN a visitor opens the teaser THEN it plays in a dial
 });
 
 for (const width of [1440, 390]) {
-  test(`GIVEN a ${width}px viewport WHEN viewing startup examples THEN MalleableMail is visible with its external destination`, async ({ page }) => {
+  test(`GIVEN a ${width}px viewport WHEN viewing startup examples THEN Weekweaver replaces MalleableMail with its external destination`, async ({ page }) => {
     // GIVEN the real production build at desktop or mobile width.
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
     // WHEN a visitor browses the startup examples.
-    const mail = page.getByRole("link", { name: "MalleableMail Email app" });
-    await mail.scrollIntoViewIfNeeded();
+    const scheduling = page.getByRole("link", { name: "Weekweaver Scheduling app" });
+    await scheduling.scrollIntoViewIfNeeded();
     // THEN the fifth example is readable and opens the supplied destination in a separate tab.
-    await expect(mail).toBeVisible();
-    await expect(mail.getByRole("heading", { name: "MalleableMail" })).toBeVisible();
-    await expect(mail).toHaveAttribute("href", "https://malleablemail.iljabauer.email");
-    await expect(mail).toHaveAttribute("target", "_blank");
-    await expect(mail).toHaveAttribute("rel", "noopener");
+    await expect(scheduling).toBeVisible();
+    await expect(scheduling.getByRole("heading", { name: "Weekweaver" })).toBeVisible();
+    await expect(scheduling).toHaveAttribute("href", "https://weekweaver.app");
+    await expect(scheduling).toHaveAttribute("target", "_blank");
+    await expect(scheduling).toHaveAttribute("rel", "noopener");
+    await expect(page.getByRole("link", { name: "MalleableMail Email app" })).toHaveCount(0);
     await expect(page.locator(".example-app")).toHaveCount(5);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   });
