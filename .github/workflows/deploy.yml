@@ -6,6 +6,7 @@ on:
   push:
     branches: [main]
     paths:
+      - '.github/workflows/startup.yml'
       - "frontend/**"
       - "e2e_tests/**"
       - ".dockerignore"
@@ -108,11 +109,15 @@ jobs:
   browser:
     needs: release
     if: ${{ always() && (github.event_name == 'pull_request' || needs.release.outputs.deploy == 'true') }}
-    uses: Deploy-your-Startup/deploy/.github/workflows/container-e2e.yml@815477021e701084673d9bb39b46907da6cf56c8 # v2.0.0
+    uses: ./.github/workflows/startup.yml
     with:
+      operation: e2e
       run_e2e: false
       shards: 1
 
+    permissions:
+      contents: read
+      deployments: write
   pull-request-contract:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
@@ -125,8 +130,9 @@ jobs:
 
   deploy:
     needs: [release, test, browser, installer-factory]
-    uses: Deploy-your-Startup/deploy/.github/workflows/deploy-pages.yml@815477021e701084673d9bb39b46907da6cf56c8 # v2.0.0
+    uses: ./.github/workflows/startup.yml
     with:
+      operation: pages
       project_name: deploy-your-startup-website
       # Public repositories deploy through the main-only production environment;
       # private ones use repository secrets (environments there need a paid plan).
@@ -134,3 +140,6 @@ jobs:
     secrets:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    permissions:
+      contents: read
+      deployments: write
