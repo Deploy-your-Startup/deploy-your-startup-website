@@ -1,0 +1,56 @@
+name: Deploy programmier.con talk
+on:
+  workflow_dispatch:
+    inputs:
+      artifact_sha256:
+        description: SHA-256 of the verified artifact from the private talk pipeline
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: programmiercon-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Download and verify talk artifact
+        env:
+          ARTIFACT_URL: ${{ secrets.PROGRAMMIERCON_ARTIFACT_URL }}
+          ARTIFACT_SHA256: ${{ inputs.artifact_sha256 }}
+        run: |
+          [[ "$ARTIFACT_URL" == https://* && "$ARTIFACT_SHA256" =~ ^[a-f0-9]{64}$ ]]
+          curl --fail --silent --show-error --proto '=https' --max-time 25 "$ARTIFACT_URL" -o "$RUNNER_TEMP/talk.zip"
+          printf '%s  %s\n' "$ARTIFACT_SHA256" "$RUNNER_TEMP/talk.zip" | sha256sum --check
+          unzip -q "$RUNNER_TEMP/talk.zip" -d talk
+          test -f talk/index.html
+          test -z "$(find talk -type f \( -name '*.md' -o -name '*.map' \) -print -quit)"
+
+      - name: Publish talk to Cloudflare Pages
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy talk --project-name=programmiercon --branch=main
+
+      - name: Connect talk domain
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          domains="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/programmiercon/domains"
+          domain=programmiercon.deploy-your-startup.com
+          result=$(curl --fail --silent --show-error -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$domains")
+          if jq -e --arg domain "$domain" 'any(.result[]; .name == $domain)' <<<"$result" >/dev/null; then
+            exit 0
+          fi
+          jq -nc --arg name "$domain" '{name: $name}' |
+            curl --fail --silent --show-error -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              -H 'Content-Type: application/json' --data-binary @- "$domains" |
+            jq -e '.success'
