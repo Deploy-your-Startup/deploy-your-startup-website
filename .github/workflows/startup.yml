@@ -1,0 +1,79 @@
+name: Shared deployment version
+'on':
+  workflow_call:
+    inputs:
+      project_name:
+        description: Cloudflare Pages project name
+        required: false
+        type: string
+        default: ''
+      working_directory:
+        description: Path to the site source (where package.json lives)
+        required: false
+        default: frontend
+        type: string
+      node_version:
+        description: Node.js version
+        required: false
+        default: '22'
+        type: string
+      build_output:
+        description: Build output directory, relative to working_directory
+        required: false
+        default: dist
+        type: string
+      branch:
+        description: Cloudflare Pages branch to deploy to
+        required: false
+        default: main
+        type: string
+      environment:
+        description: GitHub environment whose secrets and branch rules guard the deploy; empty uses repository secrets
+        required: false
+        default: ''
+        type: string
+      run_e2e:
+        description: Run browser tests in CI; Dependabot PRs always run them
+        type: boolean
+        default: true
+      directory:
+        type: string
+        default: e2e_tests
+      shards:
+        type: number
+        default: 1
+      runtime_revision:
+        description: Shared CI runtime resolved by the application workflow
+        type: string
+        default: ''
+      artifact_prefix:
+        type: string
+        default: e2e
+      operation:
+        description: pages or e2e
+        type: string
+        required: true
+    secrets:
+      CLOUDFLARE_API_TOKEN:
+        required: false
+      CLOUDFLARE_ACCOUNT_ID:
+        required: false
+jobs:
+  runtime:
+    uses: Deploy-your-Startup/deploy/.github/workflows/project-pages.yml@bfa2f4ceb411e303451b359db80071f5af20ca35 # v2.1.0
+    with:
+      project_name: ${{ inputs.project_name }}
+      working_directory: ${{ inputs.working_directory }}
+      node_version: ${{ inputs.node_version }}
+      build_output: ${{ inputs.build_output }}
+      branch: ${{ inputs.branch }}
+      environment: ${{ inputs.environment }}
+      run_e2e: ${{ inputs.run_e2e }}
+      directory: ${{ inputs.directory }}
+      shards: ${{ inputs.shards }}
+      runtime_revision: ${{ inputs.runtime_revision }}
+      artifact_prefix: ${{ inputs.artifact_prefix }}
+      operation: ${{ inputs.operation }}
+    secrets:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
