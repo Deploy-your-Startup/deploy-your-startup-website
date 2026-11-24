@@ -191,12 +191,12 @@ const baseDomain = "deploy-your-startup.com";
               </div>
               <div class="example-caption"><h3>Panda &amp; Puff</h3><span>Shisha journal <b aria-hidden="true">↗</b></span></div>
             </a>
-            <a class="example-app" href="https://malleablemail.iljabauer.email" target="_blank" rel="noopener">
-              <div class="app-preview preview-mail" aria-hidden="true">
-                <b class="deploy-status" aria-hidden="true"></b><div class="preview-toolbar"><i></i><i></i><i></i><span>malleablemail.iljabauer.email</span></div>
-                <div class="preview-inbox"><svg viewBox="0 0 40 32" fill="none"><rect x="2" y="3" width="36" height="26" rx="4" stroke="currentColor" stroke-width="2"/><path d="m3 6 17 13L37 6" stroke="currentColor" stroke-width="2"/></svg><div><span class="preview-stroke long"></span><span class="preview-stroke short"></span><span class="preview-stroke long"></span><span class="preview-stroke short"></span></div></div>
+            <a class="example-app" href="https://weekweaver.app" target="_blank" rel="noopener">
+              <div class="app-preview preview-weekweaver" aria-hidden="true">
+                <b class="deploy-status" aria-hidden="true"></b><div class="preview-toolbar"><i></i><i></i><i></i><span>weekweaver.app</span></div>
+                <div class="preview-schedule"><svg viewBox="0 0 40 32" fill="none"><rect x="2" y="5" width="36" height="25" rx="4" stroke="currentColor" stroke-width="2"/><path d="M11 2v7m18-7v7M3 13h34M12 18v7m8-7v7m8-7v7" stroke="currentColor" stroke-width="2"/></svg><div><span class="preview-stroke long"></span><span class="preview-stroke short"></span><span class="preview-stroke long"></span><span class="preview-stroke short"></span></div></div>
               </div>
-              <div class="example-caption"><h3>MalleableMail</h3><span>Email app <b aria-hidden="true">↗</b></span></div>
+              <div class="example-caption"><h3>Weekweaver</h3><span>Scheduling app <b aria-hidden="true">↗</b></span></div>
             </a>
           </div>
           <span class="harness-rocket" aria-hidden="true"><Rocket /><i></i></span>
@@ -491,10 +491,10 @@ const baseDomain = "deploy-your-startup.com";
   .preview-entry > div { flex: 1; }
   .preview-entry .preview-stroke.long { background: #b5c99a38; }
   .journal-panda { flex: none; width: 24px; height: 24px; color: #b5c99a; }
-  .preview-inbox { display: flex; align-items: center; gap: 18px; margin-top: 22px; color: #c4b5e3; }
-  .preview-inbox svg { flex: none; width: 40px; height: 32px; }
-  .preview-inbox > div { flex: 1; }
-  .preview-inbox .preview-stroke.long { margin-top: 10px; background: #c4b5e338; }
+  .preview-schedule { display: flex; align-items: center; gap: 18px; margin-top: 22px; color: #c4b5e3; }
+  .preview-schedule svg { flex: none; width: 40px; height: 32px; }
+  .preview-schedule > div { flex: 1; }
+  .preview-schedule .preview-stroke.long { margin-top: 10px; background: #c4b5e338; }
   .example-caption { padding: 0.9rem 1rem; }
   .example-caption h3 { font-size: 0.85rem; font-weight: 600; letter-spacing: -0.025em; }
   .example-caption > span { display: flex; justify-content: space-between; margin-top: 0.35rem; color: var(--muted); font-size: 0.7rem; }
@@ -536,8 +536,8 @@ const baseDomain = "deploy-your-startup.com";
   @media (max-width: 600px) {
     .example-apps, .harness-connectors { gap: 0.75rem; }
     .example-app:last-child:nth-child(odd) { width: calc((100% - 0.75rem) / 2); }
-    .preview-inbox { gap: 10px; }
-    .preview-inbox svg { width: 28px; }
+    .preview-schedule { gap: 10px; }
+    .preview-schedule svg { width: 28px; }
     .app-preview { height: 130px; padding-inline: 0.6rem; }
     .preview-toolbar > span { font-size: 0.4rem; }
     .preview-profile { gap: 8px; }
