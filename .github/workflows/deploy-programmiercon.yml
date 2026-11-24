@@ -47,10 +47,31 @@ jobs:
           domains="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/programmiercon/domains"
           domain=programmiercon.deploy-your-startup.com
           result=$(curl --fail --silent --show-error -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$domains")
-          if jq -e --arg domain "$domain" 'any(.result[]; .name == $domain)' <<<"$result" >/dev/null; then
+          if ! jq -e --arg domain "$domain" 'any(.result[]; .name == $domain)' <<<"$result" >/dev/null; then
+            jq -nc --arg name "$domain" '{name: $name}' |
+              curl --fail --silent --show-error -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+                -H 'Content-Type: application/json' --data-binary @- "$domains" |
+              jq -e '.success'
+          fi
+
+      - name: Verify the talk DNS record
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          domain=programmiercon.deploy-your-startup.com
+          target=programmiercon.pages.dev
+          records="https://api.cloudflare.com/client/v4/zones/19c67cf4d2140b5ac8f1453366db82e2/dns_records"
+          auth="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+          result=$(curl --fail --silent --show-error -H "$auth" --get --data-urlencode "name=$domain" "$records")
+          if jq -e --arg target "$target" 'any(.result[]; .type == "CNAME" and .content == $target)' <<<"$result" >/dev/null; then
             exit 0
           fi
-          jq -nc --arg name "$domain" '{name: $name}' |
-            curl --fail --silent --show-error -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-              -H 'Content-Type: application/json' --data-binary @- "$domains" |
+          if jq -e 'any(.result[]; .type == "A" or .type == "AAAA" or .type == "CNAME")' <<<"$result" >/dev/null; then
+            echo "::error::The talk subdomain already has a DNS record pointing elsewhere."
+            exit 1
+          fi
+          jq -nc --arg name "$domain" --arg content "$target" '{type:"CNAME", $name, $content, proxied:true}' |
+            curl --fail --silent --show-error -H "$auth" -H 'Content-Type: application/json' \
+              --data-binary @- "$records" |
             jq -e '.success'
