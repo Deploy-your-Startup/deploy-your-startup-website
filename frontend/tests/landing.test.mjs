@@ -23,14 +23,15 @@ test("GIVEN the landing page WHEN Astro builds THEN visitors see the harness and
 
   // THEN the rendered section shows every app on the shared foundation with working destinations.
   assert.ok(section);
-  for (const text of ["Build your idea. Find out what works.", "features, real users and feedback", "About Phil", "Gaming Buch Club", "Kartenalbum", "Panda &amp; Puff", "MalleableMail", "Email app", "Built and maintained by us", "We take care of the harness.", "Agent-ready projects", "Automated checks", "Deployment & operations", "community contribution", "Ballern", "Go all in. Build. Ship. Validate."]) {
+  for (const text of ["Build your idea. Find out what works.", "features, real users and feedback", "About Phil", "Gaming Buch Club", "Kartenalbum", "Panda &amp; Puff", "Weekweaver", "Scheduling app", "Built and maintained by us", "We take care of the harness.", "Agent-ready projects", "Automated checks", "Deployment & operations", "community contribution", "Ballern", "Go all in. Build. Ship. Validate."]) {
     assert.ok(section.includes(text), `Missing visible content: ${text}`);
   }
   assert.match(section, /href="https:\/\/aboutphil\.de"/);
   assert.match(section, /href="https:\/\/gamingbuchclub\.de"/);
   assert.match(section, /href="https:\/\/kartenalbum\.de"/);
   assert.match(section, /href="https:\/\/shisha\.justin-salzburg\.de"/);
-  assert.match(section, /href="https:\/\/malleablemail\.iljabauer\.email" target="_blank" rel="noopener"/);
+  assert.match(section, /href="https:\/\/weekweaver\.app" target="_blank" rel="noopener"/);
+  assert.doesNotMatch(section, /MalleableMail|malleablemail\.iljabauer\.email|Email app/);
   assert.match(section, /class="harness-rocket"/);
   assert.equal(section.match(/class="deploy-status"/g)?.length, 5);
   assert.doesNotMatch(section, /runtime-flow|HTTPS|<script|Einfach ballern|Dann validieren/);
