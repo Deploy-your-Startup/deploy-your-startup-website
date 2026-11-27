@@ -1,0 +1,3 @@
+/*
+  Strict-Transport-Security: max-age=86400
+  Content-Security-Policy: base-uri 'self'; frame-ancestors 'none'
